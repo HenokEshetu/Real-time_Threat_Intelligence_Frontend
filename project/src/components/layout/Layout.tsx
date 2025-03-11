@@ -1,6 +1,7 @@
 import { Box, AppBar, Toolbar, Typography, Drawer, List, ListItem, ListItemIcon, ListItemText } from '@mui/material';
 import { Dashboard as DashboardIcon, Security, Warning, BugReport, Description } from '@mui/icons-material';
 import { Link } from 'react-router-dom';
+import React from 'react';
 
 const drawerWidth = 240;
 
@@ -37,7 +38,7 @@ export const Layout = ({ children }) => {
         <Box sx={{ overflow: 'auto' }}>
           <List>
             {menuItems.map((item) => (
-              <ListItem button key={item.text} component={Link} to={item.path}>
+              <ListItem key={item.text} component={Link} to={item.path} disablePadding>
                 <ListItemIcon>{item.icon}</ListItemIcon>
                 <ListItemText primary={item.text} />
               </ListItem>

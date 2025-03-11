@@ -3,6 +3,7 @@ import { ThreatStats } from '../components/dashboard/ThreatStats';
 import { ThreatActivityChart } from '../components/dashboard/ThreatActivityChart';
 import { ThreatDistributionChart } from '../components/dashboard/ThreatDistributionChart';
 import { RecentIncidents } from '../components/dashboard/RecentIncidents';
+import React from 'react';
 
 export const Dashboard = () => {
   return (

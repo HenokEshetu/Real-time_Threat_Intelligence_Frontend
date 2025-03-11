@@ -1,5 +1,6 @@
 import { ResponsivePie } from '@nivo/pie';
 import { Box, Paper, Typography } from '@mui/material';
+import React from 'react';
 
 const data = [
   { id: 'Malware', value: 35, color: '#FF6B6B' },

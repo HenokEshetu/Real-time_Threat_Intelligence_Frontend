@@ -1,5 +1,6 @@
 import { Grid, Paper, Typography, Box } from '@mui/material';
 import { Security, Warning, BugReport, Shield } from '@mui/icons-material';
+import React from 'react';
 
 const stats = [
   {

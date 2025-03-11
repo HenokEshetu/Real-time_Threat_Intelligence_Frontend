@@ -1,25 +1,12 @@
-import create from 'zustand';
-import { gql, useMutation } from '@apollo/client';
+// src/hooks/useAuth.ts
 
-const LOGIN_MUTATION = gql`
-  mutation Login($email: String!, $password: String!) {
-    login(input: { email: $password, password: $password }) {
-      access_token
-      user {
-        id
-        email
-        firstName
-        lastName
-      }
-    }
-  }
-`;
+import { create } from 'zustand';
 
 interface AuthState {
   isAuthenticated: boolean;
   user: any | null;
   token: string | null;
-  login: (email: string, password: string) => Promise<void>;
+  login: (email: string, password: string) => void;  // No async/side effects here
   logout: () => void;
 }
 
@@ -27,21 +14,12 @@ export const useAuth = create<AuthState>((set) => ({
   isAuthenticated: !!localStorage.getItem('token'),
   user: null,
   token: localStorage.getItem('token'),
-  login: async (email, password) => {
-    try {
-      const [loginMutation] = useMutation(LOGIN_MUTATION);
-      const { data } = await loginMutation({ variables: { email, password } });
-      
-      localStorage.setItem('token', data.login.access_token);
-      set({ 
-        isAuthenticated: true, 
-        user: data.login.user,
-        token: data.login.access_token 
-      });
-    } catch (error) {
-      console.error('Login failed:', error);
-      throw error;
-    }
+  login: (email, password) => {
+    set({
+      isAuthenticated: true, 
+      user: { email }, 
+      token: 'mockToken' // Mock token for testing purposes
+    });
   },
   logout: () => {
     localStorage.removeItem('token');

@@ -1,6 +1,7 @@
 import { Paper, Typography, List, ListItem, ListItemText, ListItemIcon, Chip } from '@mui/material';
 import { Warning, Error, Info } from '@mui/icons-material';
 import { format } from 'date-fns';
+import React from 'react';
 
 const incidents = [
   {

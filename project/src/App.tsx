@@ -5,6 +5,7 @@ import { theme } from './theme';
 import { client } from './lib/apollo';
 import { AppRoutes } from './routes';
 import { Layout } from './components/layout/Layout';
+import React from 'react';
 
 function App() {
   return (

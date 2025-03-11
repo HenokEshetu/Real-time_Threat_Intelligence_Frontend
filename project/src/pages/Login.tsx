@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Box, Paper, TextField, Button, Typography } from '@mui/material';
 import { useAuth } from '../hooks/useAuth';
+import React from 'react';
 
 export const Login = () => {
   const navigate = useNavigate();

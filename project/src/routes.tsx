@@ -6,6 +6,7 @@ import { Malware } from './pages/Malware';
 import { Reports } from './pages/Reports';
 import { Login } from './pages/Login';
 import { useAuth } from './hooks/useAuth';
+import React from 'react';
 
 export const AppRoutes = () => {
   const { isAuthenticated } = useAuth();
