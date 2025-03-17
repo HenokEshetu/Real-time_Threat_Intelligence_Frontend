@@ -3,27 +3,6 @@ import { Warning, Error, Info } from '@mui/icons-material';
 import { format } from 'date-fns';
 import React from 'react';
 
-const incidents = [
-  {
-    id: 1,
-    title: 'Suspicious Network Activity Detected',
-    severity: 'high',
-    timestamp: new Date(2023, 11, 1, 14, 30),
-  },
-  {
-    id: 2,
-    title: 'Failed Login Attempts',
-    severity: 'medium',
-    timestamp: new Date(2023, 11, 1, 12, 15),
-  },
-  {
-    id: 3,
-    title: 'System Update Required',
-    severity: 'low',
-    timestamp: new Date(2023, 11, 1, 10, 45),
-  },
-];
-
 const getSeverityIcon = (severity: string) => {
   switch (severity) {
     case 'high':
@@ -49,14 +28,14 @@ const getSeverityChip = (severity: string) => {
   );
 };
 
-export const RecentIncidents = () => {
+export const RecentIncidents = ({ data }) => {
   return (
     <Paper sx={{ p: 3 }}>
       <Typography variant="h6" gutterBottom>
         Recent Incidents
       </Typography>
       <List>
-        {incidents.map((incident) => (
+        {data.map((incident) => (
           <ListItem key={incident.id} divider>
             <ListItemIcon>
               {getSeverityIcon(incident.severity)}
