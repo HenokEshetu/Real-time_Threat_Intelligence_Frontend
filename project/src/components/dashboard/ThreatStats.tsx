@@ -29,21 +29,42 @@ const stats = [
   },
 ];
 
-export const ThreatStats = ({ data }) => {
+export const ThreatStats = () => {
   return (
-    <Paper sx={{ p: 3 }}>
-      <Typography variant="h6" gutterBottom>
-        Threat Statistics
-      </Typography>
-      <Typography variant="body1">
-        Total Threats: {data.totalThreats}
-      </Typography>
-      <Typography variant="body1">
-        Active Threats: {data.activeThreats}
-      </Typography>
-      <Typography variant="body1">
-        Resolved Threats: {data.resolvedThreats}
-      </Typography>
-    </Paper>
+    <Grid container spacing={3}>
+      {stats.map((stat) => {
+        const Icon = stat.icon;
+        return (
+          <Grid item xs={12} sm={6} md={3} key={stat.title}>
+            <Paper
+              sx={{
+                p: 3,
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                height: '100%',
+              }}
+            >
+              <Box
+                sx={{
+                  p: 1,
+                  borderRadius: '50%',
+                  backgroundColor: `${stat.color}20`,
+                  mb: 2,
+                }}
+              >
+                <Icon sx={{ fontSize: 40, color: stat.color }} />
+              </Box>
+              <Typography variant="h4" component="div" gutterBottom>
+                {stat.value}
+              </Typography>
+              <Typography variant="body2" color="text.secondary">
+                {stat.title}
+              </Typography>
+            </Paper>
+          </Grid>
+        )
+      })}
+    </Grid>
   );
 };

@@ -15,11 +15,12 @@
     "incremental": true,
     "skipLibCheck": true,
     "strictNullChecks": false,
-    "noImplicitAny": false,
+    "noImplicitAny": true,
     "strictBindCallApply": false,
     "forceConsistentCasingInFileNames": false,
     "noFallthroughCasesInSwitch": false,
     "types": ["vite/client", "node"], 
-    "moduleResolution": "node"
+    "moduleResolution": "node",
+    "strict": true
   }
 }

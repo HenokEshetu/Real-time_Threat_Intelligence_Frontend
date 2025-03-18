@@ -3,7 +3,20 @@ import { Warning, Error, Info } from '@mui/icons-material';
 import { format } from 'date-fns';
 import React from 'react';
 
-const getSeverityIcon = (severity: string) => {
+// Define types for the incident object
+interface Incident {
+  id: string;
+  title: string;
+  severity: 'high' | 'medium' | 'low';
+  timestamp: Date;
+}
+
+// Define the props for the component, including the 'data' prop
+interface RecentIncidentsProps {
+  data: Incident[];
+}
+
+const getSeverityIcon = (severity: 'high' | 'medium' | 'low') => {
   switch (severity) {
     case 'high':
       return <Error color="error" />;
@@ -14,7 +27,7 @@ const getSeverityIcon = (severity: string) => {
   }
 };
 
-const getSeverityChip = (severity: string) => {
+const getSeverityChip = (severity: 'high' | 'medium' | 'low') => {
   return (
     <Chip
       label={severity.toUpperCase()}
@@ -28,7 +41,8 @@ const getSeverityChip = (severity: string) => {
   );
 };
 
-export const RecentIncidents = ({ data }) => {
+// Update the component to use the defined types for props
+export const RecentIncidents: React.FC<RecentIncidentsProps> = ({ data }) => {
   return (
     <Paper sx={{ p: 3 }}>
       <Typography variant="h6" gutterBottom>
@@ -42,10 +56,12 @@ export const RecentIncidents = ({ data }) => {
             </ListItemIcon>
             <ListItemText
               primary={
-                <Typography variant="body1">
-                  {incident.title}
-                  {getSeverityChip(incident.severity)}
-                </Typography>
+                <div>
+                  <Typography variant="body1">
+                    {incident.title}
+                    {getSeverityChip(incident.severity)}
+                  </Typography>
+                </div>
               }
               secondary={format(incident.timestamp, 'PPp')}
             />
