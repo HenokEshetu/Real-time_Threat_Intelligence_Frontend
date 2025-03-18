@@ -3,6 +3,7 @@ import { ThreatStats } from '../components/dashboard/ThreatStats';
 import { ThreatActivityChart } from '../components/dashboard/ThreatActivityChart';
 import { ThreatDistributionChart } from '../components/dashboard/ThreatDistributionChart';
 import { RecentIncidents } from '../components/dashboard/RecentIncidents';
+import  GeographicalMap  from '../components/dashboard/GeographicalMap';
 import React from 'react';
 
 const sampleThreatStats = {
@@ -50,17 +51,21 @@ export const Dashboard = () => {
       <Grid item xs={12}>
         <ThreatStats data={sampleThreatStats} />
       </Grid>
-      
-      <Grid item xs={12} md={8}>
-        <ThreatActivityChart data={sampleThreatActivity} />
+
+      <Grid item xs={12} md={6}>
+        <ThreatActivityChart />
       </Grid>
-      
-      <Grid item xs={12} md={4}>
-        <ThreatDistributionChart data={sampleThreatDistribution} />
+
+      <Grid item xs={12} md={6}>
+        <ThreatDistributionChart />
       </Grid>
-      
-      <Grid item xs={12}>
-        <RecentIncidents data={sampleRecentIncidents} />
+
+      <Grid item xs={12} md={6}>
+        <RecentIncidents />
+      </Grid>
+
+      <Grid item xs={12} md={6}>
+        <GeographicalMap />
       </Grid>
     </Grid>
   );
