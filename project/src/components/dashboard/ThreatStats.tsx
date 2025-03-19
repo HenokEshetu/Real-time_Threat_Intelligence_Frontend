@@ -2,34 +2,19 @@ import { Grid, Paper, Typography, Box } from '@mui/material';
 import { Security, Warning, BugReport, Shield } from '@mui/icons-material';
 import React from 'react';
 
-const stats = [
-  {
-    title: 'Active Threats',
-    value: 47,
-    icon: Security,
-    color: '#FF6B6B',
-  },
-  {
-    title: 'Recent Incidents',
-    value: 12,
-    icon: Warning,
-    color: '#4ECDC4',
-  },
-  {
-    title: 'Malware Detected',
-    value: 28,
-    icon: BugReport,
-    color: '#45B7D1',
-  },
-  {
-    title: 'Mitigations Applied',
-    value: 156,
-    icon: Shield,
-    color: '#96CEB4',
-  },
-];
+// Define the type for the stats prop
+interface Stat {
+  title: string;
+  value: number;
+  icon: React.ElementType;
+  color: string;
+}
 
-export const ThreatStats = () => {
+interface ThreatStatsProps {
+  stats: Stat[];
+}
+
+export const ThreatStats: React.FC<ThreatStatsProps> = ({ stats }) => {
   return (
     <Grid container spacing={3}>
       {stats.map((stat) => {
@@ -63,7 +48,7 @@ export const ThreatStats = () => {
               </Typography>
             </Paper>
           </Grid>
-        )
+        );
       })}
     </Grid>
   );

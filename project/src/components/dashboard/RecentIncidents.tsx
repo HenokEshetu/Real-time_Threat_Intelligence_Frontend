@@ -3,17 +3,17 @@ import { Warning, Error, Info } from '@mui/icons-material';
 import { format } from 'date-fns';
 import React from 'react';
 
-// Define types for the incident object
-interface Incident {
+// Define and export the 'Incident' type so it can be used elsewhere
+export interface Incident {
   id: string;
   title: string;
-  severity: 'high' | 'medium' | 'low';
+  severity: 'high' | 'medium' | 'low'; // Restrict severity to specific string values
   timestamp: Date;
 }
 
 // Define the props for the component, including the 'data' prop
 interface RecentIncidentsProps {
-  data: Incident[];
+  data: Incident[]; // Expecting an array of Incident objects
 }
 
 const getSeverityIcon = (severity: 'high' | 'medium' | 'low') => {
@@ -41,7 +41,7 @@ const getSeverityChip = (severity: 'high' | 'medium' | 'low') => {
   );
 };
 
-// Update the component to use the defined types for props
+// The 'RecentIncidents' component uses the defined types for props
 export const RecentIncidents: React.FC<RecentIncidentsProps> = ({ data }) => {
   return (
     <Paper sx={{ p: 3 }}>

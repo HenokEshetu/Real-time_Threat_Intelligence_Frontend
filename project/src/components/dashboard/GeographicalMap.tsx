@@ -1,137 +1,67 @@
 import React, { useState } from 'react';
-import { Box, Paper, Typography, useTheme, Tooltip, Popover } from '@mui/material';
-import {
-  ComposableMap,
-  Geographies,
-  Geography,
-  Marker,
-  ZoomableGroup,
-} from 'react-simple-maps';
+import { Box, Paper, Typography, useTheme, Popover, Button } from '@mui/material';
+import { ComposableMap, Geographies, Geography, Marker, ZoomableGroup } from 'react-simple-maps';
 
-// Enhanced sample data with more threat intelligence information
-const threatData = [
-  {
-    id: 'US',
-    name: 'United States',
-    value: 10,
-    latitude: 37.0902,
-    longitude: -95.7129,
-    details: {
-      activeCampaigns: 5,
-      recentIncidents: 12,
-      threatLevel: 'High',
-      commonTactics: ['Phishing', 'Ransomware', 'Supply Chain Attacks'],
-      activeGroups: ['APT29', 'Lazarus Group'],
-    },
-  },
-  {
-    id: 'IN',
-    name: 'India',
-    value: 7,
-    latitude: 20.5937,
-    longitude: 78.9629,
-    details: {
-      activeCampaigns: 3,
-      recentIncidents: 8,
-      threatLevel: 'Medium',
-      commonTactics: ['Social Engineering', 'Malware Distribution'],
-      activeGroups: ['APT41', 'Sidewinder'],
-    },
-  },
-  {
-    id: 'CN',
-    name: 'China',
-    value: 15,
-    latitude: 35.8617,
-    longitude: 104.1954,
-    details: {
-      activeCampaigns: 8,
-      recentIncidents: 15,
-      threatLevel: 'High',
-      commonTactics: ['Data Exfiltration', 'Advanced Persistent Threats'],
-      activeGroups: ['APT10', 'Bronze Butler'],
-    },
-  },
-  {
-    id: 'BR',
-    name: 'Brazil',
-    value: 5,
-    latitude: -14.235,
-    longitude: -51.9253,
-    details: {
-      activeCampaigns: 2,
-      recentIncidents: 6,
-      threatLevel: 'Medium',
-      commonTactics: ['Banking Trojans', 'Credential Theft'],
-      activeGroups: ['Guildma', 'TeaBot'],
-    },
-  },
-  {
-    id: 'FR',
-    name: 'France',
-    value: 8,
-    latitude: 46.2276,
-    longitude: 2.2137,
-    details: {
-      activeCampaigns: 4,
-      recentIncidents: 9,
-      threatLevel: 'Medium',
-      commonTactics: ['Spear Phishing', 'Zero-day Exploits'],
-      activeGroups: ['Sandworm', 'FIN7'],
-    },
-  },
-];
+interface ThreatDetailsProps {
+  threat: any;
+}
 
-const ThreatDetails = ({ threat }: { threat: any }) => (
+const ThreatDetails: React.FC<ThreatDetailsProps> = ({ threat }) => (
   <Box sx={{ p: 2, maxWidth: 300 }}>
     <Typography variant="h6" gutterBottom>
       {threat.name}
     </Typography>
     <Typography variant="body2" color="text.secondary" gutterBottom>
-      Threat Level: <span style={{ color: threat.details.threatLevel === 'High' ? '#ff4444' : '#ff9800' }}>
-        {threat.details.threatLevel}
+      Threat Level: 
+      <span style={{ color: threat?.details?.threatLevel === 'High' ? '#ff4444' : '#ff9800' }}>
+        {threat?.details?.threatLevel || 'Unknown'}
       </span>
     </Typography>
     <Typography variant="body2" gutterBottom>
-      Active Campaigns: {threat.details.activeCampaigns}
+      Active Campaigns: {threat?.details?.activeCampaigns || 'N/A'}
     </Typography>
     <Typography variant="body2" gutterBottom>
-      Recent Incidents: {threat.details.recentIncidents}
+      Recent Incidents: {threat?.details?.recentIncidents || 'N/A'}
     </Typography>
     <Typography variant="body2" gutterBottom>
       Common Tactics:
     </Typography>
     <ul style={{ margin: '4px 0', paddingLeft: '20px' }}>
-      {threat.details.commonTactics.map((tactic: any, index: number) => (
+      {threat?.details?.commonTactics?.map((tactic: string, index: number) => (
         <li key={index}>
           <Typography variant="body2">{tactic}</Typography>
         </li>
-      ))}
+      )) || <li>No tactics available</li>}
     </ul>
     <Typography variant="body2" gutterBottom>
       Active Groups:
     </Typography>
     <ul style={{ margin: '4px 0', paddingLeft: '20px' }}>
-      {threat.details.activeGroups.map((group: any, index: number) => (
+      {threat?.details?.activeGroups?.map((group: string, index: number) => (
         <li key={index}>
           <Typography variant="body2">{group}</Typography>
         </li>
-      ))}
+      )) || <li>No active groups</li>}
     </ul>
   </Box>
 );
 
-const GeographicalMap = () => {
+interface GeographicalMapProps {
+  data: any[];
+}
+
+const GeographicalMap: React.FC<GeographicalMapProps> = ({ data }) => {
   const theme = useTheme();
-  const [selectedThreat, setSelectedThreat] = useState(null);
-  const [anchorEl, setAnchorEl] = useState(null);
+  const [selectedThreat, setSelectedThreat] = useState<any>(null);
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [position, setPosition] = useState({ coordinates: [0, 0], zoom: 1 });
 
-  // Updated event type to SVGElement
-  const handleMarkerClick = (event: React.MouseEvent<SVGElement, MouseEvent>, threat: any) => {
+  const handleMarkerClick = (event: React.MouseEvent<SVGElement>, threat: any) => {
     setSelectedThreat(threat);
-    setAnchorEl(event.currentTarget);
+    // Cast event.currentTarget to SVGElement
+    setAnchorEl(event.currentTarget as unknown as HTMLElement); // Alternatively, cast to SVGElement if you don't need HTMLElement-specific properties
   };
+  
 
   const handleClose = () => {
     setAnchorEl(null);
@@ -157,15 +87,12 @@ const GeographicalMap = () => {
       <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 2 }}>
         <Typography variant="h6">Global Threat Intelligence Map</Typography>
         <Box>
-          <button onClick={handleZoomIn} style={{ marginRight: '8px' }}>+</button>
-          <button onClick={handleZoomOut}>-</button>
+          <Button onClick={handleZoomIn} variant="outlined" size="small" sx={{ marginRight: '8px' }}>+</Button>
+          <Button onClick={handleZoomOut} variant="outlined" size="small">-</Button>
         </Box>
       </Box>
       <Box sx={{ height: 400, position: 'relative' }}>
-        <ComposableMap
-          projection="geoMercator"
-          style={{ width: '100%', height: '100%' }}
-        >
+        <ComposableMap projection="geoMercator" style={{ width: '100%', height: '100%' }}>
           <ZoomableGroup
             zoom={position.zoom}
             center={position.coordinates as [number, number]}
@@ -203,7 +130,7 @@ const GeographicalMap = () => {
                 ))
               }
             </Geographies>
-            {threatData.map((threat) => (
+            {data.map((threat) => (
               <Marker
                 key={threat.id}
                 coordinates={[threat.longitude, threat.latitude]}
@@ -211,7 +138,7 @@ const GeographicalMap = () => {
               >
                 <circle
                   r={Math.sqrt(threat.value) * 3}
-                  fill={threat.details.threatLevel === 'High' ? theme.palette.error.main : theme.palette.warning.main}
+                  fill={threat?.details?.threatLevel === 'High' ? theme.palette.error.main : theme.palette.warning.main}
                   stroke="#FFF"
                   strokeWidth={1}
                   style={{ cursor: 'pointer' }}
@@ -219,7 +146,7 @@ const GeographicalMap = () => {
                 <text
                   textAnchor="middle"
                   y={-Math.sqrt(threat.value) * 3 - 5}
-                  style={{ 
+                  style={{
                     fill: '#333',
                     fontSize: 10,
                     fontWeight: 'bold',

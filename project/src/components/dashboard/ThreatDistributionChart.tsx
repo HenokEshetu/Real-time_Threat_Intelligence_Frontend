@@ -2,15 +2,17 @@ import React from 'react';
 import { ResponsivePie } from '@nivo/pie';
 import { Box, Paper, Typography } from '@mui/material';
 
-const data = [
-  { id: 'Malware', value: 35, color: '#FF6B6B' },
-  { id: 'Phishing', value: 25, color: '#4ECDC4' },
-  { id: 'Ransomware', value: 20, color: '#45B7D1' },
-  { id: 'DDoS', value: 15, color: '#96CEB4' },
-  { id: 'Other', value: 5, color: '#FFEEAD' }
-];
+interface ThreatDistribution {
+  id: string;
+  value: number;
+  color: string;
+}
 
-export const ThreatDistributionChart = () => {
+interface ThreatDistributionChartProps {
+  data: ThreatDistribution[];
+}
+
+export const ThreatDistributionChart: React.FC<ThreatDistributionChartProps> = ({ data }) => {
   return (
     <Paper sx={{ p: 3, height: 400 }}>
       <Typography variant="h6" gutterBottom>
@@ -18,7 +20,7 @@ export const ThreatDistributionChart = () => {
       </Typography>
       <Box sx={{ height: 350 }}>
         <ResponsivePie
-          data={data}
+          data={data} // Use the passed data prop here
           margin={{ top: 40, right: 80, bottom: 80, left: 80 }}
           innerRadius={0.5}
           padAngle={0.7}
