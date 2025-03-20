@@ -19,8 +19,12 @@
     "strictBindCallApply": false,
     "forceConsistentCasingInFileNames": false,
     "noFallthroughCasesInSwitch": false,
-    "types": ["vite/client", "node"], 
+    "types": ["vite/client", "node"],
     "moduleResolution": "node",
     "strict": true
-  }
+  },
+  "exclude": [
+    "node_modules",
+    "src/components/common/location/LocationMiniMapTargets.tsx"
+  ]
 }

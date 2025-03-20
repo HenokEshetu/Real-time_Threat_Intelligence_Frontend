@@ -1,51 +1,192 @@
 import React, { useState } from 'react';
-import { Grid, Paper, Typography } from '@mui/material';
-import { ThreatStats } from '../components/dashboard/ThreatStats';
-import { ThreatActivityChart } from '../components/dashboard/ThreatActivityChart';
-import { ThreatDistributionChart } from '../components/dashboard/ThreatDistributionChart';
-import { RecentIncidents } from '../components/dashboard/RecentIncidents';
-import PolarArea from '../components/dashboard/PolarArea'; // Default import
-import { Security, Warning, BugReport, Shield } from '@mui/icons-material';
-import { Incident } from '../components/dashboard/RecentIncidents'; // Import the Incident type
+import { Grid, Paper, Typography } from '@mui/material'; // Material-UI components for layout and typography
+import { ThreatStats } from '../components/dashboard/ThreatStats'; // Importing custom component to display threat statistics
+import { ThreatDistributionChart } from '../components/dashboard/ThreatDistributionChart'; // Importing custom component to display threat distribution chart
+import { RecentIncidents } from '../components/dashboard/RecentIncidents'; // Importing custom component to display recent incidents
+import PolarArea from '../components/dashboard/PolarArea'; // Importing custom polar area chart component
+import { Security, Warning, BugReport, Shield } from '@mui/icons-material'; // Icons from Material-UI for different stats
+import { Incident } from '../components/dashboard/RecentIncidents'; // Importing the Incident type to define the incident data structure
+import WidgetHorizontalBars from '../components/dashboard/HorizontalBarChart'; // Importing custom horizontal bar chart component
+import WidgetMultiAreas from '../components/dashboard/WidgetMultiAreas';
 
-// Import geographical map components
+// Import geographical map component
 import LocationMiniMap from '../components/common/location/LocationMiniMap';
-import LocationMiniMapTargets from '../components/common/location/LocationMiniMapTargets'; 
 
-// Define the stats array here in Dashboard.tsx
+const sampleMultiAreaData = [
+  {
+    name: 'Malware',
+    data: [
+      { x: '2023-01-01', y: 40 },
+      { x: '2023-02-01', y: 60 },
+      { x: '2023-03-01', y: 80 },
+      { x: '2023-04-01', y: 100 },
+      { x: '2023-05-01', y: 120 },
+      { x: '2023-06-01', y: 140 },
+      { x: '2023-07-01', y: 160 },
+      { x: '2023-08-01', y: 180 },
+      { x: '2023-09-01', y: 200 },
+      { x: '2023-10-01', y: 220 },
+      { x: '2023-11-01', y: 240 },
+      { x: '2023-12-01', y: 260 },
+    ],
+    color: '#FF0000',
+  },
+  {
+    name: 'Phishing',
+    data: [
+      { x: '2023-01-01', y: 30 },
+      { x: '2023-02-01', y: 50 },
+      { x: '2023-03-01', y: 70 },
+      { x: '2023-04-01', y: 90 },
+      { x: '2023-05-01', y: 110 },
+      { x: '2023-06-01', y: 130 },
+      { x: '2023-07-01', y: 150 },
+      { x: '2023-08-01', y: 170 },
+      { x: '2023-09-01', y: 190 },
+      { x: '2023-10-01', y: 210 },
+      { x: '2023-11-01', y: 230 },
+      { x: '2023-12-01', y: 250 },
+    ],
+    color: '#00FF00',
+  },
+  {
+    name: 'Ransomware',
+    data: [
+      { x: '2023-01-01', y: 20 },
+      { x: '2023-02-01', y: 40 },
+      { x: '2023-03-01', y: 60 },
+      { x: '2023-04-01', y: 80 },
+      { x: '2023-05-01', y: 100 },
+      { x: '2023-06-01', y: 120 },
+      { x: '2023-07-01', y: 140 },
+      { x: '2023-08-01', y: 160 },
+      { x: '2023-09-01', y: 180 },
+      { x: '2023-10-01', y: 200 },
+      { x: '2023-11-01', y: 220 },
+      { x: '2023-12-01', y: 240 },
+    ],
+    color: '#0000FF',
+  },
+  {
+    name: 'DDoS',
+    data: [
+      { x: '2023-01-01', y: 50 },
+      { x: '2023-02-01', y: 70 },
+      { x: '2023-03-01', y: 90 },
+      { x: '2023-04-01', y: 110 },
+      { x: '2023-05-01', y: 130 },
+      { x: '2023-06-01', y: 150 },
+      { x: '2023-07-01', y: 170 },
+      { x: '2023-08-01', y: 190 },
+      { x: '2023-09-01', y: 210 },
+      { x: '2023-10-01', y: 230 },
+      { x: '2023-11-01', y: 250 },
+      { x: '2023-12-01', y: 270 },
+    ],
+    color: '#FFFF00',
+  },
+  {
+    name: 'SQL Injection',
+    data: [
+      { x: '2023-01-01', y: 15 },
+      { x: '2023-02-01', y: 35 },
+      { x: '2023-03-01', y: 55 },
+      { x: '2023-04-01', y: 75 },
+      { x: '2023-05-01', y: 95 },
+      { x: '2023-06-01', y: 115 },
+      { x: '2023-07-01', y: 135 },
+      { x: '2023-08-01', y: 155 },
+      { x: '2023-09-01', y: 175 },
+      { x: '2023-10-01', y: 195 },
+      { x: '2023-11-01', y: 215 },
+      { x: '2023-12-01', y: 235 },
+    ],
+    color: '#FF00FF',
+  },
+  {
+    name: 'Insider Threat',
+    data: [
+      { x: '2023-01-01', y: 25 },
+      { x: '2023-02-01', y: 45 },
+      { x: '2023-03-01', y: 65 },
+      { x: '2023-04-01', y: 85 },
+      { x: '2023-05-01', y: 105 },
+      { x: '2023-06-01', y: 125 },
+      { x: '2023-07-01', y: 145 },
+      { x: '2023-08-01', y: 165 },
+      { x: '2023-09-01', y: 185 },
+      { x: '2023-10-01', y: 205 },
+      { x: '2023-11-01', y: 225 },
+      { x: '2023-12-01', y: 245 },
+    ],
+    color: '#00FFFF',
+  },
+];
+export default sampleMultiAreaData;
+
+// Sample data for horizontal bar chart
+const sampleHorizontalBarData = [
+  {
+    name: 'Malware',
+    data: [45],
+  },
+  {
+    name: 'Phishing',
+    data: [30],
+  },
+  {
+    name: 'Ransomware',
+    data: [25],
+  },
+  {
+    name: 'DDoS',
+    data: [20],
+  },
+  {
+    name: 'Spyware',
+    data: [15],
+  },
+];
+
+// Sample categories for horizontal bar chart
+const sampleCategories = ['Threat Types'];
+
+// Stats for the dashboard displayed in widgets
 const stats = [
   {
     title: 'Active Threats',
     value: 47,
-    icon: Security,
-    color: '#FF6B6B',
+    icon: Security, // Icon for Active Threats stat
+    color: '#FF6B6B', // Color for Active Threats stat
   },
   {
     title: 'Recent Incidents',
     value: 12,
-    icon: Warning,
-    color: '#4ECDC4',
+    icon: Warning, // Icon for Recent Incidents stat
+    color: '#4ECDC4', // Color for Recent Incidents stat
   },
   {
     title: 'Malware Detected',
     value: 28,
-    icon: BugReport,
-    color: '#45B7D1',
+    icon: BugReport, // Icon for Malware Detected stat
+    color: '#45B7D1', // Color for Malware Detected stat
   },
   {
     title: 'Mitigations Applied',
     value: 156,
-    icon: Shield,
-    color: '#96CEB4',
+    icon: Shield, // Icon for Mitigations Applied stat
+    color: '#96CEB4', // Color for Mitigations Applied stat
   },
 ];
 
+// Sample threat activity data (used in ThreatActivityChart)
 const sampleThreatActivity = [
   { date: '2023-11-01', threats: 5 },
   { date: '2023-11-02', threats: 10 },
   { date: '2023-11-03', threats: 7 },
 ];
 
+// Sample data for threat distribution chart (used in ThreatDistributionChart)
 const sampleDistributionChart = [
   { id: '1', label: 'Malware', value: 35, color: '#ff0000' },
   { id: '2', label: 'Phishing', value: 25, color: '#00ff00' },
@@ -54,6 +195,7 @@ const sampleDistributionChart = [
   { id: '5', label: 'Other', value: 5, color: '#ffff00' },
 ];
 
+// Sample data for polar area chart (used in PolarArea)
 const samplePolarAreaData = [
   { label: 'Malware', value: 50 },
   { label: 'Phishing', value: 30 },
@@ -62,11 +204,12 @@ const samplePolarAreaData = [
   { label: 'Spyware', value: 25 },
 ];
 
+// Sample recent incidents data (used in RecentIncidents)
 const sampleRecentIncidents: Incident[] = [
   {
     id: 'incident-1',
     title: 'Large-Scale Phishing Attack on Government Agencies',
-    severity: 'high', // Must be 'high', 'medium', or 'low'
+    severity: 'high',
     timestamp: new Date('2023-11-01T10:30:00'),
   },
   {
@@ -96,14 +239,15 @@ const sampleRecentIncidents: Incident[] = [
 ];
 
 export const Dashboard = () => {
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null); // Error state to display if something goes wrong
 
+  // A function to render components with error handling
   const renderComponentWithErrorHandling = (component: React.ReactNode) => {
     try {
-      return component;
+      return component; // Try rendering the component
     } catch (err) {
       console.error('Error rendering component:', err);
-      setError('An error occurred while rendering the dashboard.');
+      setError('An error occurred while rendering the dashboard.'); // Set error message on failure
       return (
         <Paper sx={{ p: 3 }}>
           <Typography variant="h6" color="error">
@@ -116,6 +260,7 @@ export const Dashboard = () => {
 
   return (
     <Grid container spacing={3}>
+      {/* Display error message if error exists */}
       {error && (
         <Grid item xs={12}>
           <Paper sx={{ p: 3 }}>
@@ -126,44 +271,53 @@ export const Dashboard = () => {
         </Grid>
       )}
 
-      {/* Stats */}
+      {/* Render ThreatStats component */}
       <Grid item xs={12}>
         {renderComponentWithErrorHandling(<ThreatStats stats={stats} />)}
       </Grid>
-
-      {/* Threat Activity Chart */}
+      
+      {/* Render Horizontal Bar Chart */}
       <Grid item xs={12} md={6}>
-        {renderComponentWithErrorHandling(<ThreatActivityChart data={sampleThreatActivity} />)}
+        {renderComponentWithErrorHandling(
+          <WidgetHorizontalBars
+            series={sampleHorizontalBarData}
+            categories={sampleCategories}
+            stacked={false}
+            total={true}
+            legend={true}
+            withExport={true}
+          />
+        )}
       </Grid>
-
-      {/* Threat Distribution Chart */}
-      <Grid item xs={12} md={6}>
-        {renderComponentWithErrorHandling(<ThreatDistributionChart data={sampleDistributionChart} />)}
-      </Grid>
-
-      {/* Polar Area */}
+      {/* Render Polar Area Chart */}
       <Grid item xs={12} md={6}>
         {renderComponentWithErrorHandling(<PolarArea data={samplePolarAreaData} groupBy="Threat Type" />)}
       </Grid>
 
-      {/* Recent Incidents */}
+      {/* Render Threat Distribution Chart */}
+      <Grid item xs={12} md={6}>
+        {renderComponentWithErrorHandling(<ThreatDistributionChart data={sampleDistributionChart} />)}
+      </Grid>
+
+      <Grid item xs={12} md={6}>
+      <WidgetMultiAreas
+        series={sampleMultiAreaData}
+        interval="month"
+        isStacked={false}
+        hasLegend={true}
+        withExport={false}
+        readonly={false}
+      />
+    </Grid>
+
+      {/* Render Recent Incidents */}
       <Grid item xs={12} md={6}>
         {renderComponentWithErrorHandling(<RecentIncidents data={sampleRecentIncidents} />)}
       </Grid>
 
-      {/* Geographical Map */}
+      {/* Render Geographical Map */}
       <Grid item xs={12} md={6}>
         {renderComponentWithErrorHandling(<LocationMiniMap />)}
-      </Grid>
-
-      {/* Map Targets */}
-      <Grid item xs={12} md={6}>
-        <LocationMiniMapTargets
-          locations={[
-            { lat: 51.505, lng: -0.09, description: 'Sample Location 1' },
-            { lat: 51.515, lng: -0.1, description: 'Sample Location 2' },
-          ]}
-        />
       </Grid>
     </Grid>
   );
