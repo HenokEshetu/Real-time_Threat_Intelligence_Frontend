@@ -44,7 +44,7 @@ const getSeverityChip = (severity: 'high' | 'medium' | 'low') => {
 // The 'RecentIncidents' component uses the defined types for props
 export const RecentIncidents: React.FC<RecentIncidentsProps> = ({ data }) => {
   return (
-    <Paper sx={{ p: 3 }}>
+    <Paper sx={{ p: 3, height: 550 }}>
       <Typography variant="h6" gutterBottom>
         Recent Incidents
       </Typography>

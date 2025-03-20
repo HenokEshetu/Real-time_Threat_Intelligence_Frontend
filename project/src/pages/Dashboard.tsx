@@ -4,10 +4,13 @@ import { ThreatStats } from '../components/dashboard/ThreatStats';
 import { ThreatActivityChart } from '../components/dashboard/ThreatActivityChart';
 import { ThreatDistributionChart } from '../components/dashboard/ThreatDistributionChart';
 import { RecentIncidents } from '../components/dashboard/RecentIncidents';
-import GeographicalMap from '../components/dashboard/GeographicalMap'; // Default import
 import PolarArea from '../components/dashboard/PolarArea'; // Default import
 import { Security, Warning, BugReport, Shield } from '@mui/icons-material';
 import { Incident } from '../components/dashboard/RecentIncidents'; // Import the Incident type
+
+// Import geographical map components
+import LocationMiniMap from '../components/common/location/LocationMiniMap';
+import LocationMiniMapTargets from '../components/common/location/LocationMiniMapTargets'; 
 
 // Define the stats array here in Dashboard.tsx
 const stats = [
@@ -92,14 +95,6 @@ const sampleRecentIncidents: Incident[] = [
   },
 ];
 
-const threatData = [
-  { id: 'US', name: 'United States', value: 10, latitude: 37.0902, longitude: -95.7129 },
-  { id: 'IN', name: 'India', value: 7, latitude: 20.5937, longitude: 78.9629 },
-  { id: 'CN', name: 'China', value: 15, latitude: 35.8617, longitude: 104.1954 },
-  { id: 'BR', name: 'Brazil', value: 5, latitude: -14.235, longitude: -51.9253 },
-  { id: 'FR', name: 'France', value: 8, latitude: 46.2276, longitude: 2.2137 },
-];
-
 export const Dashboard = () => {
   const [error, setError] = useState<string | null>(null);
 
@@ -131,28 +126,44 @@ export const Dashboard = () => {
         </Grid>
       )}
 
+      {/* Stats */}
       <Grid item xs={12}>
         {renderComponentWithErrorHandling(<ThreatStats stats={stats} />)}
       </Grid>
 
+      {/* Threat Activity Chart */}
       <Grid item xs={12} md={6}>
         {renderComponentWithErrorHandling(<ThreatActivityChart data={sampleThreatActivity} />)}
       </Grid>
 
+      {/* Threat Distribution Chart */}
       <Grid item xs={12} md={6}>
         {renderComponentWithErrorHandling(<ThreatDistributionChart data={sampleDistributionChart} />)}
       </Grid>
 
+      {/* Polar Area */}
       <Grid item xs={12} md={6}>
         {renderComponentWithErrorHandling(<PolarArea data={samplePolarAreaData} groupBy="Threat Type" />)}
       </Grid>
 
+      {/* Recent Incidents */}
       <Grid item xs={12} md={6}>
         {renderComponentWithErrorHandling(<RecentIncidents data={sampleRecentIncidents} />)}
       </Grid>
 
+      {/* Geographical Map */}
       <Grid item xs={12} md={6}>
-        {renderComponentWithErrorHandling(<GeographicalMap data={threatData} />)}
+        {renderComponentWithErrorHandling(<LocationMiniMap />)}
+      </Grid>
+
+      {/* Map Targets */}
+      <Grid item xs={12} md={6}>
+        <LocationMiniMapTargets
+          locations={[
+            { lat: 51.505, lng: -0.09, description: 'Sample Location 1' },
+            { lat: 51.515, lng: -0.1, description: 'Sample Location 2' },
+          ]}
+        />
       </Grid>
     </Grid>
   );

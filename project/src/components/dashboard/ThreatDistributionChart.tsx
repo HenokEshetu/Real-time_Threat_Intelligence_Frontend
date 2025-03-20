@@ -14,7 +14,7 @@ interface ThreatDistributionChartProps {
 
 export const ThreatDistributionChart: React.FC<ThreatDistributionChartProps> = ({ data }) => {
   return (
-    <Paper sx={{ p: 3, height: 400 }}>
+    <Paper sx={{ p: 3, height: 575 }}>
       <Typography variant="h6" gutterBottom>
         Threat Distribution
       </Typography>
