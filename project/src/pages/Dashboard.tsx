@@ -21,103 +21,103 @@ const sampleMultiAreaData = [
       { x: '2023-03-01', y: 80 },
       { x: '2023-04-01', y: 100 },
       { x: '2023-05-01', y: 120 },
-      { x: '2023-06-01', y: 140 },
-      { x: '2023-07-01', y: 160 },
-      { x: '2023-08-01', y: 180 },
+      { x: '2023-06-01', y: 260 },
+      { x: '2023-07-01', y: 240 },
+      { x: '2023-08-01', y: 220 },
       { x: '2023-09-01', y: 200 },
-      { x: '2023-10-01', y: 220 },
-      { x: '2023-11-01', y: 240 },
-      { x: '2023-12-01', y: 260 },
+      { x: '2023-10-01', y: 180 },
+      { x: '2023-11-01', y: 160 },
+      { x: '2023-12-01', y: 140 },
     ],
     color: '#FF0000',
   },
   {
     name: 'Phishing',
     data: [
-      { x: '2023-01-01', y: 30 },
-      { x: '2023-02-01', y: 50 },
-      { x: '2023-03-01', y: 70 },
-      { x: '2023-04-01', y: 90 },
-      { x: '2023-05-01', y: 110 },
-      { x: '2023-06-01', y: 130 },
-      { x: '2023-07-01', y: 150 },
-      { x: '2023-08-01', y: 170 },
-      { x: '2023-09-01', y: 190 },
-      { x: '2023-10-01', y: 210 },
-      { x: '2023-11-01', y: 230 },
-      { x: '2023-12-01', y: 250 },
+      { x: '2023-01-01', y: 50 },
+      { x: '2023-02-01', y: 70 },
+      { x: '2023-03-01', y: 90 },
+      { x: '2023-04-01', y: 110 },
+      { x: '2023-05-01', y: 130 },
+      { x: '2023-06-01', y: 270 },
+      { x: '2023-07-01', y: 250 },
+      { x: '2023-08-01', y: 230 },
+      { x: '2023-09-01', y: 210 },
+      { x: '2023-10-01', y: 190 },
+      { x: '2023-11-01', y: 170 },
+      { x: '2023-12-01', y: 150 },
     ],
     color: '#00FF00',
   },
   {
     name: 'Ransomware',
     data: [
-      { x: '2023-01-01', y: 20 },
-      { x: '2023-02-01', y: 40 },
-      { x: '2023-03-01', y: 60 },
-      { x: '2023-04-01', y: 80 },
-      { x: '2023-05-01', y: 100 },
-      { x: '2023-06-01', y: 120 },
-      { x: '2023-07-01', y: 140 },
-      { x: '2023-08-01', y: 160 },
-      { x: '2023-09-01', y: 180 },
-      { x: '2023-10-01', y: 200 },
-      { x: '2023-11-01', y: 220 },
-      { x: '2023-12-01', y: 240 },
+      { x: '2023-01-01', y: 30 },
+      { x: '2023-02-01', y: 50 },
+      { x: '2023-03-01', y: 70 },
+      { x: '2023-04-01', y: 90 },
+      { x: '2023-05-01', y: 110 },
+      { x: '2023-06-01', y: 250 },
+      { x: '2023-07-01', y: 230 },
+      { x: '2023-08-01', y: 210 },
+      { x: '2023-09-01', y: 190 },
+      { x: '2023-10-01', y: 170 },
+      { x: '2023-11-01', y: 150 },
+      { x: '2023-12-01', y: 130 },
     ],
     color: '#0000FF',
   },
   {
     name: 'DDoS',
     data: [
-      { x: '2023-01-01', y: 50 },
-      { x: '2023-02-01', y: 70 },
-      { x: '2023-03-01', y: 90 },
-      { x: '2023-04-01', y: 110 },
-      { x: '2023-05-01', y: 130 },
-      { x: '2023-06-01', y: 150 },
-      { x: '2023-07-01', y: 170 },
-      { x: '2023-08-01', y: 190 },
-      { x: '2023-09-01', y: 210 },
-      { x: '2023-10-01', y: 230 },
-      { x: '2023-11-01', y: 250 },
-      { x: '2023-12-01', y: 270 },
+      { x: '2023-01-01', y: 20 },
+      { x: '2023-02-01', y: 40 },
+      { x: '2023-03-01', y: 60 },
+      { x: '2023-04-01', y: 80 },
+      { x: '2023-05-01', y: 100 },
+      { x: '2023-06-01', y: 240 },
+      { x: '2023-07-01', y: 220 },
+      { x: '2023-08-01', y: 200 },
+      { x: '2023-09-01', y: 180 },
+      { x: '2023-10-01', y: 160 },
+      { x: '2023-11-01', y: 140 },
+      { x: '2023-12-01', y: 120 },
     ],
     color: '#FFFF00',
   },
   {
     name: 'SQL Injection',
     data: [
-      { x: '2023-01-01', y: 15 },
-      { x: '2023-02-01', y: 35 },
-      { x: '2023-03-01', y: 55 },
-      { x: '2023-04-01', y: 75 },
-      { x: '2023-05-01', y: 95 },
-      { x: '2023-06-01', y: 115 },
-      { x: '2023-07-01', y: 135 },
-      { x: '2023-08-01', y: 155 },
-      { x: '2023-09-01', y: 175 },
-      { x: '2023-10-01', y: 195 },
-      { x: '2023-11-01', y: 215 },
-      { x: '2023-12-01', y: 235 },
+      { x: '2023-01-01', y: 10 },
+      { x: '2023-02-01', y: 50 },
+      { x: '2023-03-01', y: 70 },
+      { x: '2023-04-01', y: 90 },
+      { x: '2023-05-01', y: 90 },
+      { x: '2023-06-01', y: 230 },
+      { x: '2023-07-01', y: 240 },
+      { x: '2023-08-01', y: 190 },
+      { x: '2023-09-01', y: 170 },
+      { x: '2023-10-01', y: 150 },
+      { x: '2023-11-01', y: 130 },
+      { x: '2023-12-01', y: 110 },
     ],
     color: '#FF00FF',
   },
   {
     name: 'Insider Threat',
     data: [
-      { x: '2023-01-01', y: 25 },
-      { x: '2023-02-01', y: 45 },
-      { x: '2023-03-01', y: 65 },
-      { x: '2023-04-01', y: 85 },
-      { x: '2023-05-01', y: 105 },
-      { x: '2023-06-01', y: 125 },
-      { x: '2023-07-01', y: 145 },
-      { x: '2023-08-01', y: 165 },
-      { x: '2023-09-01', y: 185 },
-      { x: '2023-10-01', y: 205 },
-      { x: '2023-11-01', y: 225 },
-      { x: '2023-12-01', y: 245 },
+      { x: '2023-01-01', y: 5 },
+      { x: '2023-02-01', y: 20 },
+      { x: '2023-03-01', y: 30 },
+      { x: '2023-04-01', y: 40 },
+      { x: '2023-05-01', y: 50 },
+      { x: '2023-06-01', y: 60 },
+      { x: '2023-07-01', y: 70 },
+      { x: '2023-08-01', y: 80 },
+      { x: '2023-09-01', y: 90 },
+      { x: '2023-10-01', y: 100 },
+      { x: '2023-11-01', y: 110 },
+      { x: '2023-12-01', y: 120 },
     ],
     color: '#00FFFF',
   },
@@ -275,50 +275,56 @@ export const Dashboard = () => {
       <Grid item xs={12}>
         {renderComponentWithErrorHandling(<ThreatStats stats={stats} />)}
       </Grid>
-      
-      {/* Render Horizontal Bar Chart */}
-      <Grid item xs={12} md={6}>
-        {renderComponentWithErrorHandling(
-          <WidgetHorizontalBars
-            series={sampleHorizontalBarData}
-            categories={sampleCategories}
-            stacked={false}
-            total={true}
-            legend={true}
-            withExport={true}
-          />
-        )}
-      </Grid>
-      {/* Render Polar Area Chart */}
-      <Grid item xs={12} md={6}>
-        {renderComponentWithErrorHandling(<PolarArea data={samplePolarAreaData} groupBy="Threat Type" />)}
-      </Grid>
 
       {/* Render Threat Distribution Chart */}
       <Grid item xs={12} md={6}>
         {renderComponentWithErrorHandling(<ThreatDistributionChart data={sampleDistributionChart} />)}
       </Grid>
-
+      
       <Grid item xs={12} md={6}>
-      <WidgetMultiAreas
-        series={sampleMultiAreaData}
-        interval="month"
-        isStacked={false}
-        hasLegend={true}
-        withExport={false}
-        readonly={false}
-      />
-    </Grid>
+  {renderComponentWithErrorHandling(
+    <WidgetHorizontalBars
+      series={sampleHorizontalBarData}
+      categories={sampleCategories}
+      stacked={false}
+      total={true}
+      legend={true}
+      withExport={true}
+    />
+  )}
+</Grid>
 
-      {/* Render Recent Incidents */}
-      <Grid item xs={12} md={6}>
-        {renderComponentWithErrorHandling(<RecentIncidents data={sampleRecentIncidents} />)}
-      </Grid>
+<Grid item xs={12} md={6}>
+  {renderComponentWithErrorHandling(
+    <WidgetMultiAreas
+      series={sampleMultiAreaData}
+      interval="month"
+      isStacked={false}
+      hasLegend={true}
+      withExport={false}
+      readonly={false}
+    />
+  )}
+</Grid>
+
 
       {/* Render Geographical Map */}
       <Grid item xs={12} md={6}>
         {renderComponentWithErrorHandling(<LocationMiniMap />)}
       </Grid>
+
+
+
+      {/* Render Recent Incidents */}
+      <Grid item xs={12} md={7}>
+        {renderComponentWithErrorHandling(<RecentIncidents data={sampleRecentIncidents} />)}
+      </Grid>
+
+      {/* Render Polar Area Chart */}
+      <Grid item xs={12} md={5}>
+        {renderComponentWithErrorHandling(<PolarArea data={samplePolarAreaData} groupBy="Threat Type" />)}
+      </Grid>
+
     </Grid>
   );
 };

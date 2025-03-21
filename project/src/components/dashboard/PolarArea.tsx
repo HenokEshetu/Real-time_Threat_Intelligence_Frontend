@@ -1,9 +1,26 @@
 import React, { useEffect, useRef } from 'react';
 import { Paper, Typography } from '@mui/material';
-import { Chart, ArcElement, Tooltip, Legend, Title, CategoryScale, RadialLinearScale } from 'chart.js';
+import {
+  Chart,
+  ArcElement,
+  Tooltip,
+  Legend,
+  Title,
+  CategoryScale,
+  RadialLinearScale,
+  PolarAreaController,
+} from 'chart.js';
 
 // Register the necessary chart.js components
-Chart.register(ArcElement, Tooltip, Legend, Title, CategoryScale, RadialLinearScale);
+Chart.register(
+  ArcElement,
+  Tooltip,
+  Legend,
+  Title,
+  CategoryScale,
+  RadialLinearScale,
+  PolarAreaController
+);
 
 interface DistributionQueryDataItem {
   label: string;
@@ -20,7 +37,6 @@ const PolarAreaChart: React.FC<PolarAreaChartProps> = ({ data, groupBy }) => {
   const chartInstanceRef = useRef<Chart | null>(null);
 
   useEffect(() => {
-    // Clean up the previous chart instance if it exists to prevent memory leaks and reusing the canvas
     if (chartInstanceRef.current) {
       chartInstanceRef.current.destroy();
     }
@@ -28,45 +44,45 @@ const PolarAreaChart: React.FC<PolarAreaChartProps> = ({ data, groupBy }) => {
     if (chartRef.current) {
       const ctx = chartRef.current.getContext('2d');
       if (ctx) {
-        // Create the new chart instance
+        // Generate dynamic background colors for better visual appeal
+        const dynamicColors = data.map(
+          (_, index) =>
+            `hsl(${(index * 360) / data.length}, 70%, 60%)`
+        );
+
         chartInstanceRef.current = new Chart(ctx, {
           type: 'polarArea',
           data: {
-            labels: data.map(item => item.label),
-            datasets: [{
-              label: 'Distribution',
-              data: data.map(item => item.value),
-              backgroundColor: data.map((_, index) => {
-                // Dynamically generate background colors to avoid hard-coding them
-                const colors = [
-                  'rgba(255, 99, 132, 0.2)',
-                  'rgba(54, 162, 235, 0.2)',
-                  'rgba(255, 206, 86, 0.2)',
-                  'rgba(75, 192, 192, 0.2)',
-                  'rgba(153, 102, 255, 0.2)',
-                ];
-                return colors[index % colors.length]; // Cycle through the colors
-              }),
-              borderColor: data.map((_, index) => {
-                const colors = [
-                  'rgba(255, 99, 132, 1)',
-                  'rgba(54, 162, 235, 1)',
-                  'rgba(255, 206, 86, 1)',
-                  'rgba(75, 192, 192, 1)',
-                  'rgba(153, 102, 255, 1)',
-                ];
-                return colors[index % colors.length]; // Cycle through the border colors
-              }),
-              borderWidth: 1,
-            }],
+            labels: data.map((item) => item.label),
+            datasets: [
+              {
+                label: 'Distribution',
+                data: data.map((item) => item.value),
+                backgroundColor: dynamicColors,
+                borderColor: dynamicColors.map((color) =>
+                  color.replace('60%', '40%')
+                ),
+                borderWidth: 1,
+                hoverBorderWidth: 2,
+                hoverBorderColor: 'rgba(0, 0, 0, 0.8)',
+              },
+            ],
           },
           options: {
             responsive: true,
+            maintainAspectRatio: false, // For better responsiveness
             plugins: {
               tooltip: {
                 enabled: true,
                 backgroundColor: 'rgba(0, 0, 0, 0.7)',
                 bodyColor: 'white',
+                callbacks: {
+                  label: function (context) {
+                    const label = context.label || '';
+                    const value = context.raw as number;
+                    return `${label}: ${value}`;
+                  },
+                },
               },
               legend: {
                 position: 'bottom',
@@ -74,6 +90,8 @@ const PolarAreaChart: React.FC<PolarAreaChartProps> = ({ data, groupBy }) => {
                   font: {
                     size: 14,
                   },
+                  usePointStyle: true,
+                  padding: 15,
                 },
               },
               title: {
@@ -81,6 +99,11 @@ const PolarAreaChart: React.FC<PolarAreaChartProps> = ({ data, groupBy }) => {
                 text: `Threat Distribution - ${groupBy}`,
                 font: {
                   size: 16,
+                  weight: 'bold',
+                },
+                padding: {
+                  top: 10,
+                  bottom: 20,
                 },
               },
             },
@@ -95,29 +118,56 @@ const PolarAreaChart: React.FC<PolarAreaChartProps> = ({ data, groupBy }) => {
                   color: 'rgba(0, 0, 0, 0.1)',
                 },
                 ticks: {
-                  display: false,
+                  display: true,
+                  font: {
+                    size: 12,
+                  },
+                  backdropColor: 'rgba(255, 255, 255, 0.8)',
                 },
               },
+            },
+            animation: {
+              animateRotate: true,
+              animateScale: true,
+              duration: 1000,
             },
           },
         });
       }
     }
 
-    // Cleanup chart when the component is unmounted or data is changed
     return () => {
       if (chartInstanceRef.current) {
         chartInstanceRef.current.destroy();
       }
     };
-  }, [data, groupBy]); // Re-create the chart if data or groupBy changes
+  }, [data, groupBy]);
 
   return (
-    <Paper sx={{ p: 3, width: '50%', margin: '0 auto' }}>
-      <Typography variant="h6" gutterBottom>
+    <Paper
+      sx={{
+        p: 3,
+        width: { xs: '100%', sm: '80%', md: '60%' },
+        margin: '0 auto',
+        height: { xs: 400, sm: 450 },
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
+      }}
+    >
+      <Typography
+        variant="h6"
+        gutterBottom
+        sx={{
+          textAlign: 'center',
+        }}
+      >
         {`Threat Distribution - ${groupBy}`}
       </Typography>
-      <canvas ref={chartRef} width="200" height="200"></canvas> {/* Smaller canvas size */}
+      <div style={{ width: '100%', height: '100%' }}>
+        <canvas ref={chartRef}></canvas>
+      </div>
     </Paper>
   );
 };
