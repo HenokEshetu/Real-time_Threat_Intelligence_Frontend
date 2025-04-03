@@ -11,6 +11,7 @@ const menuItems = [
   { text: 'Indicators', icon: <Warning />, path: '/indicators' },
   { text: 'Malware', icon: <BugReport />, path: '/malware' },
   { text: 'Reports', icon: <Description />, path: '/reports' },
+  { text: 'Artifacts', icon: <Security />, path: '/artifacts' }
 ];
 
 export const Layout = ({ children }) => {
