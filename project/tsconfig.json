@@ -21,7 +21,9 @@
     "noFallthroughCasesInSwitch": false,
     "types": ["vite/client", "node"],
     "moduleResolution": "node",
-    "strict": true
+    "strict": true,
+    "allowJs": true,  // ✅ Added this line
+    "resolveJsonModule": true  // ✅ (Optional) Allows JSON imports
   },
   "exclude": [
     "node_modules",
