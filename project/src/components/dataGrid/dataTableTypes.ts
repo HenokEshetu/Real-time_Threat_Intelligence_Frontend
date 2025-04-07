@@ -3,9 +3,9 @@ import type { Dispatch, MutableRefObject, ReactNode, SetStateAction } from 'reac
 import React from 'react';
 import { GraphQLTaggedNode } from 'react-relay';
 import { PopoverProps } from '@mui/material/Popover/Popover';
-import type { LocalStorage } from '../../utils/hooks/useLocalStorageModel';
-import { NumberOfElements, PaginationLocalStorage, UseLocalStorageHelpers } from '../../utils/hooks/useLocalStorage';
-import { FilterGroup } from '../../utils/filters/filtersHelpers-types';
+import type { LocalStorage } from '../../components/utils/hooks/useLocalStorageModel';
+import { NumberOfElements, PaginationLocalStorage, UseLocalStorageHelpers } from '../../components/utils/hooks/useLocalStorage';
+import { FilterGroup } from '../../components/utils/filters/filtersHelpers-types';
 
 export type LocalStorageColumn = { percentWidth: number, visible?: boolean, index?: number };
 export type LocalStorageColumns = Record<string, LocalStorageColumn>;
