@@ -4,10 +4,10 @@ import ArtifactCreation from './artifacts/ArtifactCreation';
 import ExportContextProvider from '../../../components/utils/ExportContextProvider';
 import { usePaginationLocalStorage } from '../../../components/utils/hooks/useLocalStorage';
 import useQueryLoading from '../../../components/utils/hooks/useQueryLoading';
-import { emptyFilterGroup, useBuildEntityTypeBasedFilterContext } from '../../../../utils/filters/filtersUtils';
+import { emptyFilterGroup, useBuildEntityTypeBasedFilterContext } from '../../../components/utils/filters/filtersUtils';
 import Breadcrumbs from '../../../components/Breadcrumbs';
 import DataTable from '../../../components/dataGrid/DataTable';
-import { UsePreloadedPaginationFragment } from '../../../../utils/hooks/usePreloadedPaginationFragment';
+import { UsePreloadedPaginationFragment } from '../../../components/utils/hooks/usePreloadedPaginationFragment';
 import { DataTableProps } from '../../../components/dataGrid/dataTableTypes';
 
 // Import generated Relay types

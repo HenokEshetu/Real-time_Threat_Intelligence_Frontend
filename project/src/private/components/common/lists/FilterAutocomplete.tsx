@@ -3,10 +3,10 @@ import TextField from '@mui/material/TextField';
 import MUIAutocomplete from '@mui/material/Autocomplete';
 import makeStyles from '@mui/styles/makeStyles';
 import ItemIcon from '../../../../components/ItemIcon';
-import useSearchEntities from '../../../../utils/filters/useSearchEntities';
+import useSearchEntities from '../../../../components/utils/filters/useSearchEntities';
 import type { Theme } from '../../../../components/Theme';
 import SearchScopeElement from './SearchScopeElement';
-import { HandleAddFilter } from '../../../../utils/hooks/useLocalStorage';
+import { HandleAddFilter } from '../../../../components/utils/hooks/useLocalStorage';
 import { Option } from '../form/ReferenceField';
 
 // Deprecated - https://mui.com/system/styles/basics/
