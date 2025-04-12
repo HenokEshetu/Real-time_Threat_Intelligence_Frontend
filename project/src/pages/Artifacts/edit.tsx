@@ -1,3 +1,4 @@
+import React from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useArtifact, useUpdateArtifact } from '../../hooks/useArtifacts';
 import { ArtifactForm } from '../../components/artifacts/ArtifactForm';
@@ -35,7 +36,7 @@ export const ArtifactEditPage = () => {
       )}
       <ArtifactForm 
         initialValues={artifact} 
-        onSubmit={handleSubmit} 
+        onSubmit={(values) => handleSubmit(values as UpdateArtifactInput)} 
         isSubmitting={updating} 
       />
     </div>

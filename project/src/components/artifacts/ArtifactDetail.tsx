@@ -1,6 +1,6 @@
-import { Artifact } from '../../../types/artifact';
+import React from 'react';
+import { Artifact } from '../../types/artifact';
 import { ArtifactViewer } from './ArtifactViewer';
-
 interface ArtifactDetailProps {
   artifact: Artifact;
 }

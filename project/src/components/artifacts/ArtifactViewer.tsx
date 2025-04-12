@@ -1,4 +1,5 @@
-import { Artifact } from '../../../types/artifact';
+import React from 'react';
+import { Artifact } from '../../types/artifact';
 
 interface ArtifactViewerProps {
   artifact: Artifact;

@@ -1,7 +1,8 @@
+import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useCreateArtifact } from '../../hooks/useArtifacts';
 import { ArtifactForm } from '../../components/artifacts/ArtifactForm';
-import { CreateArtifactInput } from '../../types/artifact';
+import { CreateArtifactInput, UpdateArtifactInput } from '../../types/artifact'; // Added UpdateArtifactInput
 
 export const ArtifactCreatePage = () => {
   const navigate = useNavigate();
@@ -14,9 +15,10 @@ export const ArtifactCreatePage = () => {
     labels: []
   };
 
-  const handleSubmit = async (values: CreateArtifactInput) => {
+  const handleSubmit = async (values: CreateArtifactInput | UpdateArtifactInput) => {
     try {
-      const createdArtifact = await createArtifact(values);
+      // Type assertion since we know we're in create mode
+      const createdArtifact = await createArtifact(values as CreateArtifactInput);
       if (createdArtifact) {
         navigate(`/artifacts/${createdArtifact.id}`);
       }

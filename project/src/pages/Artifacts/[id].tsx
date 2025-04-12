@@ -1,3 +1,4 @@
+import React from 'react';
 import { useParams } from 'react-router-dom';
 import { useArtifact } from '../../hooks/useArtifacts';
 import { ArtifactDetail } from '../../components/artifacts/ArtifactDetail';
