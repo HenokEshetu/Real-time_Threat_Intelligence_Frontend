@@ -1,1 +1,0 @@
-export const fieldSpacingContainerStyle = { marginTop: 20, width: '100%' };
