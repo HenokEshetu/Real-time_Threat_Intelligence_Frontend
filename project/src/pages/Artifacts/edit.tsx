@@ -1,9 +1,9 @@
 import { useParams, useNavigate } from 'react-router-dom';
-import { useArtifact, useUpdateArtifact } from '../../../hooks/useArtifacts';
-import { ArtifactForm } from '../../../components/artifacts/ArtifactForm';
-import { Loading } from '../../../components/common/Loading';
-import { ErrorMessage } from '../../../components/common/ErrorMessage';
-import { UpdateArtifactInput } from '../../../types/artifact';
+import { useArtifact, useUpdateArtifact } from '../../hooks/useArtifacts';
+import { ArtifactForm } from '../../components/artifacts/ArtifactForm';
+import { Loading } from '../../components/common/Loading/Loading';
+import { ErrorMessage } from '../../components/common/ErrorMessage/ErrorMessage';
+import { UpdateArtifactInput } from '../../types/artifact';
 
 export const ArtifactEditPage = () => {
   const { id } = useParams<{ id: string }>();

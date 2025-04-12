@@ -1,8 +1,9 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { useArtifacts } from '../../../hooks/useArtifacts';
-import { ArtifactCard } from '../../../components/artifacts/ArtifactCard';
-import { SearchBar } from '../../../components/filters';
+import { useArtifacts } from '../../hooks/useArtifacts';
+import { ArtifactCard } from '../../components/artifacts/ArtifactCard';
+import { SearchBar } from '../../components/filters/SearchBar/SearchBar';
+import { Artifact } from '../../types/artifact';
 
 export const ArtifactsPage = () => {
   const [searchTerm, setSearchTerm] = useState('');
@@ -29,7 +30,7 @@ export const ArtifactsPage = () => {
       <SearchBar onSearch={handleSearch} />
 
       <div className="grid">
-        {artifacts.map((artifact) => (
+        {artifacts.map((artifact: Artifact) => (
           <ArtifactCard key={artifact.id} artifact={artifact} />
         ))}
       </div>

@@ -6,7 +6,17 @@ export const CREATE_ARTIFACT = gql`
       id
       name
       mime_type
+      payload_bin
+      url
+      hashes {
+        MD5
+        SHA1
+        SHA256
+      }
       created
+      modified
+      labels
+      description
     }
   }
 `;
@@ -17,13 +27,25 @@ export const UPDATE_ARTIFACT = gql`
       id
       name
       mime_type
+      payload_bin
+      url
+      hashes {
+        MD5
+        SHA1
+        SHA256
+      }
       modified
+      labels
+      description
     }
   }
 `;
 
 export const DELETE_ARTIFACT = gql`
   mutation DeleteArtifact($id: ID!) {
-    deleteArtifact(id: $id)
+    deleteArtifact(id: $id) {
+      id
+      success
+    }
   }
 `;

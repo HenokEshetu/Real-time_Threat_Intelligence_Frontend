@@ -4,7 +4,7 @@ import { ThreatActors } from './pages/ThreatActors';
 import { Indicators } from './pages/Indicators';
 import { Malware } from './pages/Malware';
 import { Reports } from './pages/Reports';
-import { Artifacts } from './pages/Artifacts';
+import { ArtifactsPage } from './pages/Artifacts/index';
 import { Login } from './pages/Login';
 import { useAuth } from './hooks/useAuth';
 import React from 'react';
@@ -28,7 +28,7 @@ export const AppRoutes = () => {
       <Route path="/indicators" element={<Indicators />} />
       <Route path="/malware" element={<Malware />} />
       <Route path="/reports" element={<Reports />} />
-      <Route path="/artifacts" element={<Artifacts />} />
+      <Route path="/artifacts" element={<ArtifactsPage />} />
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   );

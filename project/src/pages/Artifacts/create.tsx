@@ -1,7 +1,7 @@
 import { useNavigate } from 'react-router-dom';
-import { useCreateArtifact } from '../../../hooks/useArtifacts';
-import { ArtifactForm } from '../../../components/artifacts/ArtifactForm';
-import { CreateArtifactInput } from '../../../types/artifact';
+import { useCreateArtifact } from '../../hooks/useArtifacts';
+import { ArtifactForm } from '../../components/artifacts/ArtifactForm';
+import { CreateArtifactInput } from '../../types/artifact';
 
 export const ArtifactCreatePage = () => {
   const navigate = useNavigate();

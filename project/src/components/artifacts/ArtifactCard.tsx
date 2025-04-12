@@ -1,6 +1,7 @@
+import React from 'react';
 import { Link } from 'react-router-dom';
-import { Artifact } from '../../../types/artifact';
-import { getFileIcon } from '../common/fileIcons';
+import { Artifact } from '../../types/artifact';
+import { getFileIcon } from '../common/fileIcons/fileIcons';
 
 interface ArtifactCardProps {
   artifact: Artifact;

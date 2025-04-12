@@ -1,8 +1,8 @@
 import { useParams } from 'react-router-dom';
-import { useArtifact } from '../../../hooks/useArtifacts';
-import { ArtifactDetail } from '../../../components/artifacts/ArtifactDetail';
-import { Loading } from '../../../components/common/Loading';
-import { ErrorMessage } from '../../../components/common/ErrorMessage';
+import { useArtifact } from '../../hooks/useArtifacts';
+import { ArtifactDetail } from '../../components/artifacts/ArtifactDetail';
+import { Loading } from '../../components/common/Loading/Loading';
+import { ErrorMessage } from '../../components/common/ErrorMessage/ErrorMessage';
 import { Link } from 'react-router-dom';
 
 export const ArtifactDetailPage = () => {

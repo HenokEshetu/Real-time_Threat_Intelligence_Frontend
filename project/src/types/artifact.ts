@@ -29,12 +29,26 @@ export interface Artifact {
   }
   
   export interface CreateArtifactInput {
-    name: string;
+    name?: string;
     mime_type: string;
     payload_bin?: string;
     url?: string;
     labels?: string[];
     description?: string;
+  }
+  
+  export interface UpdateArtifactInput {
+    name?: string;
+    mime_type?: string;
+    payload_bin?: string;
+    url?: string;
+    labels?: string[];
+    description?: string;
+  }
+  
+  export interface DeleteArtifactResponse {
+    id: string;
+    success: boolean;
   }
   
   export interface UpdateArtifactInput extends Partial<CreateArtifactInput> {

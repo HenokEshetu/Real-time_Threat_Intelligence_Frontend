@@ -1,11 +1,13 @@
 import { useQuery, useMutation } from '@apollo/client';
 import {
   ARTIFACTS_LIST,
-  ARTIFACT_DETAIL,
+  ARTIFACT_DETAIL
+} from '../graphql/artifacts/queries';
+import {
   CREATE_ARTIFACT,
   UPDATE_ARTIFACT,
   DELETE_ARTIFACT
-} from '../graphql/artifacts/queries';
+} from '../graphql/artifacts/mutations';
 import { Artifact, CreateArtifactInput, UpdateArtifactInput } from '../types/artifact';
 
 export const useArtifacts = (variables = {}) => {
