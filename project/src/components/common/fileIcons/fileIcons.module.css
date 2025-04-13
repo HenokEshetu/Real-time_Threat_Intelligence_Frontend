@@ -1,0 +1,40 @@
+.icon {
+    font-size: 1.5rem;
+    margin-right: 0.5rem;
+    vertical-align: middle;
+  }
+  
+  /* Default style */
+  .default {
+    color: #6c757d;
+  }
+  
+  /* Specific MIME type styles */
+  .application-json {
+    color: #f0db4f;
+  }
+  
+  .application-pdf {
+    color: #d93a33;
+  }
+  
+  .image-png,
+  .image-jpeg,
+  .image-gif {
+    color: #4a9ff5;
+  }
+  
+  .application-zip,
+  .application-x-tar,
+  .application-x-rar-compressed {
+    color: #7952b3;
+  }
+  
+  .text-plain {
+    color: #6c757d;
+  }
+  
+  .text-html,
+  .application-xml {
+    color: #e44d26;
+  }
