@@ -1,0 +1,38 @@
+.card {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    padding: 1rem;
+    border: 1px solid #ddd;
+    border-radius: 0.75rem;
+    text-decoration: none;
+    background-color: #fff;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+    transition: all 0.2s ease-in-out;
+  }
+  .card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  }
+  .icon {
+    font-size: 2rem;
+    margin-right: 1rem;
+  }
+  .name {
+    margin: 0;
+    font-size: 1.2rem;
+    font-weight: 600;
+  }
+  .description {
+    margin: 0.3rem 0;
+    color: #555;
+  }
+  .labels {
+    margin-top: 0.5rem;
+  }
+  .created {
+    font-size: 0.8rem;
+    color: #888;
+    margin-top: 0.5rem;
+  }
+  
