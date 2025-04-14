@@ -1,7 +1,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useCreateArtifact } from '../../hooks/useArtifacts';
-import { ArtifactForm } from '../../components/artifacts/ArtifactForm';
+import { EntityForm } from '../../components/common/EntityForm/EntityForm'; // ✅ Updated path
 import { CreateArtifactInput, UpdateArtifactInput } from '../../types/artifact'; // Added UpdateArtifactInput
 
 export const ArtifactCreatePage = () => {
@@ -12,12 +12,11 @@ export const ArtifactCreatePage = () => {
     name: '',
     mime_type: '',
     description: '',
-    labels: []
+    labels: [],
   };
 
   const handleSubmit = async (values: CreateArtifactInput | UpdateArtifactInput) => {
     try {
-      // Type assertion since we know we're in create mode
       const createdArtifact = await createArtifact(values as CreateArtifactInput);
       if (createdArtifact) {
         navigate(`/artifacts/${createdArtifact.id}`);
@@ -35,7 +34,8 @@ export const ArtifactCreatePage = () => {
           Error creating artifact: {error.message}
         </div>
       )}
-      <ArtifactForm 
+      <EntityForm 
+        entityType="artifact"
         initialValues={initialValues} 
         onSubmit={handleSubmit} 
         isSubmitting={loading} 

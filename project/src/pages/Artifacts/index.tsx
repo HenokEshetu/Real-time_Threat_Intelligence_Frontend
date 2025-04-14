@@ -38,11 +38,12 @@ export const ArtifactsPage = () => {
           <EntityCard
             key={artifact.id}
             id={artifact.id}
-            title={artifact.name || 'Untitled Artifact'}
-            subtitle={artifact.mime_type || 'Unknown MimeType'}
-            description={artifact.description || 'No description available'}
-            entityType="Artifact"
+            title={artifact.url || 'Untitled Artifact'}
+            subtitle={artifact.mime_type || 'Unknown MIME type'}
+            description={`Confidence: ${artifact.confidence || 'N/A'}`}
+            entityType="artifacts"
             created={artifact.created}
+            labels={artifact.labels || []}
             actions={[
               {
                 label: 'View Details',
@@ -50,7 +51,6 @@ export const ArtifactsPage = () => {
               },
             ]}
           >
-            {/* Show content preview if available */}
             {(artifact.url || artifact.payload_bin) && (
               <ContentViewer
                 content={artifact.payload_bin}

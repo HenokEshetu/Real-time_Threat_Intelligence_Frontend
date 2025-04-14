@@ -1,7 +1,7 @@
 import React from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useArtifact, useUpdateArtifact } from '../../hooks/useArtifacts';
-import { ArtifactForm } from '../../components/artifacts/ArtifactForm';
+import { EntityForm } from '../../components/common/EntityForm/EntityForm'; // ✅ Updated path
 import { Loading } from '../../components/common/Loading/Loading';
 import { ErrorMessage } from '../../components/common/ErrorMessage/ErrorMessage';
 import { UpdateArtifactInput } from '../../types/artifact';
@@ -34,7 +34,8 @@ export const ArtifactEditPage = () => {
           Error updating artifact: {updateError.message}
         </div>
       )}
-      <ArtifactForm 
+      <EntityForm 
+        entityType="artifact"
         initialValues={artifact} 
         onSubmit={(values) => handleSubmit(values as UpdateArtifactInput)} 
         isSubmitting={updating} 

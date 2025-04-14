@@ -6,11 +6,7 @@ export const ContentViewer = ({ content, mimeType, url }) => {
       if (mimeType === 'application/json') {
         try {
           const json = JSON.parse(atob(content));
-          return (
-            <pre className="json-viewer">
-              {JSON.stringify(json, null, 2)}
-            </pre>
-          );
+          return <pre className="json-viewer">{JSON.stringify(json, null, 2)}</pre>;
         } catch {
           return <div className="text-viewer">{atob(content)}</div>;
         }
@@ -20,17 +16,14 @@ export const ContentViewer = ({ content, mimeType, url }) => {
         return (
           <div className="binary-viewer">
             <p>Binary content - {content.length} bytes</p>
-            <button className="btn btn-sm btn-outline-secondary">
-              Download
-            </button>
           </div>
         );
       }
     } else if (url) {
       return (
         <div className="url-viewer">
-          <a href={url} target="_blank" rel="noopener noreferrer">
-            {url}
+          <a href={url} target="_blank" rel="noopener noreferrer" download>
+            Download File
           </a>
         </div>
       );
@@ -39,9 +32,5 @@ export const ContentViewer = ({ content, mimeType, url }) => {
     }
   };
 
-  return (
-    <div className="content-viewer">
-      {renderContent()}
-    </div>
-  );
+  return <div className="content-viewer">{renderContent()}</div>;
 };

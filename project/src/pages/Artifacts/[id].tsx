@@ -1,10 +1,9 @@
 import React from 'react';
-import { useParams } from 'react-router-dom';
-import { useArtifact } from '../../hooks/useArtifacts';
-import { ArtifactDetail } from '../../components/artifacts/ArtifactDetail';
+import { useParams, Link } from 'react-router-dom';
+import { useArtifact } from '../../hooks/useArtifacts'; // ✅ Correct hook
+import { EntityDetail } from '../../components/common/EntityDetail/EntityDetail'; // ✅ Check this path
 import { Loading } from '../../components/common/Loading/Loading';
 import { ErrorMessage } from '../../components/common/ErrorMessage/ErrorMessage';
-import { Link } from 'react-router-dom';
 
 export const ArtifactDetailPage = () => {
   const { id } = useParams<{ id: string }>();
@@ -28,7 +27,18 @@ export const ArtifactDetailPage = () => {
         </Link>
       </div>
       
-      <ArtifactDetail artifact={artifact} />
+      <EntityDetail 
+        entity={artifact}
+        entityType="artifact"
+        title={artifact.name}
+        subtitle={artifact.mime_type}
+        description={artifact.description}
+        labels={artifact.labels}
+        created={artifact.created}
+        actions={[
+          { label: 'Edit', to: `/artifacts/${artifact.id}/edit` },
+        ]}
+      />
     </div>
   );
 };
