@@ -1,0 +1,33 @@
+.container {
+    padding: 1.5rem;
+    background-color: #f9f9f9;
+    border-radius: 12px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.05);
+  }
+  
+  .title {
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+  }
+  
+  .section {
+    margin-top: 1.5rem;
+  }
+  
+  .table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  
+  .table th {
+    text-align: left;
+    padding: 8px;
+    background-color: #eee;
+    width: 150px;
+  }
+  
+  .table td {
+    padding: 8px;
+    background-color: #fff;
+  }
+  

@@ -1,0 +1,44 @@
+.content-upload {
+    margin-top: 1rem;
+    padding: 1rem;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    background-color: #fdfdfd;
+  }
+  
+  .content-upload-label {
+    display: block;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    font-size: 1rem;
+  }
+  
+  .content-upload-radio {
+    display: flex;
+    align-items: center;
+    margin-top: 0.75rem;
+  }
+  
+  .content-upload-radio input[type='radio'] {
+    margin-right: 0.5rem;
+  }
+  
+  .content-upload-input {
+    margin-top: 0.5rem;
+  }
+  
+  .content-upload-input input[type='file'],
+  .content-upload-input input[type='text'] {
+    width: 100%;
+    padding: 0.4rem 0.6rem;
+    font-size: 0.95rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+  }
+  
+  .content-upload-info {
+    margin-top: 0.4rem;
+    font-size: 0.9rem;
+    color: #666;
+  }
+  
