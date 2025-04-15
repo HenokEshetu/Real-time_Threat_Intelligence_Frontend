@@ -1,54 +1,29 @@
 import { createTheme } from '@mui/material/styles';
 
-export const theme = createTheme({
+const commonTypography = {
+  fontFamily: '"Inter", "Helvetica", "Arial", sans-serif',
+  fontWeight: 600,
+};
+
+export const lightTheme = createTheme({
   palette: {
     mode: 'light',
-    primary: {
-      main: '#2563eb',
-    },
-    secondary: {
-      main: '#475569',
-    },
-    background: {
-      default: '#f8fafc',
-      paper: '#ffffff',
-    },
+    primary: { main: '#2563eb' },
+    secondary: { main: '#475569' },
+    background: { default: '#f8fafc', paper: '#ffffff' },
   },
   typography: {
-    fontFamily: '"Inter", "Helvetica", "Arial", sans-serif',
-    h1: {
-      fontSize: '2.5rem',
-      fontWeight: 600,
-    },
-    h2: {
-      fontSize: '2rem',
-      fontWeight: 600,
-    },
-    h3: {
-      fontSize: '1.75rem',
-      fontWeight: 600,
-    },
-    h4: {
-      fontSize: '1.5rem',
-      fontWeight: 600,
-    },
-    h5: {
-      fontSize: '1.25rem',
-      fontWeight: 600,
-    },
-    h6: {
-      fontSize: '1rem',
-      fontWeight: 600,
-    },
+    ...commonTypography,
+    h1: { fontSize: '2.5rem' },
+    h2: { fontSize: '2rem' },
+    h3: { fontSize: '1.75rem' },
+    h4: { fontSize: '1.5rem' },
+    h5: { fontSize: '1.25rem' },
+    h6: { fontSize: '1rem' },
   },
   components: {
     MuiButton: {
-      styleOverrides: {
-        root: {
-          textTransform: 'none',
-          borderRadius: 8,
-        },
-      },
+      styleOverrides: { root: { textTransform: 'none', borderRadius: 8 } },
     },
     MuiCard: {
       styleOverrides: {
@@ -60,3 +35,15 @@ export const theme = createTheme({
     },
   },
 });
+
+export const darkTheme = createTheme({
+  palette: {
+    mode: 'dark',
+    primary: { main: '#90caf9' },
+    secondary: { main: '#f48fb1' },
+    background: { default: '#121212', paper: '#1e1e1e' },
+  },
+  typography: commonTypography,
+});
+
+export const theme = lightTheme; // Export the default theme

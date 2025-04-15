@@ -1,77 +1,140 @@
-import { useQuery, useMutation } from '@apollo/client';
-import {
-  ARTIFACTS_LIST,
-  ARTIFACT_DETAIL
-} from '../graphql/artifacts/queries';
-import {
-  CREATE_ARTIFACT,
-  UPDATE_ARTIFACT,
-  DELETE_ARTIFACT
-} from '../graphql/artifacts/mutations';
-import { Artifact, CreateArtifactInput, UpdateArtifactInput } from '../types/artifact';
+// src/hooks/useArtifacts.ts
+import { useQuery, gql, useMutation } from '@apollo/client';
+import { CREATE_ARTIFACT, UPDATE_ARTIFACT } from '../graphql/artifacts/mutations';
 
-export const useArtifacts = (variables = {}) => {
-  const { data, loading, error, fetchMore, refetch } = useQuery(ARTIFACTS_LIST, {
-    variables: { first: 10, ...variables },
-    fetchPolicy: 'cache-and-network'
+const SEARCH_ARTIFACTS = gql`
+  query SearchArtifacts($filters: JSON, $from: Int!, $size: Int!, $search: String) {
+    searchArtifacts(filters: $filters, from: $from, size: $size, search: $search) {
+      page
+      pageSize
+      total
+      totalPages
+      results {
+        id
+        name
+        type
+        spec_version
+        created
+        modified
+        mime_type
+        url
+        confidence
+        labels
+        hashes {
+          MD5
+          SHA256
+        }
+      }
+    }
+  }
+`;
+
+
+// const SEARCH_ARTIFACTS = gql`
+//   query SearchArtifacts($filters: JSON, $from: Int!, $size: Int!, $search: String){
+//   searchArtifacts(filters: $filters, from: $from, size: $size, search: $search) {
+//     page
+//     pageSize
+//     total
+//     totalPages
+//     results {
+//       id
+//       type
+//       spec_version
+//       created
+//       modified
+//       mime_type
+//       url
+//       confidence
+//       labels
+//     }
+//   }
+// }
+// `;
+
+const GET_ARTIFACT = gql`
+  query GetArtifact($id: ID!) {
+    artifact(id: $id) {
+      id
+      name
+      description
+      created
+      modified
+      type
+      mime_type
+      confidence
+      hashes {
+        MD5
+        SHA1
+        SHA256
+        SHA512
+      }
+      payload_bin
+      created_by_ref
+      revoked
+      labels
+      lang
+    }
+  }
+`;
+
+export const useArtifacts = ({ search = '', from = 0, size = 10 }) => {
+  const { data, loading, error, fetchMore } = useQuery(SEARCH_ARTIFACTS, {
+    variables: { 
+      filters: {}, 
+      from, 
+      size, 
+      search: search || undefined // Avoid sending empty strings
+    },
+    notifyOnNetworkStatusChange: true,
   });
 
-  const artifacts = data?.artifacts?.edges?.map((edge: any) => edge.node) || [];
-  const pageInfo = data?.artifacts?.pageInfo;
+  const artifacts = data?.searchArtifacts?.results || [];
+  console.log(artifacts);
+  const pageInfo = {
+    hasNextPage: from + size < data?.searchArtifacts?.total,
+  };
+  // const pageInfo = { hasNextPage: false };
 
   const loadMore = () => {
-    if (pageInfo?.hasNextPage) {
-      fetchMore({
-        variables: { after: pageInfo.endCursor },
-      });
-    }
+    fetchMore({
+      variables: {
+        from: artifacts.length,
+        size,
+      },
+      updateQuery: (prev, { fetchMoreResult }) => {
+        if (!fetchMoreResult) return prev;
+        return {
+          searchArtifacts: {
+            ...fetchMoreResult.searchArtifacts,
+            results: [
+              ...prev.searchArtifacts.results,
+              ...fetchMoreResult.searchArtifacts.results,
+            ],
+          },
+        };
+      },
+    });
   };
 
-  return { artifacts, loading, error, loadMore, pageInfo, refetch };
+  return { artifacts, loading, error, loadMore, pageInfo };
 };
 
 export const useArtifact = (id: string) => {
-  const { data, loading, error } = useQuery(ARTIFACT_DETAIL, {
+  const { data, loading, error } = useQuery(GET_ARTIFACT, {
     variables: { id },
-    skip: !id
+    skip: !id,
   });
 
-  return {
-    artifact: data?.artifact as Artifact | undefined,
-    loading,
-    error
-  };
+  return { artifact: data?.artifact, loading, error };
 };
 
 export const useCreateArtifact = () => {
-  const [mutate, { loading, error }] = useMutation(CREATE_ARTIFACT);
-
-  const createArtifact = async (input: CreateArtifactInput) => {
-    const { data } = await mutate({ variables: { input } });
-    return data?.createArtifact as Artifact;
-  };
-
+  const [createArtifact, { loading, error }] = useMutation(CREATE_ARTIFACT);
   return { createArtifact, loading, error };
 };
 
 export const useUpdateArtifact = () => {
-  const [mutate, { loading, error }] = useMutation(UPDATE_ARTIFACT);
-
-  const updateArtifact = async (id: string, input: UpdateArtifactInput) => {
-    const { data } = await mutate({ variables: { id, input } });
-    return data?.updateArtifact as Artifact;
-  };
-
+  const [updateArtifact, { loading, error }] = useMutation(UPDATE_ARTIFACT);
   return { updateArtifact, loading, error };
-};
-
-export const useDeleteArtifact = () => {
-  const [mutate, { loading, error }] = useMutation(DELETE_ARTIFACT);
-
-  const deleteArtifact = async (id: string) => {
-    await mutate({ variables: { id } });
-    return true;
-  };
-
-  return { deleteArtifact, loading, error };
 };

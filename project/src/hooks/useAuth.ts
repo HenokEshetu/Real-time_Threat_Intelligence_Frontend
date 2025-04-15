@@ -6,7 +6,7 @@ interface AuthState {
   isAuthenticated: boolean;
   user: any | null;
   token: string | null;
-  login: (email: string, password: string) => void;  // No async/side effects here
+  login: (email: string, password: string, token: string) => void;
   logout: () => void;
 }
 
@@ -14,12 +14,9 @@ export const useAuth = create<AuthState>((set) => ({
   isAuthenticated: !!localStorage.getItem('token'),
   user: null,
   token: localStorage.getItem('token'),
-  login: (email, password) => {
-    set({
-      isAuthenticated: true, 
-      user: { email }, 
-      token: 'mockToken' // Mock token for testing purposes
-    });
+  login: (email, password, token) => {
+    localStorage.setItem('token', token);
+    set({ isAuthenticated: true, user: { email }, token });
   },
   logout: () => {
     localStorage.removeItem('token');

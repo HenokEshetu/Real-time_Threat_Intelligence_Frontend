@@ -1,44 +1,31 @@
+// src/graphql/artifacts/queries.ts
 import { gql } from '@apollo/client';
 
-export const ARTIFACTS_LIST = gql`
-  query ArtifactsList($first: Int, $after: String, $search: String) {
-    artifacts(first: $first, after: $after, search: $search) {
-      edges {
-        node {
-          id
-          name
-          mime_type
-          created
-          modified
-          labels
-        }
-        cursor
-      }
-      pageInfo {
-        hasNextPage
-        endCursor
+export const GET_ARTIFACTS = gql`
+  query GetArtifacts($filters: JSON, $from: Int!, $size: Int!, $search: String) {
+    searchArtifacts(filters: $filters, from: $from, size: $size, search: $search) {
+      page
+      pageSize
+      total
+      totalPages
+      results {
+        id
+        type
+        spec_version
+        created
+        modified
+        mime_type
+        url
+        confidence
+        labels
       }
     }
   }
 `;
 
-export const ARTIFACT_DETAIL = gql`
-  query ArtifactDetail($id: ID!) {
-    artifact(id: $id) {
-      id
-      name
-      mime_type
-      payload_bin
-      url
-      hashes {
-        MD5
-        SHA1
-        SHA256
-      }
-      created
-      modified
-      labels
-      description
-    }
+// Ensure $from and $size are non-negative before executing the query
+export const validatePagination = (from: number, size: number) => {
+  if (from < 0 || size < 0) {
+    throw new Error("Pagination variables 'from' and 'size' must be non-negative integers.");
   }
-`;
+};

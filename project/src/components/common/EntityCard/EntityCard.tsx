@@ -1,9 +1,8 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import styles from './EntityCard.module.css'; // Optional CSS module
-import { Badge } from '@/components/ui/badge'; // Optional UI component
+import styles from './EntityCard.module.css';
+import { Badge } from '@/components/ui/Badge';
 
-// Add properties for title, subtitle, description, actions, etc.
 export interface EntityCardProps {
   id: string;
   name?: string;
@@ -11,16 +10,16 @@ export interface EntityCardProps {
   created: string;
   labels?: string[];
   icon?: React.ReactNode;
-  entityType: string; // e.g., "artifacts", "malware"
-  title: string; // New property for title
-  subtitle: string; // New property for subtitle
-  actions: { label: string; to: string }[]; // New property for actions
-  children?: React.ReactNode; // Allow children to be passed
+  entityType: string;
+  title: string;
+  subtitle: string;
+  actions?: { label: string; to?: string; onClick?: () => void }[]; // Allow 'to' or 'onClick'
+  children?: React.ReactNode;
+  metadata?: Record<string, string>; // Add metadata property
 }
 
 export const EntityCard: React.FC<EntityCardProps> = ({
   id,
-  name,
   description,
   created,
   labels = [],
@@ -28,33 +27,58 @@ export const EntityCard: React.FC<EntityCardProps> = ({
   entityType,
   title,
   subtitle,
-  actions,
-  children, // Now accepting children
+  actions = [],
+  children,
+  metadata, // Include metadata in props
 }) => {
   return (
     <Link to={`/${entityType}/${id}`} className={styles.card}>
-      <div className={styles.icon}>{icon}</div>
+      {icon && <div className={styles.icon}>{icon}</div>}
       <div className={styles.content}>
-        <h3 className={styles.name}>{title || 'Unnamed Entity'}</h3> {/* Use title */}
-        <p className={styles.subtitle}>{subtitle}</p> {/* Use subtitle */}
-        <p className={styles.description}>{description}</p>
-        <div className={styles.labels}>
-          {labels.map((label) => (
-            <Badge key={label} variant="secondary" className="mr-1">
-              {label}
-            </Badge>
-          ))}
-        </div>
-        <div className={styles.created}>Created: {new Date(created).toLocaleDateString()}</div>
-        {/* Render actions */}
-        <div className={styles.actions}>
-          {actions.map((action) => (
-            <Link key={action.to} to={action.to} className="btn btn-link">
-              {action.label}
-            </Link>
-          ))}
-        </div>
-        {/* Render children */}
+        <h3 className={styles.name}>{title}</h3>
+        <p className={styles.subtitle}>{subtitle}</p>
+        {description && <p className={styles.description}>{description}</p>}
+        {labels.length > 0 && (
+          <div className={styles.labels}>
+            {labels.map((label) => (
+              <Badge key={label} variant="secondary" className="mr-1">
+                {label}
+              </Badge>
+            ))}
+          </div>
+        )}
+        {created && (
+          <div className={styles.created}>
+            Created: {new Date(created).toLocaleDateString()}
+          </div>
+        )}
+        {metadata && (
+          <div className={styles.metadata}>
+            <h4>Metadata</h4>
+            <ul>
+              {Object.entries(metadata).map(([key, value]) => (
+                <li key={key}>
+                  <strong>{key}:</strong> {value}
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
+        {actions.length > 0 && (
+          <div className={styles.actions}>
+            {actions.map((action, index) =>
+              action.to ? (
+                <Link key={index} to={action.to} className="btn btn-link">
+                  {action.label}
+                </Link>
+              ) : (
+                <button key={index} onClick={action.onClick} className="btn btn-link">
+                  {action.label}
+                </button>
+              )
+            )}
+          </div>
+        )}
         {children}
       </div>
     </Link>

@@ -1,19 +1,26 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom'; // Add useNavigate for navigation
 import { useArtifacts } from '../../hooks/useArtifacts';
 import { SearchBar } from '../../components/filters/SearchBar/SearchBar';
-import { EntityCard } from '../../components/common/EntityCard/EntityCard';
+import { EntityCard } from '@/components/common/EntityCard/EntityCard';
 import { ContentViewer } from '../../components/common/ContentViewer/ContentViewer';
 import { Artifact } from '../../types/artifact';
 
 export const ArtifactsPage = () => {
+  const navigate = useNavigate(); // Initialize navigate
   const [searchTerm, setSearchTerm] = useState('');
   const { artifacts, loading, error, loadMore, pageInfo } = useArtifacts({
     search: searchTerm,
+    from: 0,
+    size: 10, // Adjust size as needed
   });
 
   const handleSearch = (term: string) => {
     setSearchTerm(term);
+  };
+
+  const handleViewArtifact = (id: string) => {
+    navigate(`/artifact/${id}`); // Navigate to artifact detail page
   };
 
   if (loading && !artifacts.length) return <div>Loading artifacts...</div>;
@@ -33,32 +40,28 @@ export const ArtifactsPage = () => {
       <SearchBar onSearch={handleSearch} />
 
       {/* Artifact Grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 mt-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mt-6">
         {artifacts.map((artifact: Artifact) => (
           <EntityCard
             key={artifact.id}
             id={artifact.id}
-            title={artifact.name || 'Untitled Artifact'}
-            subtitle={artifact.mime_type || 'Unknown MimeType'}
-            description={artifact.description || 'No description available'}
-            entityType="Artifact"
+            title={artifact.url || 'Untitled Artifact'} // Display artifact URL or fallback
+            subtitle={artifact.mime_type || 'Unknown MIME type'} // Display MIME type
+            description={`Confidence: ${artifact.confidence}%`} // Display confidence level
+            entityType="artifacts"
             created={artifact.created}
+            labels={artifact.labels || []}
             actions={[
               {
                 label: 'View Details',
-                to: `/artifacts/${artifact.id}`,
+                onClick: () => handleViewArtifact(artifact.id), // Use onClick instead of to
               },
             ]}
-          >
-            {/* Show content preview if available */}
-            {(artifact.url || artifact.payload_bin) && (
-              <ContentViewer
-                content={artifact.payload_bin}
-                mimeType={artifact.mime_type}
-                url={artifact.url}
-              />
-            )}
-          </EntityCard>
+            metadata={{
+              'Created By': artifact.created_by_ref || 'Unknown',
+              'MD5 Hash': artifact.hashes?.MD5 || 'N/A',
+            }}
+          />
         ))}
       </div>
 

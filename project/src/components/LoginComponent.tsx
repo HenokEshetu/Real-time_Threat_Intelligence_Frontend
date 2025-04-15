@@ -28,7 +28,7 @@ const LoginComponent = () => {
       const { data } = await loginMutation({ variables: { email, password } });
       if (data?.login?.access_token) {
         localStorage.setItem('token', data.login.access_token);
-        login(email, password); // Update Zustand store after successful login
+        login(email, password, data.login.access_token); // Pass token to Zustand store
       }
     } catch (error) {
       console.error('Login failed:', error);

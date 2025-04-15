@@ -286,7 +286,6 @@ export const Dashboard = () => {
     <WidgetHorizontalBars
       series={sampleHorizontalBarData}
       categories={sampleCategories}
-      stacked={false}
       total={true}
       legend={true}
       withExport={true}

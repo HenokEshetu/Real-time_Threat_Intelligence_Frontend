@@ -1,8 +1,8 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useCreateArtifact } from '../../hooks/useArtifacts';
-import { ArtifactForm } from '../../components/artifacts/ArtifactForm';
-import { CreateArtifactInput, UpdateArtifactInput } from '../../types/artifact'; // Added UpdateArtifactInput
+import { EntityForm } from '../../components/common/EntityForm/EntityForm';
+import { CreateArtifactInput } from '../../types/artifact';
 
 export const ArtifactCreatePage = () => {
   const navigate = useNavigate();
@@ -12,15 +12,14 @@ export const ArtifactCreatePage = () => {
     name: '',
     mime_type: '',
     description: '',
-    labels: []
+    labels: [],
   };
 
-  const handleSubmit = async (values: CreateArtifactInput | UpdateArtifactInput) => {
+  const handleSubmit = async (values: CreateArtifactInput) => {
     try {
-      // Type assertion since we know we're in create mode
-      const createdArtifact = await createArtifact(values as CreateArtifactInput);
-      if (createdArtifact) {
-        navigate(`/artifacts/${createdArtifact.id}`);
+      const { data } = await createArtifact({ variables: { input: values } });
+      if (data?.createArtifact?.id) {
+        navigate(`/artifacts/${data.createArtifact.id}`);
       }
     } catch (err) {
       console.error('Error creating artifact:', err);
@@ -35,10 +34,16 @@ export const ArtifactCreatePage = () => {
           Error creating artifact: {error.message}
         </div>
       )}
-      <ArtifactForm 
-        initialValues={initialValues} 
-        onSubmit={handleSubmit} 
-        isSubmitting={loading} 
+      <EntityForm
+        initialValues={initialValues}
+        onSubmit={handleSubmit}
+        isSubmitting={loading}
+        fieldConfig={[
+          { name: 'name', label: 'Name', type: 'text', required: true },
+          { name: 'mime_type', label: 'MIME Type', type: 'text' },
+          { name: 'description', label: 'Description', type: 'textarea' },
+          { name: 'labels', label: 'Labels', type: 'multiselect', options: [] },
+        ]}
       />
     </div>
   );
