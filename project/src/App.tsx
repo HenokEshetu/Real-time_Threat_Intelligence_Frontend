@@ -14,6 +14,7 @@ function App() {
         <CssBaseline />
         <Router>
           <Layout>
+            {/* Ensure AppRoutes is rendering correctly */}
             <AppRoutes />
           </Layout>
         </Router>

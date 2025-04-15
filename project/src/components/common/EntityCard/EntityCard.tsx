@@ -13,8 +13,9 @@ export interface EntityCardProps {
   entityType: string;
   title: string;
   subtitle: string;
-  actions?: { label: string; to: string }[];
+  actions?: { label: string; to?: string; onClick?: () => void }[]; // Allow 'to' or 'onClick'
   children?: React.ReactNode;
+  metadata?: Record<string, string>; // Add metadata property
 }
 
 export const EntityCard: React.FC<EntityCardProps> = ({
@@ -28,6 +29,7 @@ export const EntityCard: React.FC<EntityCardProps> = ({
   subtitle,
   actions = [],
   children,
+  metadata, // Include metadata in props
 }) => {
   return (
     <Link to={`/${entityType}/${id}`} className={styles.card}>
@@ -50,13 +52,31 @@ export const EntityCard: React.FC<EntityCardProps> = ({
             Created: {new Date(created).toLocaleDateString()}
           </div>
         )}
+        {metadata && (
+          <div className={styles.metadata}>
+            <h4>Metadata</h4>
+            <ul>
+              {Object.entries(metadata).map(([key, value]) => (
+                <li key={key}>
+                  <strong>{key}:</strong> {value}
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
         {actions.length > 0 && (
           <div className={styles.actions}>
-            {actions.map((action) => (
-              <Link key={action.to} to={action.to} className="btn btn-link">
-                {action.label}
-              </Link>
-            ))}
+            {actions.map((action, index) =>
+              action.to ? (
+                <Link key={index} to={action.to} className="btn btn-link">
+                  {action.label}
+                </Link>
+              ) : (
+                <button key={index} onClick={action.onClick} className="btn btn-link">
+                  {action.label}
+                </button>
+              )
+            )}
           </div>
         )}
         {children}

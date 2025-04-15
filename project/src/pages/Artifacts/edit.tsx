@@ -1,9 +1,7 @@
 import React from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useArtifact, useUpdateArtifact } from '../../hooks/useArtifacts';
-import { EntityForm } from '../../components/common/EntityForm/EntityForm'; // ✅ Updated path
-import { Loading } from '../../components/common/Loading/Loading';
-import { ErrorMessage } from '../../components/common/ErrorMessage/ErrorMessage';
+import { EntityForm } from '../../components/common/EntityForm/EntityForm';
 import { UpdateArtifactInput } from '../../types/artifact';
 
 export const ArtifactEditPage = () => {
@@ -15,16 +13,16 @@ export const ArtifactEditPage = () => {
   const handleSubmit = async (values: UpdateArtifactInput) => {
     try {
       if (!id) return;
-      await updateArtifact(id, values);
+      await updateArtifact({ variables: { id, input: values } });
       navigate(`/artifacts/${id}`);
     } catch (err) {
       console.error('Error updating artifact:', err);
     }
   };
 
-  if (loadingArtifact) return <Loading />;
-  if (artifactError) return <ErrorMessage message={artifactError.message} />;
-  if (!artifact) return <ErrorMessage message="Artifact not found" />;
+  if (loadingArtifact) return <div>Loading...</div>;
+  if (artifactError) return <div>Error: {artifactError.message}</div>;
+  if (!artifact) return <div>Artifact not found</div>;
 
   return (
     <div className="container">
@@ -34,11 +32,16 @@ export const ArtifactEditPage = () => {
           Error updating artifact: {updateError.message}
         </div>
       )}
-      <EntityForm 
-        entityType="artifact"
-        initialValues={artifact} 
-        onSubmit={(values) => handleSubmit(values as UpdateArtifactInput)} 
-        isSubmitting={updating} 
+      <EntityForm
+        initialValues={artifact}
+        onSubmit={handleSubmit}
+        isSubmitting={updating}
+        fieldConfig={[
+          { name: 'name', label: 'Name', type: 'text', required: true },
+          { name: 'mime_type', label: 'MIME Type', type: 'text' },
+          { name: 'description', label: 'Description', type: 'textarea' },
+          { name: 'labels', label: 'Labels', type: 'multiselect', options: [] },
+        ]}
       />
     </div>
   );

@@ -1,13 +1,13 @@
 import React from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { useArtifact } from '../../hooks/useArtifacts'; // ✅ Correct hook
-import { EntityDetail } from '../../components/common/EntityDetail/EntityDetail'; // ✅ Check this path
+import { useArtifact } from '../../hooks/useArtifacts'; // Use the new hook
+import { EntityDetail } from '../../components/common/EntityDetail/EntityDetail';
 import { Loading } from '../../components/common/Loading/Loading';
 import { ErrorMessage } from '../../components/common/ErrorMessage/ErrorMessage';
 
 export const ArtifactDetailPage = () => {
   const { id } = useParams<{ id: string }>();
-  const { artifact, loading, error } = useArtifact(id || '');
+  const { artifact, loading, error } = useArtifact(id || ''); // Fetch artifact by ID
 
   if (loading) return <Loading />;
   if (error) return <ErrorMessage message={error.message} />;
@@ -27,17 +27,29 @@ export const ArtifactDetailPage = () => {
         </Link>
       </div>
       
-      <EntityDetail 
-        entity={artifact}
-        entityType="artifact"
-        title={artifact.name}
-        subtitle={artifact.mime_type}
+      <EntityDetail
+        id={artifact.id}
+        name={artifact.name}
         description={artifact.description}
-        labels={artifact.labels}
         created={artifact.created}
-        actions={[
-          { label: 'Edit', to: `/artifacts/${artifact.id}/edit` },
-        ]}
+        modified={artifact.modified}
+        type={artifact.type}
+        icon={artifact.mime_type}
+        metadata={{
+          Confidence: `${artifact.confidence}%`,
+          'Created By': artifact.created_by_ref || 'Unknown',
+          'MD5 Hash': artifact.hashes?.MD5 || 'N/A',
+          'SHA-256 Hash': artifact.hashes?.['SHA-256'] || 'N/A',
+        }}
+        hashes={artifact.hashes}
+        children={
+          artifact.payload_bin && (
+            <details>
+              <summary><strong>Payload:</strong></summary>
+              <pre>{artifact.payload_bin}</pre>
+            </details>
+          )
+        }
       />
     </div>
   );
