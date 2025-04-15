@@ -1944,8 +1944,8 @@ type NetworkTraffic {
   created: String!
   created_by_ref: String
   defanged: Boolean
-  dst_byte_count: String
-  dst_packets: String
+  dst_byte_count: Float
+  dst_packets: Float
   dst_payload_ref: String
   dst_port: String
   dst_ref: String
@@ -1963,8 +1963,8 @@ type NetworkTraffic {
   protocols: [String!]
   revoked: Boolean
   spec_version: String!
-  src_byte_count: String
-  src_packets: String
+  src_byte_count: Float
+  src_packets: Float
   src_payload_ref: String
   src_port: String
   src_ref: String

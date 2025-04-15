@@ -27,20 +27,19 @@ interface LocationMiniMapProps {
 }
 
 // Define custom marker icons
-const createCustomIcon = (type: string, darkMode: boolean) => {
+const createCustomIcon = (type: 'default' | 'important' | 'warning' | 'info', darkMode: boolean) => {
   const iconColor = {
     default: darkMode ? '#4cc9f0' : '#4361ee',
     important: darkMode ? '#f72585' : '#e63946',
     warning: darkMode ? '#ffd166' : '#ff9e00',
-    info: darkMode ? '#06d6a0' : '#06d6a0'
+    info: darkMode ? '#06d6a0' : '#06d6a0',
   };
-  
   return L.divIcon({
     className: `custom-marker ${type}-marker`,
-    html: `<div style="background-color: ${iconColor[type] || iconColor.default}"></div>`,
+    html: `<div style="background-color: ${iconColor[type]}"></div>`,
     iconSize: [30, 30],
     iconAnchor: [15, 30],
-    popupAnchor: [0, -30]
+    popupAnchor: [0, -30],
   });
 };
 
@@ -74,29 +73,11 @@ const FullscreenControl = () => {
   
   const toggleFullscreen = () => {
     const container = map.getContainer();
-    
     if (!isFullscreen) {
-      if (container.requestFullscreen) {
-        container.requestFullscreen();
-      } else if (container.mozRequestFullScreen) {
-        container.mozRequestFullScreen();
-      } else if (container.webkitRequestFullscreen) {
-        container.webkitRequestFullscreen();
-      } else if (container.msRequestFullscreen) {
-        container.msRequestFullscreen();
-      }
+      container.requestFullscreen();
     } else {
-      if (document.exitFullscreen) {
-        document.exitFullscreen();
-      } else if (document.mozCancelFullScreen) {
-        document.mozCancelFullScreen();
-      } else if (document.webkitExitFullscreen) {
-        document.webkitExitFullscreen();
-      } else if (document.msExitFullscreen) {
-        document.msExitFullscreen();
-      }
+      document.exitFullscreen();
     }
-    
     setIsFullscreen(!isFullscreen);
   };
   
@@ -125,13 +106,13 @@ const FullscreenControl = () => {
   );
 };
 
-const SearchControl = ({ markers }) => {
+const SearchControl = ({ markers }: { markers: MarkerData[] }) => {
   const map = useMap();
-  const [searchQuery, setSearchQuery] = useState('');
-  const [searchResults, setSearchResults] = useState([]);
+  const [searchQuery, setSearchQuery] = useState<string>('');
+  const [searchResults, setSearchResults] = useState<MarkerData[]>([]);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   
-  const handleSearch = (e) => {
+  const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
     const query = e.target.value.toLowerCase();
     setSearchQuery(query);
     
@@ -145,7 +126,7 @@ const SearchControl = ({ markers }) => {
     }
   };
   
-  const goToLocation = (position) => {
+  const goToLocation = (position: [number, number]) => {
     map.flyTo(position, 16, {
       animate: true,
       duration: 1.5
@@ -252,7 +233,7 @@ const LocationMiniMap: React.FC<LocationMiniMapProps> = ({
   };
   
   // Animation effect when flying to a marker
-  const flyToMarker = (index) => {
+  const flyToMarker = (index: number) => {
     if (mapRef.current && markers[index]) {
       const map = mapRef.current;
       map.flyTo(markers[index].position, zoom + 2, {
@@ -410,7 +391,7 @@ const LocationMiniMap: React.FC<LocationMiniMapProps> = ({
       )}
 
       {/* Create CSS for the map */}
-      <style jsx>{`
+      <style>{`
         /* Custom CSS for map components */
         .dark-theme-map {
           filter: brightness(0.9);

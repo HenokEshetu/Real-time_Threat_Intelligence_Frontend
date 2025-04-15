@@ -128,7 +128,7 @@ const HorizontalBarChart: React.FC<HorizontalBarChartProps> = ({
         shade: 'light',
         type: 'horizontal',
         shadeIntensity: 0.2,
-        gradientToColors: undefined,
+        gradientToColors: undefined as string[] | undefined,
         inverseColors: true,
         opacityFrom: 0.85,
         opacityTo: 1,

@@ -22,12 +22,35 @@ const SEARCH_ARTIFACTS = gql`
         labels
         hashes {
           MD5
-          SHA-256
+          SHA256
         }
       }
     }
   }
 `;
+
+
+// const SEARCH_ARTIFACTS = gql`
+//   query SearchArtifacts($filters: JSON, $from: Int!, $size: Int!, $search: String){
+//   searchArtifacts(filters: $filters, from: $from, size: $size, search: $search) {
+//     page
+//     pageSize
+//     total
+//     totalPages
+//     results {
+//       id
+//       type
+//       spec_version
+//       created
+//       modified
+//       mime_type
+//       url
+//       confidence
+//       labels
+//     }
+//   }
+// }
+// `;
 
 const GET_ARTIFACT = gql`
   query GetArtifact($id: ID!) {
@@ -42,9 +65,9 @@ const GET_ARTIFACT = gql`
       confidence
       hashes {
         MD5
-        SHA-1
-        SHA-256
-        SHA-512
+        SHA1
+        SHA256
+        SHA512
       }
       payload_bin
       created_by_ref
@@ -67,9 +90,11 @@ export const useArtifacts = ({ search = '', from = 0, size = 10 }) => {
   });
 
   const artifacts = data?.searchArtifacts?.results || [];
+  console.log(artifacts);
   const pageInfo = {
     hasNextPage: from + size < data?.searchArtifacts?.total,
   };
+  // const pageInfo = { hasNextPage: false };
 
   const loadMore = () => {
     fetchMore({

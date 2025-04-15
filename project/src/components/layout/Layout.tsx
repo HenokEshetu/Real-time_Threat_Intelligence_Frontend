@@ -14,7 +14,7 @@ const menuItems = [
   { text: 'Artifacts', icon: <Security />, path: '/artifacts' }
 ];
 
-export const Layout = ({ children }) => {
+export const Layout = ({ children }: { children: React.ReactNode }) => {
   return (
     <Box sx={{ display: 'flex' }}>
       <AppBar position="fixed" sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 }}>
