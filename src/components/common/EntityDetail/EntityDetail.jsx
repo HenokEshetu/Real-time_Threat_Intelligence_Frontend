@@ -1,5 +1,6 @@
 import React from 'react';
 import styles from './EntityDetail.module.css';
+import { Shield } from 'lucide-react';
 
 export const EntityDetail = ({
   id,
@@ -16,7 +17,7 @@ export const EntityDetail = ({
   return (
     <div className={styles.container}>
       <h2 className={styles.title}>
-        {icon} {name || `Unnamed ${type}`}
+        {icon && icon == 'shield' ? <Shield /> : ''}
       </h2>
 
       <div className={styles.section}>

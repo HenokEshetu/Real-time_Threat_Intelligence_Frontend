@@ -1,4 +1,3 @@
-// src/hooks/useArtifacts.ts
 import { useQuery, gql, useMutation } from '@apollo/client';
 import {
   CREATE_ARTIFACT,
