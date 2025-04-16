@@ -12,7 +12,7 @@ export const ArtifactsPage = () => {
   const { artifacts, loading, error, loadMore, pageInfo } = useArtifacts({
     search: searchTerm,
     from: 0,
-    size: 1, // Adjust size as needed
+    size: 10, // Adjust size as needed
   });
 
   const handleSearch = (term: string) => {

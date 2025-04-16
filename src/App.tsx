@@ -9,6 +9,10 @@ import { ArtifactsPage } from './pages/Artifacts';
 import { ArtifactDetailPage } from './pages/Artifacts/ArtifactDetailPage';
 import { ArtifactCreatePage } from './pages/Artifacts/create';
 import { ArtifactEditPage } from './pages/Artifacts/edit';
+import { IndicatorsPage } from './pages/Indicators/IndicatorsPage';
+import { IndicatorDetailPage } from './pages/Indicators/IndicatorDetailPage';
+import { IndicatorCreatePage } from './pages/Indicators/IndicatorCreatePage';
+import { IndicatorEditPage } from './pages/Indicators/IndicatorEditPage';
 
 function App() {
   return (
@@ -18,10 +22,16 @@ function App() {
         {/* <Router> */}
         <Layout>
           <Routes>
-            <Route path="/" element={<ArtifactsPage />} />
-            <Route path="/artifact/:id" element={<ArtifactDetailPage />} />
-            <Route path="/artifacts/create" element={<ArtifactCreatePage />} />
-            <Route path="/artifacts/:id/edit" element={<ArtifactEditPage />} />
+            <Route path="/" element={<IndicatorsPage />} />
+            <Route path="/indicator/:id" element={<IndicatorDetailPage />} />
+            <Route
+              path="/indicators/create"
+              element={<IndicatorCreatePage />}
+            />
+            <Route
+              path="/indicators/:id/edit"
+              element={<IndicatorEditPage />}
+            />
             <Route path="*" element={<div>404 - Page Not Found</div>} />{' '}
             {/* Fallback route */}
           </Routes>
