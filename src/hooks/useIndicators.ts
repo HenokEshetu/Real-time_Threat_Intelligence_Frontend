@@ -1,5 +1,5 @@
 import { SEARCH_INDICATORS, GET_INDICATOR } from '@/graphql/indicator';
-import { useQuery, gql } from '@apollo/client';
+import { useQuery } from '@apollo/client';
 
 export const useIndicators = ({
   filters = {},
