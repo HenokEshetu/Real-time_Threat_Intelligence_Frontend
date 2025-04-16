@@ -14,7 +14,7 @@ export const IndicatorDetailPage = () => {
   if (!indicator) return <ErrorMessage message="Indicator not found" />;
 
   return (
-    <div className="max-w-5xl mx-auto p-4">
+    <div className="w-465 mx-auto p-4">
       <div className="flex items-center justify-between mb-6">
         <Link
           to="/indicators"

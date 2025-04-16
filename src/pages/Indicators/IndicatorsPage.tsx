@@ -1,92 +1,144 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useIndicators } from '../../hooks/useIndicators';
-import { SearchBar } from '../../components/filters/SearchBar/SearchBar';
-import { EntityCard } from '@/components/common/EntityCard/EntityCard';
-import { ContentViewer } from '../../components/common/ContentViewer/ContentViewer';
+import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import { Skeleton } from '@/components/ui/skeleton';
+import { Alert, AlertDescription } from '@/components/ui/alert';
+import { SearchIcon, PlusIcon } from 'lucide-react';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table';
 import { Indicator } from '../../types/indicator';
 
 export const IndicatorsPage = () => {
   const navigate = useNavigate();
-  const [searchTerm, setSearchTerm] = useState('');
   const { indicators, loading, error, loadMore, hasMore } = useIndicators({
-    // filters: searchTerm ? { name: searchTerm } : {},
-    filters: {
-      // labels: [
-      // 'malware',
-      // 'phishing',
-      // 'hash',
-      // 'suspicious',
-      // 'trusted',
-      // 'internal-network',
-      // ],
-      // confidence: 90,
-    },
+    filters: {},
     page: 1,
     pageSize: 10,
   });
 
-  const handleSearch = (term: string) => {
-    setSearchTerm(term);
-  };
+  const handleViewIndicator = (id: string) => navigate(`/indicator/${id}`);
 
-  const handleViewIndicator = (id: string) => {
-    navigate(`/indicators/${id}`);
-  };
+  if (loading && indicators.length === 0) {
+    return (
+      <div className="container py-6 space-y-4">
+        <div className="flex justify-between items-center">
+          <Skeleton className="h-8 w-48" />
+          <Skeleton className="h-10 w-36" />
+        </div>
+        <Skeleton className="h-10 w-full" />
+        <div className="space-y-4">
+          {[...Array(10)].map((_, i) => (
+            <Skeleton key={i} className="h-16 w-full rounded-md" />
+          ))}
+        </div>
+      </div>
+    );
+  }
 
-  if (loading && indicators.length === 0)
-    return <div>Loading indicators...</div>;
-  if (error) return <div>Error loading indicators: {error.message}</div>;
+  if (error) {
+    return (
+      <div className="container py-6">
+        <Alert variant="destructive">
+          <AlertDescription>
+            Error loading indicators: {error.message}
+          </AlertDescription>
+        </Alert>
+      </div>
+    );
+  }
 
   return (
-    <div className="container">
+    <div className="p-6 w-465 space-y-6 rounded-lg">
       {/* Header */}
-      <div className="page-header d-flex justify-between items-center mb-4">
-        <h1 className="text-2xl font-bold">Indicators</h1>
-        <Link to="/indicators/create" className="btn btn-primary">
-          + New Indicator
-        </Link>
+      <div className="flex justify-between items-center">
+        <h1 className="text-2xl font-bold tracking-tight text-gray-800">
+          Indicators
+        </h1>
+        <Button asChild>
+          <Link to="/indicators/create" className="flex items-center gap-2">
+            <PlusIcon className="h-4 w-4" />
+            New Indicator
+          </Link>
+        </Button>
       </div>
 
-      {/* Search */}
-      <SearchBar onSearch={handleSearch} />
-
-      {/* Indicator Grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mt-6">
-        {indicators.map((indicator: Indicator) => (
-          <EntityCard
-            key={indicator.id}
-            id={indicator.id}
-            title={indicator.name || 'Untitled Indicator'}
-            subtitle={indicator.pattern_type}
-            description={`Type: ${
-              indicator.indicator_types?.join(', ') || 'N/A'
-            }`}
-            entityType="indicator"
-            created={indicator.created}
-            labels={indicator.labels || []}
-            actions={[
-              {
-                label: 'View Details',
-                onClick: () => handleViewIndicator(indicator.id),
-              },
-            ]}
-            metadata={{
-              'Valid From': new Date(indicator.valid_from).toLocaleString(),
-              'Valid Until': indicator.valid_until
-                ? new Date(indicator.valid_until).toLocaleString()
-                : '—',
-            }}
-          />
-        ))}
+      {/* Indicators Table */}
+      <div className="overflow-x-auto bg-white rounded-md shadow-sm border border-gray-200">
+        <Table className="w-full text-sm text-gray-700">
+          <TableHeader>
+            <TableRow className="bg-gray-100">
+              <TableHead className="font-bold p-4 text-gray-800">
+                Name
+              </TableHead>
+              <TableHead className="font-bold p-4 text-gray-800">
+                Pattern Type
+              </TableHead>
+              <TableHead className="font-bold p-4 text-gray-800">
+                Labels
+              </TableHead>
+              <TableHead className="font-bold p-4 text-gray-800">
+                Valid From
+              </TableHead>
+              <TableHead className="font-bold p-4 text-gray-800">
+                Valid Until
+              </TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {indicators.map((indicator: Indicator) => (
+              <TableRow
+                key={indicator.id}
+                onClick={() => handleViewIndicator(indicator.id)}
+                className="hover:bg-gray-50 transition-colors border-b border-gray-200 cursor-pointer"
+              >
+                <TableCell className="p-4 font-medium text-gray-900 hover:underline">
+                  {indicator.name || 'Untitled'}
+                </TableCell>
+                <TableCell className="p-4 text-gray-700">
+                  {indicator.pattern_type}
+                </TableCell>
+                <TableCell className="p-4">
+                  <div className="flex flex-wrap gap-1">
+                    {indicator.labels?.map((label) => (
+                      <Badge
+                        key={label}
+                        variant="outline"
+                        className="text-xs px-4 border border-red-500 text-red-500 p-1 rounded-x-2xl rounded-y-2xl"
+                      >
+                        {label}
+                      </Badge>
+                    ))}
+                  </div>
+                </TableCell>
+                <TableCell className="p-4 text-gray-600">
+                  {new Date(indicator.valid_from).toLocaleDateString()}
+                </TableCell>
+                <TableCell className="p-4 text-gray-600">
+                  {indicator.valid_until
+                    ? new Date(indicator.valid_until).toLocaleDateString()
+                    : '—'}
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
       </div>
 
       {/* Pagination */}
       {hasMore && (
-        <div className="text-center mt-6">
-          <button onClick={loadMore} className="btn btn-secondary">
-            Load More
-          </button>
+        <div className="flex justify-center pt-4">
+          <Button variant="outline" onClick={loadMore} disabled={loading}>
+            {loading ? 'Loading...' : 'Load More'}
+          </Button>
         </div>
       )}
     </div>
