@@ -20,7 +20,7 @@
     "strictBindCallApply": false,
     "forceConsistentCasingInFileNames": false,
     "noFallthroughCasesInSwitch": false,
-    "types": ["vite/client", "node", "react", "react-dom"],
+    "types": ["vite/client", "react", "react-dom"],
     "moduleResolution": "node",
     "strict": true,
     "allowJs": true,

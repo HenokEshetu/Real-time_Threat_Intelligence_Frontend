@@ -3,7 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useIndicators } from '../../hooks/useIndicators';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
+import { Badge } from '@/components/ui/Badge';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { SearchIcon, PlusIcon } from 'lucide-react';
@@ -112,7 +112,6 @@ export const IndicatorsPage = () => {
                       <Badge
                         key={label}
                         variant="outline"
-                        className="text-xs px-4 border border-red-500 text-red-500 p-1 rounded-x-2xl rounded-y-2xl"
                       >
                         {label}
                       </Badge>

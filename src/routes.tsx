@@ -1,4 +1,4 @@
-import { Routes, Route, Navigate } from 'react-router-dom';
+import { Route, Routes, Navigate } from 'react-router-dom';
 import { Dashboard } from './pages/Dashboard';
 import { ThreatActors } from './pages/ThreatActors';
 import { IndicatorsPage } from './pages/Indicators/IndicatorsPage';
@@ -24,7 +24,7 @@ export const AppRoutes = () => {
     return (
       <Routes>
         <Route path="/login" element={<Login />} />
-        <Route path="*" element={<Navigate to="/login" replace />} />
+        <Route path="*" element={<Navigate to="/login" />} />
       </Routes>
     );
   }
@@ -37,7 +37,7 @@ export const AppRoutes = () => {
       <Route path="/malware" element={<Malware />} />
       <Route path="/malware/create" element={<MalwareCreatePage />} />
       <Route path="/malware/:id" element={<MalwareDetailPage />} />
-      <Route path="/malware/*" element={<Navigate to="/malware" replace />} />
+      <Route path="/malware/*" element={<Navigate to="/malware" />} />
       <Route path="/reports" element={<Reports />} />
 
       <Route path="/artifacts" element={<ArtifactsPage />} />
@@ -45,12 +45,11 @@ export const AppRoutes = () => {
       <Route path="/artifact/:id/edit" element={<ArtifactEditPage />} />
       <Route path="/artifact/create" element={<ArtifactCreatePage />} />
 
-      <Route path="/indicators" element={<IndicatorsPage />} />
       <Route path="/indicator/:id" element={<IndicatorDetailPage />} />
       <Route path="/indicator/:id/edit" element={<IndicatorEditPage />} />
       <Route path="/indicator/create" element={<IndicatorCreatePage />} />
 
-      <Route path="*" element={<Navigate to="/" replace />} />
+      <Route path="*" element={<Navigate to="/" />} />
     </Routes>
   );
 };

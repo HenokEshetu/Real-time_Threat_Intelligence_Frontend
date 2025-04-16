@@ -5,7 +5,7 @@ import './Badge.css'; // Optional styling
 
 export interface BadgeProps {
   children: React.ReactNode;
-  variant?: 'primary' | 'secondary';
+  variant?: 'primary' | 'secondary' | 'outline'; // Allow 'outline'
   className?: string;
 }
 

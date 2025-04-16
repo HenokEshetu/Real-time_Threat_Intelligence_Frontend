@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import styles from './EntityCard.module.css';
-// import { Badge } from '@/components/ui/Badge';
+import { Badge } from "@/components/ui/Badge";
 
 export interface EntityCardProps {
   id: string;
@@ -40,11 +40,11 @@ export const EntityCard: React.FC<EntityCardProps> = ({
         {description && <p className={styles.description}>{description}</p>}
         {labels.length > 0 && (
           <div className={styles.labels}>
-            {/* {labels.map((label) => (
+            {labels.map((label) => (
               <Badge key={label} variant="secondary" className="mr-1">
                 {label}
               </Badge>
-            ))} */}
+            ))}
           </div>
         )}
         {created && (
