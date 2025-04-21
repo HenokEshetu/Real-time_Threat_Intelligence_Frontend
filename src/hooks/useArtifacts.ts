@@ -4,33 +4,6 @@ import {
   UPDATE_ARTIFACT,
 } from '../graphql/artifacts/mutations';
 
-// const SEARCH_ARTIFACTS = gql`
-//   query SearchArtifacts($filters: JSON, $from: Int!, $size: Int!, $search: String) {
-//     searchArtifacts(filters: $filters, from: $from, size: $size, search: $search) {
-//       page
-//       pageSize
-//       total
-//       totalPages
-//       results {
-//         id
-//         name
-//         type
-//         spec_version
-//         created
-//         modified
-//         mime_type
-//         url
-//         confidence
-//         labels
-//         hashes {
-//           MD5
-//           SHA256
-//         }
-//       }
-//     }
-//   }
-// `;
-
 const SEARCH_ARTIFACTS = gql`
   query SearchArtifacts(
     $filters: SearchArtifactInput!
@@ -52,10 +25,40 @@ const SEARCH_ARTIFACTS = gql`
         url
         confidence
         labels
+        hashes {
+          MD5
+          SHA_256
+        }
       }
     }
   }
 `;
+
+// const SEARCH_ARTIFACTS = gql`
+//   query SearchArtifacts(
+//     $filters: SearchArtifactInput!
+//     $from: Int!
+//     $size: Int!
+//   ) {
+//     searchArtifacts(filters: $filters, from: $from, size: $size) {
+//       page
+//       pageSize
+//       total
+//       totalPages
+//       results {
+//         id
+//         type
+//         spec_version
+//         created
+//         modified
+//         mime_type
+//         url
+//         confidence
+//         labels
+//       }
+//     }
+//   }
+// `;
 
 const GET_ARTIFACT = gql`
   query Artifact($id: String!) {

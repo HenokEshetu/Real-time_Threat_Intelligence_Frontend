@@ -33,21 +33,22 @@ export const AppRoutes = () => {
     <Routes>
       <Route path="/" element={<Dashboard />} />
       <Route path="/threat-actors" element={<ThreatActors />} />
-      <Route path="/indicators" element={<IndicatorsPage />} />
-      <Route path="/malware" element={<Malware />} />
-      <Route path="/malware/create" element={<MalwareCreatePage />} />
-      <Route path="/malware/:id" element={<MalwareDetailPage />} />
-      <Route path="/malware/*" element={<Navigate to="/malware" />} />
       <Route path="/reports" element={<Reports />} />
 
-      <Route path="/artifacts" element={<ArtifactsPage />} />
-      <Route path="/artifact/:id" element={<ArtifactDetailPage />} />
-      <Route path="/artifact/:id/edit" element={<ArtifactEditPage />} />
-      <Route path="/artifact/create" element={<ArtifactCreatePage />} />
+      <Route path="/malware" element={<Malware />} />
+      <Route path="/malware/:id" element={<MalwareDetailPage />} />
+      <Route path="/malware/create" element={<MalwareCreatePage />} />
+      <Route path="/malware/*" element={<Navigate to="/malware" />} />
 
-      <Route path="/indicator/:id" element={<IndicatorDetailPage />} />
-      <Route path="/indicator/:id/edit" element={<IndicatorEditPage />} />
-      <Route path="/indicator/create" element={<IndicatorCreatePage />} />
+      <Route path="/artifacts" element={<ArtifactsPage />} />
+      <Route path="/artifacts/:id" element={<ArtifactDetailPage />} />
+      <Route path="/artifacts/:id/edit" element={<ArtifactEditPage />} />
+      <Route path="/artifacts/create" element={<ArtifactCreatePage />} />
+
+      <Route path="/indicators" element={<IndicatorsPage />} />
+      <Route path="/indicators/:id" element={<IndicatorDetailPage />} />
+      <Route path="/indicators/:id/edit" element={<IndicatorEditPage />} />
+      <Route path="/indicators/create" element={<IndicatorCreatePage />} />
 
       <Route path="*" element={<Navigate to="/" />} />
     </Routes>

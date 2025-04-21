@@ -1,16 +1,16 @@
 import React, { useState } from 'react';
-import { Grid, Paper, Typography } from '@mui/material'; // Material-UI components for layout and typography
-import { ThreatStats } from '../components/dashboard/ThreatStats'; // Importing custom component to display threat statistics
-import { ThreatDistributionChart } from '../components/dashboard/ThreatDistributionChart'; // Importing custom component to display threat distribution chart
-import { RecentIncidents } from '../components/dashboard/RecentIncidents'; // Importing custom component to display recent incidents
-import PolarArea from '../components/dashboard/PolarArea'; // Importing custom polar area chart component
-import { Security, Warning, BugReport, Shield } from '@mui/icons-material'; // Icons from Material-UI for different stats
-import { Incident } from '../components/dashboard/RecentIncidents'; // Importing the Incident type to define the incident data structure
-import WidgetHorizontalBars from '../components/dashboard/HorizontalBarChart'; // Importing custom horizontal bar chart component
+import { Card, CardContent, CardHeader } from '@/components/ui/card';
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+import { Grid } from '@/components/ui/grid';
+import { ThreatStats } from '../components/dashboard/ThreatStats';
+import { ThreatDistributionChart } from '../components/dashboard/ThreatDistributionChart';
+import { RecentIncidents } from '../components/dashboard/RecentIncidents';
+import PolarArea from '../components/dashboard/PolarArea';
+import WidgetHorizontalBars from '../components/dashboard/HorizontalBarChart';
 import WidgetMultiAreas from '../components/dashboard/WidgetMultiAreas';
-
-// Import geographical map component
 import LocationMiniMap from '../components/common/location/LocationMiniMap';
+import { Incident } from '../components/dashboard/RecentIncidents';
+import { Bug, Shield, ShieldBan, TriangleAlert } from 'lucide-react';
 
 const sampleMultiAreaData = [
   {
@@ -156,19 +156,19 @@ const stats = [
   {
     title: 'Active Threats',
     value: 47,
-    icon: Security, // Icon for Active Threats stat
+    icon: ShieldBan, // Icon for Active Threats stat
     color: '#FF6B6B', // Color for Active Threats stat
   },
   {
     title: 'Recent Incidents',
     value: 12,
-    icon: Warning, // Icon for Recent Incidents stat
+    icon: TriangleAlert, // Icon for Recent Incidents stat
     color: '#4ECDC4', // Color for Recent Incidents stat
   },
   {
     title: 'Malware Detected',
     value: 28,
-    icon: BugReport, // Icon for Malware Detected stat
+    icon: Bug, // Icon for Malware Detected stat
     color: '#45B7D1', // Color for Malware Detected stat
   },
   {
@@ -239,91 +239,119 @@ const sampleRecentIncidents: Incident[] = [
 ];
 
 export const Dashboard = () => {
-  const [error, setError] = useState<string | null>(null); // Error state to display if something goes wrong
+  const [error, setError] = useState<string | null>(null);
 
-  // A function to render components with error handling
   const renderComponentWithErrorHandling = (component: React.ReactNode) => {
     try {
-      return component; // Try rendering the component
+      return component;
     } catch (err) {
       console.error('Error rendering component:', err);
-      setError('An error occurred while rendering the dashboard.'); // Set error message on failure
+      setError('An error occurred while rendering the dashboard.');
       return (
-        <Paper sx={{ p: 3 }}>
-          <Typography variant="h6" color="error">
-            Something went wrong. Please try again later.
-          </Typography>
-        </Paper>
+        <Card>
+          <CardContent>
+            <Alert variant="destructive">
+              <AlertTitle>Error</AlertTitle>
+              <AlertDescription>
+                Something went wrong. Please try again later.
+              </AlertDescription>
+            </Alert>
+          </CardContent>
+        </Card>
       );
     }
   };
 
   return (
-    <Grid container spacing={3}>
-      {/* Display error message if error exists */}
+    <Grid gap={4} className="w-465">
       {error && (
-        <Grid item xs={12}>
-          <Paper sx={{ p: 3 }}>
-            <Typography variant="h6" color="error">
-              {error}
-            </Typography>
-          </Paper>
-        </Grid>
+        <Card>
+          <CardContent>
+            <Alert variant="destructive">
+              <AlertTitle>Error</AlertTitle>
+              <AlertDescription>{error}</AlertDescription>
+            </Alert>
+          </CardContent>
+        </Card>
       )}
 
-      {/* Render ThreatStats component */}
-      <Grid item xs={12}>
-        {renderComponentWithErrorHandling(<ThreatStats stats={stats} />)}
+      <Card>
+        <CardHeader>Threat Statistics</CardHeader>
+        <CardContent>
+          {renderComponentWithErrorHandling(<ThreatStats stats={stats} />)}
+        </CardContent>
+      </Card>
+
+      <Grid cols={2} gap={4}>
+        <Card>
+          <CardHeader>Threat Distribution</CardHeader>
+          <CardContent>
+            {renderComponentWithErrorHandling(
+              <ThreatDistributionChart data={sampleDistributionChart} />,
+            )}
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>Threat Types</CardHeader>
+          <CardContent>
+            {renderComponentWithErrorHandling(
+              <WidgetHorizontalBars
+                series={sampleHorizontalBarData}
+                categories={sampleCategories}
+                total={true}
+                legend={true}
+                withExport={true}
+              />,
+            )}
+          </CardContent>
+        </Card>
       </Grid>
 
-      {/* Render Threat Distribution Chart */}
-      <Grid item xs={12} md={6}>
-        {renderComponentWithErrorHandling(<ThreatDistributionChart data={sampleDistributionChart} />)}
-      </Grid>
-      
-      <Grid item xs={12} md={6}>
-  {renderComponentWithErrorHandling(
-    <WidgetHorizontalBars
-      series={sampleHorizontalBarData}
-      categories={sampleCategories}
-      total={true}
-      legend={true}
-      withExport={true}
-    />
-  )}
-</Grid>
+      <Grid cols={2} gap={4}>
+        <Card>
+          <CardHeader>Threat Trends</CardHeader>
+          <CardContent>
+            {renderComponentWithErrorHandling(
+              <WidgetMultiAreas
+                series={sampleMultiAreaData}
+                interval="month"
+                isStacked={false}
+                hasLegend={true}
+                withExport={false}
+                readonly={false}
+              />,
+            )}
+          </CardContent>
+        </Card>
 
-<Grid item xs={12} md={6}>
-  {renderComponentWithErrorHandling(
-    <WidgetMultiAreas
-      series={sampleMultiAreaData}
-      interval="month"
-      isStacked={false}
-      hasLegend={true}
-      withExport={false}
-      readonly={false}
-    />
-  )}
-</Grid>
-
-
-      {/* Render Geographical Map */}
-      <Grid item xs={12} md={6}>
-        {renderComponentWithErrorHandling(<LocationMiniMap />)}
+        <Card>
+          <CardHeader>Location Map</CardHeader>
+          <CardContent>
+            {renderComponentWithErrorHandling(<LocationMiniMap />)}
+          </CardContent>
+        </Card>
       </Grid>
 
+      <Grid cols={2} gap={4}>
+        <Card>
+          <CardHeader>Recent Incidents</CardHeader>
+          <CardContent>
+            {renderComponentWithErrorHandling(
+              <RecentIncidents data={sampleRecentIncidents} />,
+            )}
+          </CardContent>
+        </Card>
 
-
-      {/* Render Recent Incidents */}
-      <Grid item xs={12} md={7}>
-        {renderComponentWithErrorHandling(<RecentIncidents data={sampleRecentIncidents} />)}
+        <Card>
+          <CardHeader>Threat Breakdown</CardHeader>
+          <CardContent>
+            {renderComponentWithErrorHandling(
+              <PolarArea data={samplePolarAreaData} groupBy="Threat Type" />,
+            )}
+          </CardContent>
+        </Card>
       </Grid>
-
-      {/* Render Polar Area Chart */}
-      <Grid item xs={12} md={5}>
-        {renderComponentWithErrorHandling(<PolarArea data={samplePolarAreaData} groupBy="Threat Type" />)}
-      </Grid>
-
     </Grid>
   );
 };

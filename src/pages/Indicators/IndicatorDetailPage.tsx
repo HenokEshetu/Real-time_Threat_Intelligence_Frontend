@@ -1,9 +1,11 @@
 import React from 'react';
-import { useParams, Link } from 'react-router-dom';
-import { useIndicator } from '../../hooks/useIndicators';
-import { EntityDetail } from '../../components/common/EntityDetail/EntityDetail';
-import { Loading } from '../../components/common/Loading/Loading';
-import { ErrorMessage } from '../../components/common/ErrorMessage/ErrorMessage';
+import { useParams } from 'react-router-dom';
+import { useIndicator } from '@/hooks/useIndicators';
+import { Loading } from '@/components/common/Loading/Loading';
+import { ErrorMessage } from '@/components/common/ErrorMessage/ErrorMessage';
+import { TopContainer } from '@/components/common/TopContainer';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { IndicatorOverview } from '@/components/indicator/overview';
 
 export const IndicatorDetailPage = () => {
   const { id } = useParams<{ id: string }>();
@@ -14,75 +16,46 @@ export const IndicatorDetailPage = () => {
   if (!indicator) return <ErrorMessage message="Indicator not found" />;
 
   return (
-    <div className="w-465 mx-auto p-4">
-      <div className="flex items-center justify-between mb-6">
-        <Link
-          to="/indicators"
-          className="text-sm px-4 py-2 rounded-lg border border-gray-300 hover:bg-gray-100 transition"
-        >
-          ← Back to List
-        </Link>
-        <Link
-          to={`/indicators/${id}/edit`}
-          className="text-sm px-4 py-2 rounded-lg bg-blue-600 text-white hover:bg-blue-700 transition"
-        >
-          Edit
-        </Link>
-      </div>
+    <div className="w-full flex flex-col">
+      <TopContainer className="h-13">
+        <h1 className="text-2xl font-semibold">
+          {indicator.name.replace('Indicator: ', '')}
+        </h1>
+      </TopContainer>
 
-      <EntityDetail
-        id={indicator.id}
-        name={indicator.name}
-        description={indicator.description}
-        created={indicator.created}
-        modified={indicator.modified}
-        type={indicator.type}
-        icon="shield"
-        hashes={indicator.hashes}
-        metadata={{
-          'Pattern Type': indicator.pattern_type,
-          'Valid From': indicator.valid_from,
-          'Valid Until': indicator.valid_until || 'N/A',
-          Confidence:
-            indicator.confidence !== undefined
-              ? `${indicator.confidence}%`
-              : 'N/A',
-          'Created By': indicator.created_by_ref || 'Unknown',
-          'Indicator Types': indicator.indicator_types?.join(', ') || 'N/A',
-          Revoked: indicator.revoked ? 'Yes' : 'No',
-        }}
-      >
-        <div className="mb-6">
-          <h2 className="text-lg font-semibold mb-2">Pattern</h2>
-          <pre className="bg-gray-100 text-sm p-4 rounded-md overflow-x-auto">
-            {indicator.pattern}
-          </pre>
-        </div>
+      <Tabs defaultValue="overview" className="w-full">
+        <TopContainer className="h-13 flex-start border-b border-gray-200">
+          <TabsList className="flex gap-4 bg-transparent">
+            {[
+              'overview',
+              'knowledge',
+              'content',
+              'analysis',
+              'sightings',
+              'data',
+              'history',
+            ].map((tab) => (
+              <TabsTrigger
+                key={tab}
+                value={tab}
+                className="uppercase font-normal border-b-1 tracking-wider text-[14px] text-forground relative py-6 transition-all rounded-none !shadow-none h-full w-full bg-transparent cursor-pointer data-[state=active]:border-b-1 data-[state=active]:border-b-violet-500 data-[state=active]:text-violet-500 hover:text-violet-500 hover:border-b-violet-500"
+              >
+                {tab}
+              </TabsTrigger>
+            ))}
+          </TabsList>
+        </TopContainer>
 
-        {indicator.kill_chain_phases?.length > 0 && (
-          <div className="mb-6">
-            <h2 className="text-lg font-semibold mb-2">Kill Chain Phases</h2>
-            <ul className="space-y-2">
-              {indicator.kill_chain_phases.map(
-                ({
-                  phase,
-                  index,
-                }: {
-                  phase: { kill_chain_name: string; phase_name: string };
-                  index: number;
-                }) => (
-                  <li
-                    key={index}
-                    className="bg-white border rounded-md p-3 shadow-sm"
-                  >
-                    <strong>{phase.kill_chain_name}:</strong> {phase.phase_name}
-                  </li>
-                ),
-              )}
-            </ul>
-          </div>
-        )}
-      </EntityDetail>
+        <TabsContent value="overview">
+          <IndicatorOverview indicator={indicator} />
+        </TabsContent>
+        <TabsContent value="knowledge">Knowledge content here</TabsContent>
+        <TabsContent value="content">Content content here</TabsContent>
+        <TabsContent value="analysis">Analysis content here</TabsContent>
+        <TabsContent value="sightings">Sightings content here</TabsContent>
+        <TabsContent value="data">Data content here</TabsContent>
+        <TabsContent value="history">History content here</TabsContent>
+      </Tabs>
     </div>
   );
 };
