@@ -1,0 +1,43 @@
+import { useQuery, useMutation } from '@apollo/client';
+import { SEARCH_REPORTS, GET_REPORT, CREATE_REPORT, UPDATE_REPORT, DELETE_REPORT } from '@/graphql/report';
+import { SearchReportInput } from '@/types/report';
+
+export const useReports = ({
+  filters = {},
+  page = 1,
+  pageSize = 10,
+}: {
+  filters?: SearchReportInput;
+  page?: number;
+  pageSize?: number;
+}) => {
+  const { data, loading, error, fetchMore } = useQuery(SEARCH_REPORTS, {
+    variables: { filters, page, pageSize },
+    notifyOnNetworkStatusChange: true,
+  });
+
+  const reports = data?.searchReports || [];
+
+  const loadMore = () => {
+    fetchMore({
+      variables: { page: page + 1, pageSize },
+      updateQuery: (prev, { fetchMoreResult }) => {
+        if (!fetchMoreResult) return prev;
+        return {
+          searchReports: [...(prev?.searchReports || []), ...fetchMoreResult.searchReports],
+        };
+      },
+    });
+  };
+
+  return { reports, loading, error, loadMore, hasMore: reports.length === pageSize };
+};
+
+export const useReport = (id: string) => {
+  const { data, loading, error } = useQuery(GET_REPORT, { variables: { id } });
+  return { report: data?.getReport, loading, error };
+};
+
+export const useCreateReport = () => useMutation(CREATE_REPORT);
+export const useUpdateReport = () => useMutation(UPDATE_REPORT);
+export const useDeleteReport = () => useMutation(DELETE_REPORT);
