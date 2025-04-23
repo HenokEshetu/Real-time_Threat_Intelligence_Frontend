@@ -20,12 +20,15 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import { TopBreadcrumb } from '@/components/Breadcrumb';
 import { useTheme } from '@/components/ui/theme-provider';
 import { useState } from 'react';
-import { Breadcrumb } from '@/components/ui/breadcrumb';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import React from 'react';
 import { SearchBar } from '@/components/common/SearchBar';
+import { Breadcrumb } from '@/components/ui/breadcrumb';
+import { TopContainer } from '@/components/common/TopContainer';
+import logo from '@/static/images/favicon.png';
 
 const menuItems = [
   {
@@ -66,7 +69,7 @@ export const Layout = ({ children }: { children: React.ReactNode }) => {
   return (
     <div className="min-h-screen flex flex-col">
       {/* Top Navbar */}
-      <header className="sticky top-0 z-40 w-full h-20 border-b bg-background px-4 py-2 flex items-center justify-between">
+      <header className="sticky top-0 z-40 w-full h-17 border-b bg-background px-4 py-2 flex items-center justify-between">
         <div className="flex items-center gap-2">
           <Button
             variant="ghost"
@@ -76,10 +79,13 @@ export const Layout = ({ children }: { children: React.ReactNode }) => {
           >
             <MenuIcon className="h-5 w-5" />
           </Button>
-          <div className="flex justify-between w-200 pl-10">
-            <h1 className="text-3xl font-semibold hidden md:block p-0">
-              CTI Platform
-            </h1>
+          <div className="flex justify-between items-center w-180">
+            <div className="flex justify-between items-center w-37">
+              <img src={logo} className="w-13 h-13 rounded-full" />
+              <h1 className="text-3xl font-semibold hidden md:block p-0">
+                RtCTI
+              </h1>
+            </div>
             <SearchBar />
           </div>
           <Breadcrumb className="hidden md:flex ml-4" />
@@ -125,10 +131,13 @@ export const Layout = ({ children }: { children: React.ReactNode }) => {
           </DropdownMenu>
         </div>
       </header>
+      <TopContainer className="h-12">
+        <TopBreadcrumb />
+      </TopContainer>
 
       <div className="flex flex-1">
         {/* Sidebar */}
-        <aside className="hidden md:flex md:flex-col md:w-70 border-r bg-background pt-4">
+        <aside className="hidden md:flex md:flex-col md:w-50 h-full fixed top-17 border-r bg-background pt-4">
           <nav className="space-y-1 px-2">
             {menuItems.map((item) => (
               <Link
@@ -188,8 +197,7 @@ export const Layout = ({ children }: { children: React.ReactNode }) => {
         </div>
 
         {/* Page Content */}
-        <main className="flex justify-center w-full h-full p-6">
-          <Breadcrumb className="md:hidden mb-4" />
+        <main className="flex justify-center w-full h-full md:pl-50">
           {children}
         </main>
       </div>

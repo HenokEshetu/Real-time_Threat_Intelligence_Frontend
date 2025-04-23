@@ -1,6 +1,8 @@
 import React from 'react';
 import styles from './EntityDetail.module.css';
 import { Shield } from 'lucide-react';
+import ReactMarkdown from 'react-markdown';
+import rehypeHighlight from 'rehype-highlight';
 
 export const EntityDetail = ({
   id,
@@ -66,7 +68,9 @@ export const EntityDetail = ({
       {description && (
         <div className={styles.section}>
           <h3>Description</h3>
-          <p>{description}</p>
+          <ReactMarkdown rehypePlugins={[rehypeHighlight]}>
+            {description}
+          </ReactMarkdown>
         </div>
       )}
 

@@ -27,7 +27,7 @@ export const useIndicators = ({
     fetchMore({
       variables: {
         page: page + 1,
-        pageSize,
+        pageSize: pageSize,
       },
       updateQuery: (prev, { fetchMoreResult }) => {
         if (!fetchMoreResult) return prev;

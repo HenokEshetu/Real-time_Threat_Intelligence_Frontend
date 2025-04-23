@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import styles from './EntityCard.module.css';
-import { Badge } from "@/components/ui/Badge";
+import { Badge } from '@/components/ui/badge';
 
 export interface EntityCardProps {
   id: string;
@@ -72,10 +72,14 @@ export const EntityCard: React.FC<EntityCardProps> = ({
                   {action.label}
                 </Link>
               ) : (
-                <button key={index} onClick={action.onClick} className="btn btn-link">
+                <button
+                  key={index}
+                  onClick={action.onClick}
+                  className="btn btn-link"
+                >
                   {action.label}
                 </button>
-              )
+              ),
             )}
           </div>
         )}
