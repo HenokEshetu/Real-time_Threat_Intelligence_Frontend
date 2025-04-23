@@ -16,6 +16,13 @@ import { IndicatorCreatePage } from './pages/Indicators/IndicatorCreatePage';
 import { ArtifactDetailPage } from './pages/Artifacts/ArtifactDetailPage';
 import { ArtifactEditPage } from './pages/Artifacts/edit';
 import { ArtifactCreatePage } from './pages/Artifacts/create';
+import { ReportsPage } from './pages/Reports/ReportsPage';
+import { ReportDetailPage } from './pages/Reports/ReportDetailPage';
+import { ReportsEditPage } from './pages/Reports/ReportsEditPage';
+import { ReportsCreatePage } from './pages/Reports/ReportsCreatePage';
+import CreateThreatActor from './pages/ThreatActors/create';
+import ThreatActorDetail from './pages/ThreatActors/detail';
+import EditThreatActor from './pages/ThreatActors/edit';
 
 export const AppRoutes = () => {
   const { isAuthenticated } = useAuth();
@@ -33,22 +40,26 @@ export const AppRoutes = () => {
     <Routes>
       <Route path="/" element={<Dashboard />} />
       <Route path="/threat-actors" element={<ThreatActors />} />
+      <Route path="/threat-actors/create" element={<CreateThreatActor />} />
+      <Route path="/threat-actors/:id" element={<ThreatActorDetail />} />
+      <Route path="/threat-actors/:id/edit" element={<EditThreatActor />} />
       <Route path="/indicators" element={<IndicatorsPage />} />
       <Route path="/malware" element={<Malware />} />
       <Route path="/malware/create" element={<MalwareCreatePage />} />
       <Route path="/malware/:id" element={<MalwareDetailPage />} />
       <Route path="/malware/*" element={<Navigate to="/malware" />} />
       <Route path="/reports" element={<Reports />} />
-
       <Route path="/artifacts" element={<ArtifactsPage />} />
       <Route path="/artifact/:id" element={<ArtifactDetailPage />} />
       <Route path="/artifact/:id/edit" element={<ArtifactEditPage />} />
       <Route path="/artifact/create" element={<ArtifactCreatePage />} />
-
       <Route path="/indicator/:id" element={<IndicatorDetailPage />} />
       <Route path="/indicator/:id/edit" element={<IndicatorEditPage />} />
       <Route path="/indicator/create" element={<IndicatorCreatePage />} />
-
+      <Route path="/Reports" element={<ReportsPage />} />
+      <Route path="/Reports/:id" element={<ReportDetailPage />} />
+      <Route path="/Reports/:id/edit" element={<ReportsEditPage />} />
+      <Route path="/Reports/create" element={<ReportsCreatePage />} />
       <Route path="*" element={<Navigate to="/" />} />
     </Routes>
   );

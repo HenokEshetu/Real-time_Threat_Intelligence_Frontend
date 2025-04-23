@@ -10,13 +10,14 @@ import {
 } from '../graphql/threatActor/mutations';
 
 // List threat actors
+// Note: Network errors will be available in the `error` property.
 export const useThreatActors = ({ filters = {}, page = 1, pageSize = 20 } = {}) => {
   const { data, loading, error } = useQuery(SEARCH_THREAT_ACTORS, {
     variables: { filters, page, pageSize },
     notifyOnNetworkStatusChange: true,
   });
-  // Return actors as an array, not the paginated object
-  return { actors: data?.searchThreatActors?.results ?? [], loading, error };
+  // Return the full searchThreatActors object for debugging
+  return { actors: data?.searchThreatActors?.results ?? [], loading, error, raw: data?.searchThreatActors };
 };
 
 // Get threat actor detail by id

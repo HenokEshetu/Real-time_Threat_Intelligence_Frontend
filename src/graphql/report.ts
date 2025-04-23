@@ -71,9 +71,7 @@ export const CREATE_REPORT = gql`
       revoked
       spec_version
       type
-      relationship {
-        // ...fields for RelationshipCommonProperties if needed...
-      }
+      relationship
     }
   }
 `;
@@ -103,9 +101,7 @@ export const UPDATE_REPORT = gql`
       revoked
       spec_version
       type
-      relationship {
-        // ...fields for RelationshipCommonProperties if needed...
-      }
+      relationship
     }
   }
 `;
