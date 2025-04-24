@@ -1,12 +1,9 @@
 import React, { useState } from 'react';
-import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { useIndicators } from '../../hooks/useIndicators';
-import { Input } from '@/components/ui/input';
-import { Button } from '@/components/ui/button';
+import { useNavigate } from 'react-router-dom';
+import { useIndicators } from '@/hooks/useIndicators';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { SearchIcon, PlusIcon } from 'lucide-react';
 import {
   Table,
   TableBody,
@@ -15,8 +12,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { Indicator } from '../../types/indicator';
-import { ScrollArea } from '@/components/ui/scroll-area';
+import { Indicator } from '@/types/indicator';
 
 export const IndicatorsPage = () => {
   const navigate = useNavigate();
@@ -120,7 +116,7 @@ export const IndicatorsPage = () => {
       {/* Header */}
 
       {/* Indicators Table */}
-      <div className="sticky top-100 overflow-x-auto overflow-y-auto h-[90vh] bg-white rounded-md">
+      <div className="overflow-x-auto overflow-y-auto h-[90vh] bg-white rounded-md">
         <Table className="w-full text-sm text-foreground">
           <TableHeader className="">
             <TableRow className="bg-gray-100">
@@ -160,7 +156,9 @@ export const IndicatorsPage = () => {
                   </Badge>
                 </TableCell>
                 <TableCell className="p-4 font-medium text-gray-900 hover:underline">
-                  {indicator.name.replace('Indicator: ', '') || 'Untitled'}
+                  {indicator.name.replace('Indicator: ', '') == 'undefined'
+                    ? 'Unknown'
+                    : indicator.name.replace('Indicator: ', '')}
                 </TableCell>
                 <TableCell className="p-4">
                   <div className="flex flex-wrap gap-1">

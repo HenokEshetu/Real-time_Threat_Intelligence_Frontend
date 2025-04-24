@@ -17,14 +17,14 @@ export const IndicatorDetailPage = () => {
 
   return (
     <div className="w-full flex flex-col">
-      <TopContainer className="h-13">
+      <TopContainer className="h-13 top-29">
         <h1 className="text-2xl font-semibold">
           {indicator.name.replace('Indicator: ', '')}
         </h1>
       </TopContainer>
 
       <Tabs defaultValue="overview" className="w-full">
-        <TopContainer className="h-13 flex-start border-b border-gray-200">
+        <TopContainer className="h-13 flex-start border-b border-gray-200 top-42">
           <TabsList className="flex gap-4 bg-transparent">
             {[
               'overview',

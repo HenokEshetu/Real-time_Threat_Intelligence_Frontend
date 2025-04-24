@@ -18,9 +18,9 @@
 @import "tailwindcss/utilities.css" layer(utilities);
 @import "tw-animate-css";
 
-/* @custom-variant dark (&:is(.dark *)); */
+@custom-variant dark (&:is(.dark *));
 
-/* @theme {
+@theme {
     --font-sans: ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
     --font-serif: ui-serif, Georgia, Cambria, "Times New Roman", Times, serif;
     --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
@@ -31,9 +31,9 @@
     --shadow-2xs: 0 1px rgb(0 0 0 / 0.05);
     --shadow-xs: 0 1px 2px 0 rgb(0 0 0 / 0.05);
     --shadow-sm: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
-} */
+}
 
-/* @theme inline {
+@theme inline {
     --radius-sm: calc(var(--radius) - 4px);
     --radius-md: calc(var(--radius) - 2px);
     --radius-lg: var(--radius);
@@ -69,7 +69,7 @@
     --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
     --color-sidebar-border: var(--sidebar-border);
     --color-sidebar-ring: var(--sidebar-ring);
-} */
+}
 
 :root {
     --radius: 0.625rem;
@@ -148,16 +148,11 @@
   body {
     background-color: var(--background);
     color: var(--foreground);
-  }
-}
-
-body {
-    font-family: Inter, Poppins;
+    font-family: Poppins, Inter;
     margin: 0;
     padding: 0;
-    background-color: #f4f4f4;
-}
-
-body::-webkit-scrollbar {
+  }
+  body::-webkit-scrollbar {
     display: none;
+  }
 }

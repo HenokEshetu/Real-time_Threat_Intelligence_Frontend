@@ -24,7 +24,11 @@ export const GET_REPORT = gql`
 `;
 
 export const SEARCH_REPORTS = gql`
-  query SearchReports($filters: SearchReportInput, $page: Int! = 1, $pageSize: Int! = 10) {
+  query SearchReports(
+    $filters: SearchReportInput
+    $page: Int! = 1
+    $pageSize: Int! = 10
+  ) {
     searchReports(filters: $filters, page: $page, pageSize: $pageSize) {
       id
       name
@@ -45,6 +49,38 @@ export const SEARCH_REPORTS = gql`
     }
   }
 `;
+
+// export const CREATE_REPORT = gql`
+//   mutation CreateReport($input: CreateReportInput!) {
+//     createReport(input: $input) {
+//       id
+//       name
+//       description
+//       authors
+//       published
+//       report_types
+//       confidence
+//       created
+//       created_by_ref
+//       modified
+//       labels
+//       object_refs
+//       external_references {
+//         source_name
+//         url
+//         external_id
+//       }
+//       extensions
+//       lang
+//       revoked
+//       spec_version
+//       type
+//       relationship {
+//         // ...fields for RelationshipCommonProperties if needed...
+//       }
+//     }
+//   }
+// `;
 
 export const CREATE_REPORT = gql`
   mutation CreateReport($input: CreateReportInput!) {
@@ -71,12 +107,41 @@ export const CREATE_REPORT = gql`
       revoked
       spec_version
       type
-      relationship {
-        // ...fields for RelationshipCommonProperties if needed...
-      }
     }
   }
 `;
+
+// export const UPDATE_REPORT = gql`
+//   mutation UpdateReport($id: String!, $input: UpdateReportInput!) {
+//     updateReport(id: $id, input: $input) {
+//       id
+//       name
+//       description
+//       authors
+//       published
+//       report_types
+//       confidence
+//       created
+//       created_by_ref
+//       modified
+//       labels
+//       object_refs
+//       external_references {
+//         source_name
+//         url
+//         external_id
+//       }
+//       extensions
+//       lang
+//       revoked
+//       spec_version
+//       type
+//       relationship {
+//         // ...fields for RelationshipCommonProperties if needed...
+//       }
+//     }
+//   }
+// `;
 
 export const UPDATE_REPORT = gql`
   mutation UpdateReport($id: String!, $input: UpdateReportInput!) {
@@ -103,9 +168,6 @@ export const UPDATE_REPORT = gql`
       revoked
       spec_version
       type
-      relationship {
-        // ...fields for RelationshipCommonProperties if needed...
-      }
     }
   }
 `;
