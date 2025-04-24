@@ -52,7 +52,6 @@ export const GET_INDICATOR = gql`
         id
         source_name
         url
-        hashes
       }
       id
       indicator_types
@@ -95,7 +94,6 @@ export const GET_INDICATOR = gql`
           id
           source_name
           url
-          hashes
         }
         id
         labels
