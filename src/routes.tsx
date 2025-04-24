@@ -23,6 +23,11 @@ import { ReportsCreatePage } from './pages/Reports/ReportsCreatePage';
 import CreateThreatActor from './pages/ThreatActors/create';
 import ThreatActorDetail from './pages/ThreatActors/detail';
 import EditThreatActor from './pages/ThreatActors/edit';
+import Ingestion from './pages/Ingestion';
+import { IdentityListPage } from './pages/Identity';
+import { IdentityCreatePage } from './pages/Identity/create';
+import { IdentityEditPage } from './pages/Identity/edit';
+import { IdentityDetailPage } from './pages/Identity/detail';
 
 export const AppRoutes = () => {
   const { isAuthenticated } = useAuth();
@@ -68,6 +73,14 @@ export const AppRoutes = () => {
       <Route path="/indicators/:id/edit" element={<IndicatorEditPage />} />
       <Route path="/indicators/create" element={<IndicatorCreatePage />} />
 
+      <Route path="/identity" element={<IdentityListPage />} />
+      <Route path="/identity/create" element={<IdentityCreatePage />} />
+      <Route path="/identity/:id/edit" element={<IdentityEditPage />} />
+      <Route path="/identity/:id" element={<IdentityDetailPage />} />
+  
+
+
+      <Route path="/ingestion" element={<Ingestion />} />
 
       <Route path="*" element={<Navigate to="/" />} />
     </Routes>

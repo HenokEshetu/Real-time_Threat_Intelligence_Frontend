@@ -8,6 +8,7 @@ import {
   MoonIcon,
   MenuIcon,
   XIcon,
+  UserIcon, // Use UserIcon instead of PersonIcon
 } from 'lucide-react';
 import { Link, useLocation } from 'react-router-dom';
 import { cn } from '@/lib/utils';
@@ -56,6 +57,11 @@ const menuItems = [
     text: 'Artifacts',
     icon: <LockIcon className="h-5 w-5" />,
     path: '/artifacts',
+  },
+  {
+    text: 'Identity',
+    icon: <UserIcon className="h-5 w-5" />, // Use UserIcon here
+    path: '/identity',
   },
 ];
 

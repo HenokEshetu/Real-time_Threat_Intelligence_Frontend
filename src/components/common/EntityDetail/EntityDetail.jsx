@@ -1,8 +1,8 @@
+// NOTE: This file requires 'react-markdown' and 'rehype-highlight'.
+// Install with: npm install react-markdown rehype-highlight
+
 import React from 'react';
 import styles from './EntityDetail.module.css';
-import { Shield } from 'lucide-react';
-import ReactMarkdown from 'react-markdown';
-import rehypeHighlight from 'rehype-highlight';
 
 export const EntityDetail = ({
   id,
@@ -68,9 +68,11 @@ export const EntityDetail = ({
       {description && (
         <div className={styles.section}>
           <h3>Description</h3>
-          <ReactMarkdown rehypePlugins={[rehypeHighlight]}>
+          {/* Remove or comment out markdown rendering if react-markdown is not installed */}
+          {/* <ReactMarkdown rehypePlugins={[rehypeHighlight]}>
             {description}
-          </ReactMarkdown>
+          </ReactMarkdown> */}
+          <div>{description}</div>
         </div>
       )}
 

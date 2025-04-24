@@ -1,3 +1,8 @@
+export interface KillChainPhase {
+  kill_chain_name: string;
+  phase_name: string;
+}
+
 export interface Indicator {
   id: string;
   name?: string;
@@ -16,6 +21,8 @@ export interface Indicator {
   lang?: string;
   external_references?: unknown[];
   object_marking_refs?: string[];
+  kill_chain_phases?: KillChainPhase[];
+  hashes?: Record<string, string>;
 }
 
 export interface CreateIndicatorInput {
