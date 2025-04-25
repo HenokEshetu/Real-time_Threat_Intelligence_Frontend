@@ -21,7 +21,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { TopBreadcrumb } from '@/components/Breadcrumb';
+import { TopBreadcrumb } from '@/components/common/Breadcrumb';
 import { useTheme } from '@/components/ui/theme-provider';
 import { useState } from 'react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
