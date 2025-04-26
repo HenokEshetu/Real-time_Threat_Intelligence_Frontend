@@ -3,6 +3,30 @@ import { gql } from '@apollo/client';
 export const SEARCH_INDICATORS = gql`
   query SearchIndicators(
     $filters: SearchIndicatorInput
+    $page: Int!
+    $pageSize: Int!
+  ) {
+    searchIndicators(filters: $filters, page: $page, pageSize: $pageSize) {
+      results {
+        id
+        name
+        pattern
+        pattern_type
+        valid_from
+        valid_until
+        indicator_types
+        labels
+        description
+        created
+        modified
+      }
+    }
+  }
+`;
+
+export const SEARCH_SUBSCRIPTION_INDICATORS = gql`
+  subscription SearchIndicators(
+    $filters: SearchIndicatorInput
     $page: Int! = 1
     $pageSize: Int! = 10
   ) {

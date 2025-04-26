@@ -1,5 +1,11 @@
 import { useQuery, useMutation } from '@apollo/client';
-import { SEARCH_REPORTS, GET_REPORT, CREATE_REPORT, UPDATE_REPORT, DELETE_REPORT } from '@/graphql/report';
+import {
+  SEARCH_REPORTS,
+  GET_REPORT,
+  CREATE_REPORT,
+  UPDATE_REPORT,
+  DELETE_REPORT,
+} from '@/graphql/report';
 import { SearchReportInput } from '@/types/report';
 
 export const useReports = ({
@@ -16,21 +22,30 @@ export const useReports = ({
     notifyOnNetworkStatusChange: true,
   });
 
-  const reports = data?.searchReports || [];
+  const reports = data?.searchReports?.results || [];
 
   const loadMore = () => {
     fetchMore({
-      variables: { page: page + 1, pageSize },
+      variables: { filter: filters, page: page + 1, pageSize },
       updateQuery: (prev, { fetchMoreResult }) => {
         if (!fetchMoreResult) return prev;
         return {
-          searchReports: [...(prev?.searchReports || []), ...fetchMoreResult.searchReports],
+          searchReports: [
+            ...(prev?.searchReports || []),
+            ...fetchMoreResult.searchReports,
+          ],
         };
       },
     });
   };
 
-  return { reports, loading, error, loadMore, hasMore: reports.length === pageSize };
+  return {
+    reports,
+    loading,
+    error,
+    loadMore,
+    hasMore: reports.length === pageSize,
+  };
 };
 
 export const useReport = (id: string) => {

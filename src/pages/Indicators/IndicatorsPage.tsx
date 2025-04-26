@@ -178,10 +178,10 @@ export const IndicatorsPage: React.FC = () => {
                       {indicator.pattern_type}
                     </Badge>
                   </TableCell>
-                  <TableCell className="p-4 font-medium text-gray-900 hover:underline">
+                  <TableCell className="p-4 font-medium text-gray-900 hover:underline max-w-100 truncate">
                     {indicator.name.replace('Indicator: ', '') || 'Unknown'}
                   </TableCell>
-                  <TableCell className="p-4">
+                  <TableCell className="p-4 max-w-100">
                     <div className="flex flex-wrap gap-1">
                       {displayLabels.map((label) => {
                         if (!labelColorMap.current.has(label)) {

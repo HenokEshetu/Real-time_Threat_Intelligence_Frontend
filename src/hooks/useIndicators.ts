@@ -1,5 +1,9 @@
-import { SEARCH_INDICATORS, GET_INDICATOR } from '@/graphql/indicator';
-import { useQuery } from '@apollo/client';
+import {
+  SEARCH_INDICATORS,
+  GET_INDICATOR,
+  SEARCH_SUBSCRIPTION_INDICATORS,
+} from '@/graphql/indicator';
+import { useQuery, useSubscription } from '@apollo/client';
 
 export const useIndicators = ({
   filters = {},
@@ -18,6 +22,18 @@ export const useIndicators = ({
     },
     notifyOnNetworkStatusChange: true,
   });
+
+  // const { data, loading, error } = useSubscription(
+  //   SEARCH_SUBSCRIPTION_INDICATORS,
+  //   {
+  //     variables: {
+  //       filters: filters,
+  //       page: page,
+  //       pageSize: pageSize,
+  //     },
+  //     fetchPolicy: 'cache-first',
+  //   },
+  // );
 
   const indicators = data?.searchIndicators?.results || [];
 

@@ -3,12 +3,13 @@ import { Card, CardContent } from '../ui/card';
 import { Indicator } from '@/types/indicator';
 import { Badge } from '@/components/ui/badge';
 import { Radarchart } from '../common/RadarChart';
+import { StixPattern } from '../common/StixPattern';
 
 interface ParsedReport {
   [key: string]: string;
 }
 
-// Color palette for label badges
+// Tailwind palette for badges
 const tailwindColors = [
   { bg: 'bg-red-50', border: 'border-red-500', text: 'text-red-600' },
   { bg: 'bg-orange-50', border: 'border-orange-500', text: 'text-orange-600' },
@@ -43,67 +44,61 @@ const tailwindColors = [
   { bg: 'bg-slate-100', border: 'border-slate-500', text: 'text-slate-600' },
   { bg: 'bg-gray-100', border: 'border-gray-500', text: 'text-gray-600' },
 ];
-
 let availableColors = [...tailwindColors];
-
-/**
- * Gets a random Tailwind color combination and ensures it's not reused until all colors are used
- */
 const getRandomTailwindColor = () => {
-  if (availableColors.length === 0) {
-    availableColors = [...tailwindColors];
-  }
-
+  if (availableColors.length === 0) availableColors = [...tailwindColors];
   const idx = Math.floor(Math.random() * availableColors.length);
   const color = availableColors[idx];
   availableColors.splice(idx, 1);
-
   return color;
 };
 
-/**
- * Enhanced parser that handles both STIX and Hybrid Analysis formats
- */
 const parseIntelReport = (raw: string): ParsedReport => {
   const result: ParsedReport = {};
-
-  // First try STIX format (key: value with ** markers)
-  const stixRegex = /\*\*([^:]+):\*\*\s*([\s\S]*?)(?=\s*\*\*[^:]+:\*\*|$)/g;
-  let stixMatch: RegExpExecArray | null;
   let hasStixFormat = false;
 
-  while ((stixMatch = stixRegex.exec(raw))) {
+  // STIX-style **Key:** Value blocks
+  const stixRegex = /\*\*([^:]+):\*\*\s*([\s\S]*?)(?=\s*\*\*[^:]+:\*\*|$)/g;
+  let match: RegExpExecArray | null;
+  while ((match = stixRegex.exec(raw))) {
     hasStixFormat = true;
-    const key = stixMatch[1].trim();
-    const val = stixMatch[2].trim().replace(/\n/g, ' ');
-    result[key] = val;
+    result[match[1].trim()] = match[2].trim().replace(/\n/g, ' ');
   }
 
-  // If no STIX format detected, try Hybrid Analysis format (key: value;)
-  if (!hasStixFormat) {
-    const hybridRegex = /([^:;]+):\s*([^;]+);/g;
-    let hybridMatch: RegExpExecArray | null;
-
-    while ((hybridMatch = hybridRegex.exec(raw))) {
-      const key = hybridMatch[1].trim();
-      const val = hybridMatch[2].trim();
-      result[key] = val;
+  // Fallback only when semicolon-delimited segments present
+  if (!hasStixFormat && raw.includes(';')) {
+    raw.split(/;\s*/g).forEach((seg) => {
+      const [key, ...rest] = seg.split(/:\s*/);
+      const value = rest.join(':').trim();
+      if (!key || !value || key.trim().toLowerCase() === 'source') return;
+      result[key.trim()] = value;
+    });
+    // Format lists and percentages
+    if (result['Processes']) {
+      result['Processes'] = result['Processes']
+        .split('.')
+        .filter(Boolean)
+        .join(', ');
+    }
+    if (result['Threat Score'] && !isNaN(Number(result['Threat Score']))) {
+      result['Threat Score'] = `${result['Threat Score']}%`;
+    }
+    if (result['Tags']) {
+      result['Tags'] = result['Tags'].split(/\s*,\s*/).join(', ');
     }
   }
 
-  // Special handling for Tags/Processes in Hybrid Analysis format
-  if (result['Tags'] && result['Tags'].includes(',')) {
-    result['Tags'] = result['Tags'].split(/\s*,\s*/).join(', ');
-  }
-  if (result['Processes'] && result['Processes'].includes(',')) {
-    result['Processes'] = result['Processes'].split(/\s*,\s*/).join(', ');
+  // Always extract the standalone Source line or phrase
+  const sourceRegex = /\bSource\s*[:\-]\s*([^;\n]+)/i;
+  const srcMatch = raw.match(sourceRegex);
+  if (srcMatch) {
+    result['Source'] = srcMatch[1].trim();
   }
 
   return result;
 };
 
 export const IndicatorOverview = ({ indicator }: { indicator: Indicator }) => {
-  // Parse the indicator description into key-value pairs
   const parsed = useMemo(() => {
     if (typeof indicator.description === 'string') {
       return parseIntelReport(indicator.description);
@@ -111,7 +106,6 @@ export const IndicatorOverview = ({ indicator }: { indicator: Indicator }) => {
     return {};
   }, [indicator.description]);
 
-  // Get labels either from indicator.labels or parsed from description
   const labels: string[] = indicator.labels?.length
     ? indicator.labels
     : parsed['Labels'] || parsed['Tags']
@@ -119,7 +113,6 @@ export const IndicatorOverview = ({ indicator }: { indicator: Indicator }) => {
     : [];
   const uniqueLabels = Array.from(new Set(labels));
 
-  // Persistent color mapping for consistent label colors
   const labelColorMap = useRef<Map<string, (typeof tailwindColors)[0]>>(
     new Map(),
   );
@@ -149,36 +142,51 @@ export const IndicatorOverview = ({ indicator }: { indicator: Indicator }) => {
     return 'bg-green-100 text-green-800';
   };
 
+  const getTlpColors = (tlp: string) => {
+    switch (tlp?.toUpperCase()) {
+      case 'WHITE':
+        return 'bg-white text-black border-black';
+      case 'GREEN':
+        return 'bg-green-100 text-green-800 border-green-800';
+      case 'AMBER':
+        return 'bg-yellow-100 text-yellow-800 border-yellow-800';
+      case 'RED':
+        return 'bg-red-100 text-red-800 border-red-800';
+      default:
+        return 'bg-gray-100 text-gray-800 border-gray-800';
+    }
+  };
+
   return (
     <div className="p-4 grid grid-cols-1 md:grid-cols-2 gap-6">
       {/* Details Section */}
-      <div className="h-auto">
+      <div className="">
         <h1 className="uppercase text-xs font-bold text-slate-600 p-2">
           Details
         </h1>
-        <Card className="bg-transparent h-full border border-gray-300 rounded-sm shadow-none">
+        <Card className="bg-transparent border border-gray-300 rounded-sm shadow-none !py-4">
           <CardContent className="px-3">
             {/* Pattern */}
             <div className="pb-3 w-full">
               <h2 className="font-semibold text-base mb-2">
                 Indicator Pattern
               </h2>
-              <p className="bg-slate-200 p-3 rounded overflow-x-auto font-mono text-sm">
-                {indicator.pattern}
-              </p>
+              <div className="bg-slate-100 border border-slate-600 text-slate-600 font-semibold p-3 rounded overflow-x-auto font-mono text-sm">
+                <StixPattern pattern={indicator.pattern} />
+              </div>
             </div>
 
             {/* Validity & Confidence */}
             <div className="flex justify-between py-3">
               <div className="w-[48%]">
                 <h2 className="font-bold text-base mb-2">Valid From</h2>
-                <p className="bg-slate-200 p-2 rounded w-[52%] font-mono text-sm text-center uppercase">
+                <p className="bg-slate-100 border border-slate-600 text-slate-600 font-semibold p-2 rounded w-[52%] font-mono text-sm text-center uppercase">
                   {indicator.valid_from}
                 </p>
               </div>
               <div className="w-[48%]">
                 <h2 className="font-bold text-base mb-2">Valid Until</h2>
-                <p className="bg-slate-200 p-2 rounded w-[52%] font-mono text-sm text-center uppercase">
+                <p className="bg-slate-100 border border-slate-600 text-slate-600 font-semibold p-2 rounded w-[52%] font-mono text-sm text-center uppercase">
                   {indicator.valid_until}
                 </p>
               </div>
@@ -204,9 +212,9 @@ export const IndicatorOverview = ({ indicator }: { indicator: Indicator }) => {
               </div>
               <div className="w-[31%]">
                 <h2 className="font-bold text-base mb-2">Indicator Type</h2>
-                {parsed['Indicator Type'] && (
+                {indicator.type && (
                   <span className="bg-violet-50 text-violet-600 border-violet-500 border rounded py-1 px-5 text-sm text-center">
-                    {parsed['Indicator Type']}
+                    {indicator.type}
                   </span>
                 )}
               </div>
@@ -229,7 +237,7 @@ export const IndicatorOverview = ({ indicator }: { indicator: Indicator }) => {
                   <h2 className="font-bold text-base mb-2">Threat Score</h2>
                   <span
                     className={`${getThreatScoreColor(
-                      parseInt(parsed['Threat Score'] || 0),
+                      parseInt(parsed['Threat Score'] || '0'),
                     )} py-1 px-6 rounded text-sm text-center`}
                   >
                     {parsed['Threat Score']}
@@ -244,8 +252,30 @@ export const IndicatorOverview = ({ indicator }: { indicator: Indicator }) => {
               </div>
             )}
 
+            {indicator.description && (
+              <div className="flex justify-between py-3">
+                <div className="w-full">
+                  <h2 className="font-bold text-base mb-2">Description</h2>
+                  <p className="border border-slate-200 p-5 rounded-sm text-md text-slate-700 text-pretty">
+                    {indicator.description}
+                  </p>
+                </div>
+              </div>
+            )}
+
+            {parsed['Source'] && (
+              <div className="flex justify-between py-3">
+                <div className="w-full">
+                  <h2 className="font-bold text-base mb-2">Source</h2>
+                  <span className="bg-amber-50 text-amber-600 border-amber-500 border rounded py-2 px-6 text-sm text-center">
+                    {parsed['Source']}
+                  </span>
+                </div>
+              </div>
+            )}
+
             {/* Parsed fields */}
-            <div className="mt-4 space-y-2">
+            <div className="py-3">
               {Object.entries(parsed).map(([key, value]) => {
                 if (
                   [
@@ -253,9 +283,10 @@ export const IndicatorOverview = ({ indicator }: { indicator: Indicator }) => {
                     'Labels',
                     'Value',
                     'Confidence',
-                    // 'Verdict',
-                    // 'Threat Score',
-                    // 'Environment',
+                    'Verdict',
+                    'Threat Score',
+                    'Environment',
+                    'Source',
                   ].includes(key)
                 )
                   return null;
@@ -264,8 +295,8 @@ export const IndicatorOverview = ({ indicator }: { indicator: Indicator }) => {
                   <div key={key} className="py-2">
                     <strong>{key}:</strong>
                     <p
-                      className={`bg-slate-200 p-3 mt-3 rounded text-md break-normal ${
-                        key !== 'Description' ? 'font-mono' : ''
+                      className={`bg-gray-200 p-3 mt-3 rounded text-md break-normal ${
+                        key !== 'Hybrid Analysis sample' ? 'font-mono' : ''
                       }`}
                     >
                       {value}
@@ -273,6 +304,39 @@ export const IndicatorOverview = ({ indicator }: { indicator: Indicator }) => {
                   </div>
                 );
               })}
+            </div>
+
+            <hr />
+            <div className="flex justify-between py-5">
+              {indicator.external_references && (
+                <div className="w-full">
+                  <h2 className="font-bold text-base mb-2">
+                    External References
+                  </h2>
+                  <table className="w-full text-sm text-foreground">
+                    <tbody>
+                      {indicator.external_references.map((ref, index) => (
+                        <tr
+                          key={index}
+                          className="hover:bg-slate-100 transition-colors border-b border-gray-300 cursor-pointer"
+                        >
+                          <td className="p-4 text-gray-700">
+                            <Badge
+                              variant="outline"
+                              className="text-blue-500 border-blue-500 bg-blue-50 py-1"
+                            >
+                              {ref.source_name}
+                            </Badge>
+                          </td>
+                          <td className="p-4 font-medium text-gray-900 hover:underline">
+                            <a href={ref.url}>{ref.url}</a>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              )}
             </div>
 
             {/* Kill Chain Phases */}
@@ -296,29 +360,30 @@ export const IndicatorOverview = ({ indicator }: { indicator: Indicator }) => {
         </Card>
       </div>
 
-      {/* Metadata Section */}
       <div>
         <h1 className="uppercase text-xs font-bold text-slate-600 p-2">
           Basic Information
         </h1>
         <Card className="bg-transparent shadow-none border border-gray-300 rounded-sm">
           <CardContent className="space-y-4 p-6">
-            <div className="space-y-1 text-sm">
-              <div>
-                <strong>Created:</strong>{' '}
-                {new Date(indicator.created).toLocaleString()}
-              </div>
-              <div>
-                <strong>Modified:</strong>{' '}
-                {new Date(indicator.modified).toLocaleString()}
-              </div>
-            </div>
-
             <div className="flex justify-between py-3">
               <div className="w-[48%]">
                 <h2 className="font-bold text-sm mb-2">Pattern Type</h2>
                 <span className="bg-blue-100 text-blue-800 border border-blue-800 py-1 px-5 rounded text-sm text-center uppercase">
                   {indicator.pattern_type}
+                </span>
+              </div>
+              <div className="w-[48%]">
+                <h2 className="font-bold text-sm mb-2">Marking</h2>
+                {/* <span className="bg-blue-100 text-blue-800 border border-blue-800 py-1 px-5 rounded text-sm text-center uppercase">
+                  TLP:{indicator.object_marking_refs[0]}
+                </span> */}
+                <span
+                  className={`py-1 px-5 rounded text-sm text-center uppercase border ${getTlpColors(
+                    indicator.object_marking_refs[0],
+                  )}`}
+                >
+                  TLP:{indicator.object_marking_refs[0]}
                 </span>
               </div>
             </div>
@@ -370,30 +435,32 @@ export const IndicatorOverview = ({ indicator }: { indicator: Indicator }) => {
               )}
             </div>
 
-            <div className="flex justify-between py-3">
-              <div className="w-[48%]">
+            <div className="flex justify-between py-2">
+              <div className="w-full">
                 <h2 className="font-bold text-base mb-2">Created By</h2>
-                <div className="bg-slate-200 p-2 rounded text-sm text-center uppercase">
+                <div className="bg-slate-200 p-2 rounded text-sm uppercase">
                   {indicator.created_by_ref}
                 </div>
               </div>
-              <div className="w-[48%]">
+            </div>
+            <div className="flex justify-between py-2">
+              <div className="w-full">
                 <h2 className="font-bold text-base mb-2">Last Updated</h2>
-                <div className="bg-slate-200 p-2 rounded text-sm text-center uppercase">
+                <div className="bg-slate-200 p-2 rounded text-sm uppercase">
                   {new Date(indicator.modified).toLocaleDateString()}
                 </div>
               </div>
             </div>
-
-            {/* Processes from Hybrid Analysis */}
-            {parsed['Processes'] && (
-              <div className="mt-4">
-                <h2 className="font-bold text-base mb-2">Observed Processes</h2>
-                <div className="bg-slate-200 p-3 rounded text-sm font-mono">
-                  {parsed['Processes']}
-                </div>
+            <div className="space-y-1 text-sm">
+              <div>
+                <strong>Created:</strong>{' '}
+                {new Date(indicator.created).toLocaleString()}
               </div>
-            )}
+              <div>
+                <strong>Modified:</strong>{' '}
+                {new Date(indicator.modified).toLocaleString()}
+              </div>
+            </div>
           </CardContent>
         </Card>
       </div>

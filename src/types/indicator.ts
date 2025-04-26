@@ -1,5 +1,6 @@
 export interface Indicator {
   id: string;
+  type?: string;
   name?: string;
   pattern: string;
   pattern_type: string;

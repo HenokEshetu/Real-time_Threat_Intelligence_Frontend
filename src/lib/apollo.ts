@@ -3,30 +3,32 @@ import {
   InMemoryCache,
   createHttpLink,
   split,
-} from '@apollo/client'; // import { setContext } from '@apollo/client/link/context';
+} from '@apollo/client';
 import { GraphQLWsLink } from '@apollo/client/link/subscriptions';
 import { getMainDefinition } from '@apollo/client/utilities';
 import { createClient } from 'graphql-ws';
 
+// HTTP connection
 const httpLink = createHttpLink({
-  uri: 'http://localhost:4000/graphql', // Update to backend server URL
+  uri: 'http://localhost:4000/graphql',
 });
 
+// WebSocket connection
 const wsLink = new GraphQLWsLink(
   createClient({
-    url: 'ws://localhost:4000/graphql', // Update to backend server URL
-    connectionParams: () => {
-      // const token = localStorage.getItem('token');
-      // return {
-      //   headers: {
-      //     authorization: token ? `Bearer ${token}` : '',
-      //   },
-      // };
-      return {};
-    },
+    url: 'ws://localhost:4000/graphql',
+    retryAttempts: 3,
+    shouldRetry: (errOrCloseEvent) => true,
+    connectionParams: () => ({
+      // Uncomment if you need authentication
+      // headers: {
+      //   authorization: localStorage.getItem('token') || '',
+      // },
+    }),
   }),
 );
 
+// Split links
 const splitLink = split(
   ({ query }) => {
     const definition = getMainDefinition(query);
@@ -39,16 +41,7 @@ const splitLink = split(
   httpLink,
 );
 
-// const authLink = setContext((_, { headers }) => {
-//   const token = localStorage.getItem('token');
-//   return {
-//     headers: {
-//       ...headers,
-//       authorization: token ? `Bearer ${token}` : '',
-//     },
-//   };
-// });
-
+// Create client
 export const client = new ApolloClient({
   link: splitLink,
   cache: new InMemoryCache(),

@@ -5,7 +5,6 @@ import { IndicatorsPage } from './pages/Indicators/IndicatorsPage';
 import { Malware } from './pages/Malware';
 import { MalwareDetailPage } from './pages/Malware/detail';
 import { MalwareCreatePage } from './pages/Malware/create';
-import { Reports } from './pages/Reports';
 import { ArtifactsPage } from './pages/Artifacts/index';
 import { Login } from './pages/Login';
 import { useAuth } from './hooks/useAuth';

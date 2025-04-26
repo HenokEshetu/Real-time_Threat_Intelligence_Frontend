@@ -1,14 +1,16 @@
+import React, { useState } from 'react';
 import {
   LayoutDashboard,
   ShieldAlertIcon,
   BugIcon,
   FileTextIcon,
   LockIcon,
+  UserIcon,
   SunIcon,
   MoonIcon,
   MenuIcon,
   XIcon,
-  UserIcon, // Use UserIcon instead of PersonIcon
+  ChevronDown,
 } from 'lucide-react';
 import { Link, useLocation } from 'react-router-dom';
 import { cn } from '@/lib/utils';
@@ -23,29 +25,58 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { TopBreadcrumb } from '@/components/common/Breadcrumb';
 import { useTheme } from '@/components/ui/theme-provider';
-import { useState } from 'react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import React from 'react';
 import { SearchBar } from '@/components/common/SearchBar';
 import { Breadcrumb } from '@/components/ui/breadcrumb';
 import { TopContainer } from '@/components/common/TopContainer';
 import logo from '@/static/images/favicon.png';
+import {
+  SidebarMenu,
+  SidebarMenuButton,
+  SidebarMenuItem,
+  SidebarMenuSub,
+  SidebarMenuSubItem,
+  SidebarProvider,
+} from '../ui/sidebar';
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from '../ui/collapsible';
 
-const menuItems = [
+interface MenuItem {
+  text: string;
+  icon: React.ReactNode;
+  path?: string;
+  subItems?: MenuItem[];
+}
+
+const menuItems: MenuItem[] = [
   {
     text: 'Dashboard',
     icon: <LayoutDashboard className="h-5 w-5" />,
     path: '/',
   },
   {
+    text: 'Observations',
+    icon: <ShieldAlertIcon className="h-5 w-5" />,
+    subItems: [
+      {
+        text: 'Indicators',
+        icon: <ShieldAlertIcon className="h-5 w-5" />,
+        path: '/indicators',
+      },
+      {
+        text: 'Artifacts',
+        icon: <LockIcon className="h-5 w-5" />,
+        path: '/artifacts',
+      },
+    ],
+  },
+  {
     text: 'Threat Actors',
     icon: <LockIcon className="h-5 w-5" />,
     path: '/threat-actors',
-  },
-  {
-    text: 'Indicators',
-    icon: <ShieldAlertIcon className="h-5 w-5" />,
-    path: '/indicators',
   },
   { text: 'Malware', icon: <BugIcon className="h-5 w-5" />, path: '/malware' },
   {
@@ -54,13 +85,8 @@ const menuItems = [
     path: '/reports',
   },
   {
-    text: 'Artifacts',
-    icon: <LockIcon className="h-5 w-5" />,
-    path: '/artifacts',
-  },
-  {
     text: 'Identity',
-    icon: <UserIcon className="h-5 w-5" />, // Use UserIcon here
+    icon: <UserIcon className="h-5 w-5" />,
     path: '/identity',
   },
 ];
@@ -69,8 +95,13 @@ export const Layout = ({ children }: { children: React.ReactNode }) => {
   const { theme, setTheme } = useTheme();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const location = useLocation();
+  const [toogleDropdown, setToggleDropdown] = useState(false);
 
   const toggleTheme = () => setTheme(theme === 'dark' ? 'light' : 'dark');
+
+  const handleDropdown = () => {
+    setToggleDropdown(!toogleDropdown);
+  };
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -85,14 +116,10 @@ export const Layout = ({ children }: { children: React.ReactNode }) => {
           >
             <MenuIcon className="h-5 w-5" />
           </Button>
-          <div className="flex justify-between items-center w-180">
-            <div className="flex justify-between items-center w-37">
-              <img src={logo} className="w-13 h-13 rounded-full" />
-              <h1 className="text-3xl font-semibold hidden md:block p-0">
-                RtCTI
-              </h1>
-            </div>
-            <SearchBar />
+          <div className="flex items-center w-180">
+            <img src={logo} className="w-13 h-13 rounded-full" />
+            <h1 className="text-5xl font-semibold hidden md:block ml-2">ዳጉ</h1>
+            <SearchBar className="ml-18" />
           </div>
           <Breadcrumb className="hidden md:flex ml-4" />
         </div>
@@ -137,31 +164,79 @@ export const Layout = ({ children }: { children: React.ReactNode }) => {
           </DropdownMenu>
         </div>
       </header>
+
       <TopContainer className="h-12">
         <TopBreadcrumb />
       </TopContainer>
 
       <div className="flex flex-1">
-        {/* Sidebar */}
+        {/* Desktop Sidebar */}
         <aside className="hidden md:flex md:flex-col md:w-50 h-full fixed top-17 border-r bg-background pt-4">
-          <nav className="space-y-1 px-2">
-            {menuItems.map((item) => (
-              <Link
-                key={item.text}
-                to={item.path}
-                className={cn(
-                  'flex items-center px-3 py-2 text-sm font-medium rounded-md',
-                  'hover:bg-accent hover:text-accent-foreground transition-colors',
-                  location.pathname === item.path
-                    ? 'bg-primary/10 text-primary'
-                    : 'text-muted-foreground hover:text-primary',
-                )}
-              >
-                <span className="mr-3">{item.icon}</span>
-                {item.text}
-              </Link>
-            ))}
-          </nav>
+          <SidebarProvider>
+            {' '}
+            {/* <-- wrap SidebarMenu with SidebarProvider */}
+            <SidebarMenu>
+              {menuItems.map((item) => (
+                <Collapsible key={item.text} defaultOpen>
+                  <SidebarMenuItem>
+                    <CollapsibleTrigger asChild>
+                      <SidebarMenuButton>
+                        {item.path ? (
+                          <Link
+                            to={item.path}
+                            className={cn(
+                              'flex items-center w-full px-3 py-2 text-sm font-medium rounded-md text-left',
+                              location.pathname === item.path
+                                ? 'bg-primary/10 text-primary'
+                                : 'text-muted-foreground hover:text-primary',
+                            )}
+                          >
+                            <span className="mr-3">{item.icon}</span>
+                            {item.text}
+                          </Link>
+                        ) : (
+                          <button
+                            className="flex items-center w-full px-3 py-2 text-sm font-medium rounded-md text-muted-foreground"
+                            onClick={handleDropdown}
+                          >
+                            <span className="mr-3">{item.icon}</span>
+                            {item.text}
+                            {toogleDropdown ? (
+                              <ChevronDown className="ml-auto h-4 w-4" />
+                            ) : (
+                              <ChevronDown className="ml-auto h-4 w-4 rotate-180" />
+                            )}
+                          </button>
+                        )}
+                      </SidebarMenuButton>
+                    </CollapsibleTrigger>
+                    {item.subItems && (
+                      <CollapsibleContent className="transition-transform">
+                        <SidebarMenuSub>
+                          {item.subItems.map((sub) => (
+                            <SidebarMenuSubItem key={sub.text}>
+                              <Link
+                                to={sub.path!}
+                                className={cn(
+                                  'flex items-center w-full px-3 py-2 text-sm font-medium rounded-md text-left pl-8',
+                                  location.pathname === sub.path
+                                    ? 'bg-primary/10 text-primary'
+                                    : 'text-muted-foreground hover:text-primary',
+                                )}
+                              >
+                                <span className="mr-3">{sub.icon}</span>
+                                {sub.text}
+                              </Link>
+                            </SidebarMenuSubItem>
+                          ))}
+                        </SidebarMenuSub>
+                      </CollapsibleContent>
+                    )}
+                  </SidebarMenuItem>
+                </Collapsible>
+              ))}
+            </SidebarMenu>
+          </SidebarProvider>
         </aside>
 
         {/* Mobile Sidebar */}
@@ -183,21 +258,40 @@ export const Layout = ({ children }: { children: React.ReactNode }) => {
           </div>
           <nav className="space-y-1 px-2 py-4">
             {menuItems.map((item) => (
-              <Link
-                key={item.text}
-                to={item.path}
-                className={cn(
-                  'flex items-center px-3 py-2 text-sm font-medium rounded-md',
-                  'hover:bg-accent hover:text-accent-foreground transition-colors',
-                  location.pathname === item.path
-                    ? 'bg-primary/10 text-primary'
-                    : 'text-muted-foreground hover:text-primary',
+              <React.Fragment key={item.text}>
+                {item.path && (
+                  <Link
+                    to={item.path}
+                    className={cn(
+                      'flex items-center px-3 py-2 text-sm font-medium rounded-md',
+                      location.pathname === item.path
+                        ? 'bg-primary/10 text-primary'
+                        : 'text-muted-foreground hover:text-primary',
+                    )}
+                    onClick={() => setMobileMenuOpen(false)}
+                  >
+                    <span className="mr-3">{item.icon}</span>
+                    {item.text}
+                  </Link>
                 )}
-                onClick={() => setMobileMenuOpen(false)}
-              >
-                <span className="mr-3">{item.icon}</span>
-                {item.text}
-              </Link>
+                {item.subItems &&
+                  item.subItems.map((sub) => (
+                    <Link
+                      key={sub.text}
+                      to={sub.path!}
+                      className={cn(
+                        'flex items-center px-3 py-2 text-sm font-medium rounded-md pl-8',
+                        location.pathname === sub.path
+                          ? 'bg-primary/10 text-primary'
+                          : 'text-muted-foreground hover:text-primary',
+                      )}
+                      onClick={() => setMobileMenuOpen(false)}
+                    >
+                      <span className="mr-3">{sub.icon}</span>
+                      {sub.text}
+                    </Link>
+                  ))}
+              </React.Fragment>
             ))}
           </nav>
         </div>

@@ -24,23 +24,49 @@ export const GET_REPORT = gql`
 `;
 
 export const SEARCH_REPORTS = gql`
-  query SearchReports($filters: SearchReportInput, $page: Int! = 1, $pageSize: Int! = 10) {
+  query SearchReports(
+    $filters: SearchReportInput
+    $page: Int = 1
+    $pageSize: Int = 10
+  ) {
     searchReports(filters: $filters, page: $page, pageSize: $pageSize) {
-      id
-      name
-      description
-      authors
-      published
-      report_types
-      confidence
-      created
-      modified
-      labels
-      object_refs
-      external_references {
-        source_name
-        url
-        external_id
+      page
+      pageSize
+      total
+      totalPages
+      results {
+        id
+        name
+        description
+        report_types
+        published
+        authors
+        created
+        modified
+        object_refs
+        confidence
+        labels
+        lang
+        revoked
+        spec_version
+        type
+        created_by_ref
+        enrichment {
+          virustotal
+          whois
+          # other enrichment fields as needed
+        }
+        external_references {
+          source_name
+          url
+          external_id
+        }
+        object_marking_refs
+        relationship {
+          relationship_type
+          source_ref
+          target_ref
+        }
       }
     }
   }
