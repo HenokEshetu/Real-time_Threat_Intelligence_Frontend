@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { ThreatActor } from '../../../types/threatActor';
+import { ThreatActor } from '../../../types/threat-actor';
 
 interface ThreatActorCardProps {
   actor: ThreatActor;
@@ -15,7 +15,7 @@ const Chip: React.FC<{ text: string; color?: string }> = ({ text, color }) => (
     style={{
       background: color || 'linear-gradient(90deg,#3b82f6,#06b6d4)',
       color: '#fff',
-      boxShadow: '0 1px 4px rgba(59,130,246,0.15)'
+      boxShadow: '0 1px 4px rgba(59,130,246,0.15)',
     }}
   >
     {text}
@@ -60,7 +60,7 @@ export const ThreatActorCard: React.FC<ThreatActorCardProps> = ({
     'linear-gradient(90deg,#fbbf24,#f59e42)',
     'linear-gradient(90deg,#a21caf,#6366f1)',
     'linear-gradient(90deg,#f43f5e,#fbbf24)',
-    'linear-gradient(90deg,#06b6d4,#3b82f6)'
+    'linear-gradient(90deg,#06b6d4,#3b82f6)',
   ];
 
   // For chip color cycling
@@ -76,13 +76,19 @@ export const ThreatActorCard: React.FC<ThreatActorCardProps> = ({
   // Avatar: use a paperclip icon for visual cue
   const avatar = (
     <div className="rounded-full bg-gradient-to-br from-blue-400 to-blue-700 dark:from-blue-900 dark:to-blue-700 w-10 h-10 flex items-center justify-center text-xl font-extrabold text-white shadow-lg border-4 border-white dark:border-zinc-900">
-      <span role="img" aria-label="paperclip" className="text-2xl">📎</span>
+      <span role="img" aria-label="paperclip" className="text-2xl">
+        📎
+      </span>
     </div>
   );
 
   return (
     <div
-      className={`relative group ${interactive ? 'hover:ring-2 hover:ring-blue-300 focus:ring-2 focus:ring-blue-400' : ''}`}
+      className={`relative group ${
+        interactive
+          ? 'hover:ring-2 hover:ring-blue-300 focus:ring-2 focus:ring-blue-400'
+          : ''
+      }`}
       tabIndex={0}
       aria-label={actor.name}
       style={{ minHeight: 220, outline: 'none', background: 'none' }}
@@ -97,9 +103,14 @@ export const ThreatActorCard: React.FC<ThreatActorCardProps> = ({
         {header}
         {avatar}
         <div className="mt-2 text-center">
-          <div className="font-bold text-base text-blue-900 dark:text-blue-200">{actor.name}</div>
+          <div className="font-bold text-base text-blue-900 dark:text-blue-200">
+            {actor.name}
+          </div>
           <div className="flex justify-center mt-1">
-            <Chip text="threat-actor" color="linear-gradient(90deg,#06b6d4,#3b82f6)" />
+            <Chip
+              text="threat-actor"
+              color="linear-gradient(90deg,#06b6d4,#3b82f6)"
+            />
           </div>
         </div>
         <div className="flex flex-wrap justify-center gap-1 mt-2">
@@ -110,9 +121,11 @@ export const ThreatActorCard: React.FC<ThreatActorCardProps> = ({
               color={
                 label.toLowerCase() === 'apt'
                   ? 'linear-gradient(90deg,#fbbf24,#f59e42)'
-                  : label.toLowerCase() === 'russian' || label.toLowerCase() === 'north-korea'
+                  : label.toLowerCase() === 'russian' ||
+                    label.toLowerCase() === 'north-korea'
                   ? 'linear-gradient(90deg,#f59e42,#fbbf24)'
-                  : label.toLowerCase() === 'spy' || label.toLowerCase() === 'crime_syndicate'
+                  : label.toLowerCase() === 'spy' ||
+                    label.toLowerCase() === 'crime_syndicate'
                   ? 'linear-gradient(90deg,#3b82f6,#6366f1)'
                   : getColor(i)
               }
@@ -128,7 +141,7 @@ export const ThreatActorCard: React.FC<ThreatActorCardProps> = ({
           <button
             className="text-xs text-blue-600 hover:underline focus:outline-none"
             tabIndex={-1}
-            onClick={e => {
+            onClick={(e) => {
               e.stopPropagation();
               if (onClick) onClick(actor.id);
             }}

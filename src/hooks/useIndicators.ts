@@ -36,8 +36,9 @@ export const useIndicators = ({
   // );
 
   const indicators = data?.searchIndicators?.results || [];
+  const total = data?.searchIndicators?.total || 0;
 
-  console.log('Indicators:', indicators);
+  console.log('total ', total);
 
   const loadMore = () => {
     fetchMore({
@@ -62,6 +63,7 @@ export const useIndicators = ({
     indicators,
     loading,
     error,
+    total,
     loadMore,
     hasMore: indicators.length === pageSize,
   };

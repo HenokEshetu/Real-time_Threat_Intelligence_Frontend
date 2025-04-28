@@ -1,0 +1,87 @@
+import { gql } from '@apollo/client';
+
+export const SEARCH_FILE_OBSERVABLES = gql`
+  query searchFiles($filter: SearchFileInput!, $from: Int!, $size: Int!) {
+    searchFiles(filters: $filter, from: $from, size: $size) {
+      page
+      pageSize
+      total
+      totalPages
+      results {
+        atime
+        confidence
+        contains_refs
+        content_ref
+        created
+        created_by_ref
+        ctime
+        defanged
+        enrichment {
+          abuseipdb
+          asn
+          dns
+          geo
+          hybrid
+          misp
+          shodan
+          ssl
+          threatcrowd
+          threatfox
+          virustotal
+          whois
+        }
+        extensions
+        external_references {
+          description
+          external_id
+          id
+          source_name
+          url
+        }
+        hashes {
+          MD5
+          SHA_1
+          SHA_256
+          SHA_512
+        }
+        id
+        labels
+        lang
+        magic_number_hex
+        mime_type
+        modified
+        mtime
+        name
+        name_enc
+        ntfs_ext {
+          alternate_data_streams
+          sid
+        }
+        object_marking_refs
+        parent_directory_ref
+        pdf_ext {
+          version
+          document_info_dict
+        }
+        raster_image_ext {
+          bits_per_pixel
+        }
+        revoked
+        size
+        spec_version
+        type
+        unix_ext {
+          group_id
+          mode
+          user_id
+        }
+        windows_pe_binary_ext {
+          imphash
+          optional_header
+          pe_type
+          sections
+        }
+      }
+    }
+  }
+`;

@@ -1,49 +1,57 @@
+export interface Enrichment {
+  abuseipdb?: any;
+  asn?: any;
+  dns?: any;
+  geo?: any;
+  hybrid?: any;
+  misp?: any;
+  shodan?: any;
+  ssl?: any;
+  threatcrowd?: any;
+  threatfox?: any;
+  virustotal?: any;
+  whois?: any;
+}
+
 export interface ExternalReference {
   source_name: string;
   url?: string;
   external_id?: string;
 }
 
+export interface RelationshipCommonProperties {
+  relationship_type: string;
+  source_ref: string;
+  target_ref: string;
+}
+
 export interface Report {
   id: string;
   name: string;
   description?: string;
-  authors?: string[];
-  published: string;
   report_types: string[];
-  confidence?: number;
+  published: string;
+  authors: string[];
   created: string;
-  created_by_ref?: string;
   modified: string;
+  object_refs: string[];
+  confidence?: number;
   labels?: string[];
-  object_refs?: string[];
-  external_references?: ExternalReference[];
-  extensions?: Record<string, any>;
   lang?: string;
   revoked?: boolean;
   spec_version: string;
   type: string;
-  relationship?: any[];
+  created_by_ref?: string;
+  enrichment?: Enrichment;
+  external_references?: ExternalReference[];
+  object_marking_refs?: string[];
+  relationship?: RelationshipCommonProperties[];
 }
 
-export interface SearchReportInput {
-  Relationship?: any[];
-  authors?: string[];
-  confidence?: number;
-  created?: string;
-  created_by_ref?: string;
-  description?: string;
-  extensions?: Record<string, any>;
-  external_references?: ExternalReference[];
-  id?: string;
-  labels?: string[];
-  lang?: string;
-  modified?: string;
-  name?: string;
-  object_refs?: string[];
-  published?: string;
-  report_types?: string[];
-  revoked?: boolean;
-  spec_version?: string;
-  type?: string;
+export interface ReportSearchResult {
+  page: number;
+  pageSize: number;
+  total: number;
+  totalPages: number;
+  results: Report[];
 }

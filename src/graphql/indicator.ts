@@ -20,6 +20,8 @@ export const SEARCH_INDICATORS = gql`
         created
         modified
       }
+      total
+      totalPages
     }
   }
 `;

@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React, { useRef, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useIndicators } from '@/hooks/useIndicators';
 import { Badge } from '@/components/ui/badge';
@@ -13,8 +13,9 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { Indicator } from '@/types/indicator';
+import { Button } from '@/components/ui/button';
+import { ChevronsLeft, ChevronsRight } from 'lucide-react';
 
-// utility colors
 const tailwindColors = [
   { bg: 'bg-red-50', border: 'border-red-500', text: 'text-red-600' },
   { bg: 'bg-orange-50', border: 'border-orange-500', text: 'text-orange-600' },
@@ -46,50 +47,60 @@ const tailwindColors = [
     border: 'border-neutral-500',
     text: 'text-neutral-600',
   },
-  {
-    bg: 'bg-slate-100',
-    border: 'border-slate-500',
-    text: 'text-slate-600',
-  },
-  {
-    bg: 'bg-gray-100',
-    border: 'border-gray-500',
-    text: 'text-gray-600',
-  },
+  { bg: 'bg-slate-100', border: 'border-slate-500', text: 'text-slate-600' },
+  { bg: 'bg-gray-100', border: 'border-gray-500', text: 'text-gray-600' },
 ];
 
-var availableColors = [...tailwindColors];
+let availableColors = [...tailwindColors];
 
 const getRandomTailwindColor = () => {
-  // once we’ve used them all, reset
   if (availableColors.length === 0) {
     availableColors = [...tailwindColors];
   }
 
-  // pick a random index from the remaining colors
   const idx = Math.floor(Math.random() * availableColors.length);
   const color = availableColors[idx];
-
-  // remove it so it can’t be reused until reset
   availableColors.splice(idx, 1);
-
   return color;
 };
 
-export const IndicatorsPage: React.FC = () => {
+export const IndicatorsPage = () => {
   const navigate = useNavigate();
-  const { indicators, loading, error } = useIndicators({
+  const [currentPage, setCurrentPage] = useState(1);
+  const pageSize = 50;
+
+  const { indicators, loading, error, total } = useIndicators({
     filters: {},
-    page: 1,
-    pageSize: 100,
+    page: currentPage,
+    pageSize,
   });
 
-  // Persistent color map for labels
-  const labelColorMap = useRef<Map<string, (typeof tailwindColors)[0]>>(
+  const labelColorMap = React.useRef<Map<string, (typeof tailwindColors)[0]>>(
     new Map(),
   );
 
+  const totalPages = Math.ceil((total || 0) / pageSize);
+
   const handleViewIndicator = (id: string) => navigate(`/indicators/${id}`);
+
+  const handlePageChange = (newPage: number) => {
+    setCurrentPage(Math.max(1, Math.min(newPage, totalPages)));
+  };
+
+  const getTlpColors = (tlp: string) => {
+    switch (tlp?.toUpperCase()) {
+      case 'WHITE':
+        return 'bg-white text-black border-black';
+      case 'GREEN':
+        return 'bg-green-100 text-green-800 border-green-800';
+      case 'AMBER':
+        return 'bg-yellow-100 text-yellow-800 border-yellow-800';
+      case 'RED':
+        return 'bg-red-100 text-red-800 border-red-800';
+      default:
+        return 'bg-gray-100 text-gray-800 border-gray-800';
+    }
+  };
 
   if (loading && indicators.length === 0) {
     return (
@@ -121,9 +132,9 @@ export const IndicatorsPage: React.FC = () => {
   }
 
   return (
-    <div className="w-full flex flex-col">
-      <div className="overflow-x-auto overflow-y-auto h-[90vh] bg-white rounded-md">
-        <Table className="w-full text-sm text-foreground">
+    <div className="w-full flex flex-col space-y-4">
+      <div className="overflow-x-auto overflow-y-auto h-[85vh] bg-white rounded-md">
+        <Table className="w-full text-sm text-foreground h-full">
           <TableHeader>
             <TableRow className="bg-gray-100">
               <TableHead className="font-bold p-4 text-gray-800">
@@ -133,10 +144,10 @@ export const IndicatorsPage: React.FC = () => {
                 Name
               </TableHead>
               <TableHead className="font-bold p-4 text-gray-800">
-                Labels
+                Markings
               </TableHead>
               <TableHead className="font-bold p-4 text-gray-800">
-                Language
+                Labels
               </TableHead>
               <TableHead className="font-bold p-4 text-gray-800">
                 Valid From
@@ -149,12 +160,17 @@ export const IndicatorsPage: React.FC = () => {
           <TableBody>
             {indicators.map((indicator: Indicator) => {
               const labels = indicator.labels || [];
-              // remove duplicates while preserving order
-              const uniqueLabels: string[] = [];
+              var uniqueLabels: string[] = [];
+              var marking = '';
+
               labels.forEach((lbl) => {
                 if (!uniqueLabels.includes(lbl)) uniqueLabels.push(lbl);
+                if (lbl.includes('tlp:')) {
+                  marking = lbl;
+                  uniqueLabels = uniqueLabels.filter((label) => label !== lbl);
+                }
               });
-              // pick the 3 shortest unique labels but display them in original order
+
               const shortestThree = [...uniqueLabels]
                 .sort((a, b) => a.length - b.length)
                 .slice(0, 3);
@@ -180,6 +196,24 @@ export const IndicatorsPage: React.FC = () => {
                   </TableCell>
                   <TableCell className="p-4 font-medium text-gray-900 hover:underline max-w-100 truncate">
                     {indicator.name.replace('Indicator: ', '') || 'Unknown'}
+                  </TableCell>
+                  <TableCell className={`p-4 text-gray-600`}>
+                    <Badge
+                      variant="outline"
+                      className={`max-w-28 ${getTlpColors(
+                        marking.replaceAll('tlp:', '') ||
+                          indicator.object_marking_refs
+                          ? indicator.object_marking_refs[0]
+                          : 'unknown',
+                      )} uppercase truncate`}
+                    >
+                      {marking ||
+                        `TLP:${
+                          indicator.object_marking_refs
+                            ? indicator.object_marking_refs[0]
+                            : 'unknown'
+                        }`}
+                    </Badge>
                   </TableCell>
                   <TableCell className="p-4 max-w-100">
                     <div className="flex flex-wrap gap-1">
@@ -212,9 +246,6 @@ export const IndicatorsPage: React.FC = () => {
                     </div>
                   </TableCell>
                   <TableCell className="p-4 text-gray-600">
-                    {indicator.lang || 'N/A'}
-                  </TableCell>
-                  <TableCell className="p-4 text-gray-600">
                     {indicator.valid_from
                       ? new Date(indicator.valid_from).toLocaleDateString()
                       : '—'}
@@ -229,6 +260,50 @@ export const IndicatorsPage: React.FC = () => {
             })}
           </TableBody>
         </Table>
+      </div>
+      <div className="flex items-center justify-between px-4 py-2 border-t">
+        <div className="text-sm text-muted-foreground">
+          Showing {(currentPage - 1) * pageSize + 1} to{' '}
+          {Math.min(currentPage * pageSize, total || 0)} of {total || 0}{' '}
+          indicators
+        </div>
+        <div className="flex items-center space-x-2">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => handlePageChange(1)}
+            disabled={currentPage === 1 || loading}
+          >
+            <ChevronsLeft className="h-4 w-4" />
+          </Button>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => handlePageChange(currentPage - 1)}
+            disabled={currentPage === 1 || loading}
+          >
+            <ChevronsLeft className="h-4 w-4" />
+          </Button>
+          <span className="px-2 text-sm font-medium">
+            Page {currentPage} of {totalPages}
+          </span>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => handlePageChange(currentPage + 1)}
+            disabled={currentPage === totalPages || loading}
+          >
+            <ChevronsRight className="h-4 w-4" />
+          </Button>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => handlePageChange(totalPages)}
+            disabled={currentPage === totalPages || loading}
+          >
+            <ChevronsRight className="h-4 w-4" />
+          </Button>
+        </div>
       </div>
     </div>
   );

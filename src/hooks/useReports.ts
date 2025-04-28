@@ -6,14 +6,14 @@ import {
   UPDATE_REPORT,
   DELETE_REPORT,
 } from '@/graphql/report';
-import { SearchReportInput } from '@/types/report';
+import { ReportSearchResult } from '@/types/report';
 
 export const useReports = ({
   filters = {},
   page = 1,
   pageSize = 10,
 }: {
-  filters?: SearchReportInput;
+  filters?: Record<string, any>;
   page?: number;
   pageSize?: number;
 }) => {
@@ -23,6 +23,7 @@ export const useReports = ({
   });
 
   const reports = data?.searchReports?.results || [];
+  const total = data?.searchReports?.total || 0;
 
   const loadMore = () => {
     fetchMore({
@@ -44,6 +45,7 @@ export const useReports = ({
     loading,
     error,
     loadMore,
+    total,
     hasMore: reports.length === pageSize,
   };
 };

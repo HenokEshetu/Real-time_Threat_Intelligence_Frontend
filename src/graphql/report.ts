@@ -52,9 +52,18 @@ export const SEARCH_REPORTS = gql`
         type
         created_by_ref
         enrichment {
+          abuseipdb
+          asn
+          dns
+          geo
+          hybrid
+          misp
+          shodan
+          ssl
+          threatcrowd
+          threatfox
           virustotal
           whois
-          # other enrichment fields as needed
         }
         external_references {
           source_name

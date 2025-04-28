@@ -1,48 +1,54 @@
-import { useQuery, useMutation } from '@apollo/client';
-import {
-  SEARCH_THREAT_ACTORS,
-  THREAT_ACTOR_QUERY,
-} from '../graphql/threatActor/queries';
-import {
-  CREATE_THREAT_ACTOR,
-  UPDATE_THREAT_ACTOR,
-  DELETE_THREAT_ACTOR,
-} from '../graphql/threatActor/mutations';
+import { useQuery } from '@apollo/client';
+import { SEARCH_THREAT_ACTORS } from '@/graphql/threat-actors';
+import { ThreatActor } from '@/types/threat-actor';
 
-// List threat actors
-// Note: Network errors will be available in the `error` property.
-export const useThreatActors = ({ filters = {}, page = 1, pageSize = 20 } = {}) => {
-  const { data, loading, error } = useQuery(SEARCH_THREAT_ACTORS, {
-    variables: { filters, page, pageSize },
+export const useThreatActors = ({
+  filters = {},
+  page = 1,
+  pageSize = 10,
+}: {
+  filters?: Record<string, any>;
+  page?: number;
+  pageSize?: number;
+}) => {
+  const { data, loading, error, fetchMore } = useQuery(SEARCH_THREAT_ACTORS, {
+    variables: { filters: filters, page: page, pageSize: pageSize },
     notifyOnNetworkStatusChange: true,
   });
-  // Return the full searchThreatActors object for debugging
-  return { actors: data?.searchThreatActors?.results ?? [], loading, error, raw: data?.searchThreatActors };
+
+  const threatActors = data?.searchThreatActors?.results || [];
+  const total = data?.searchThreatActors?.total || 0;
+
+  const loadMore = () => {
+    fetchMore({
+      variables: { filter: filters, page: page + 1, pageSize },
+      updateQuery: (prev, { fetchMoreResult }) => {
+        if (!fetchMoreResult) return prev;
+        return {
+          searchReports: [
+            ...(prev?.searchThreatActors || []),
+            ...fetchMoreResult.searchThreatActors,
+          ],
+        };
+      },
+    });
+  };
+
+  return {
+    threatActors,
+    loading,
+    error,
+    loadMore,
+    total,
+    hasMore: threatActors.length === pageSize,
+  };
 };
 
-// Get threat actor detail by id
-export const useThreatActorDetail = (id: string | undefined) => {
-  const { data, loading, error } = useQuery(THREAT_ACTOR_QUERY, {
-    variables: { id },
-    skip: !id,
-  });
-  return { actor: data?.threatActor, loading, error };
-};
+// export const useReport = (id: string) => {
+//   const { data, loading, error } = useQuery(GET_REPORT, { variables: { id } });
+//   return { report: data?.getReport, loading, error };
+// };
 
-// Create threat actor
-export const useCreateThreatActor = () => {
-  const [createThreatActor, { loading, error }] = useMutation(CREATE_THREAT_ACTOR);
-  return { createThreatActor, loading, error };
-};
-
-// Update threat actor
-export const useUpdateThreatActor = () => {
-  const [updateThreatActor, { loading, error }] = useMutation(UPDATE_THREAT_ACTOR);
-  return { updateThreatActor, loading, error };
-};
-
-// Delete threat actor
-export const useDeleteThreatActor = () => {
-  const [deleteThreatActor, { loading, error }] = useMutation(DELETE_THREAT_ACTOR);
-  return { deleteThreatActor, loading, error };
-};
+// export const useCreateReport = () => useMutation(CREATE_REPORT);
+// export const useUpdateReport = () => useMutation(UPDATE_REPORT);
+// export const useDeleteReport = () => useMutation(DELETE_REPORT);

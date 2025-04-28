@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { ThreatActor } from '../../../types/threatActor';
+import { ThreatActor } from '../../../types/threat-actor';
 import { ThreatActorCard } from './ThreatActorCard';
 
 interface ThreatActorsGridProps {
@@ -19,7 +19,10 @@ export const ThreatActorsGrid: React.FC<ThreatActorsGridProps> = ({
     return (
       <div className="text-center text-red-600 py-10 animate-fade-in">
         Error: Unexpected data format for threat actors.
-        <pre className="text-xs text-red-400 mt-2" style={{ whiteSpace: 'pre-wrap', wordBreak: 'break-all' }}>
+        <pre
+          className="text-xs text-red-400 mt-2"
+          style={{ whiteSpace: 'pre-wrap', wordBreak: 'break-all' }}
+        >
           {JSON.stringify(actors, null, 2)}
         </pre>
       </div>
@@ -42,11 +45,11 @@ export const ThreatActorsGrid: React.FC<ThreatActorsGridProps> = ({
       tabIndex={0}
       aria-label="Threat Actors List"
       style={{ outline: 'none', minHeight: 320 }}
-      onKeyDown={e => {
+      onKeyDown={(e) => {
         if (['ArrowRight', 'ArrowDown'].includes(e.key)) {
-          setFocusedIdx(i => Math.min(i + 1, actors.length - 1));
+          setFocusedIdx((i) => Math.min(i + 1, actors.length - 1));
         } else if (['ArrowLeft', 'ArrowUp'].includes(e.key)) {
-          setFocusedIdx(i => Math.max(i - 1, 0));
+          setFocusedIdx((i) => Math.max(i - 1, 0));
         }
       }}
     >
@@ -69,7 +72,7 @@ export const ThreatActorsGrid: React.FC<ThreatActorsGridProps> = ({
             onSelect?.(actor.id);
           }}
           onFocus={() => setFocusedIdx(idx)}
-          onKeyDown={e => {
+          onKeyDown={(e) => {
             if (e.key === 'Enter' || e.key === ' ') {
               onActorClick?.(actor.id);
               onSelect?.(actor.id);

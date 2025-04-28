@@ -11,6 +11,9 @@ import {
   MenuIcon,
   XIcon,
   ChevronDown,
+  FingerprintIcon,
+  Telescope,
+  BinocularsIcon,
 } from 'lucide-react';
 import { Link, useLocation } from 'react-router-dom';
 import { cn } from '@/lib/utils';
@@ -43,6 +46,7 @@ import {
   CollapsibleContent,
   CollapsibleTrigger,
 } from '../ui/collapsible';
+import { Input } from '../ui/input';
 
 interface MenuItem {
   text: string;
@@ -59,11 +63,16 @@ const menuItems: MenuItem[] = [
   },
   {
     text: 'Observations',
-    icon: <ShieldAlertIcon className="h-5 w-5" />,
+    icon: <Telescope className="h-5 w-5" />,
     subItems: [
       {
+        text: 'Observables',
+        icon: <BinocularsIcon className="h-5 w-5" />,
+        path: '/observables',
+      },
+      {
         text: 'Indicators',
-        icon: <ShieldAlertIcon className="h-5 w-5" />,
+        icon: <FingerprintIcon className="h-5 w-5" />,
         path: '/indicators',
       },
       {
@@ -95,12 +104,22 @@ export const Layout = ({ children }: { children: React.ReactNode }) => {
   const { theme, setTheme } = useTheme();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const location = useLocation();
-  const [toogleDropdown, setToggleDropdown] = useState(false);
+  const [toogleDropdown, setToggleDropdown] = useState(true);
+  const [page, setPage] = useState(1);
 
   const toggleTheme = () => setTheme(theme === 'dark' ? 'light' : 'dark');
 
   const handleDropdown = () => {
     setToggleDropdown(!toogleDropdown);
+  };
+
+  const handlePageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    if (!isNaN(Number(value))) {
+      setPage(Number(value));
+    } else {
+      setPage(1);
+    }
   };
 
   return (
@@ -165,8 +184,17 @@ export const Layout = ({ children }: { children: React.ReactNode }) => {
         </div>
       </header>
 
-      <TopContainer className="h-12">
+      <TopContainer className="h-12 justify-between">
         <TopBreadcrumb />
+        <div className="flex items-center">
+          <h1 className="px-4">Page</h1>
+          <Input
+            placeholder="Page NO"
+            value={page}
+            onChange={handlePageChange}
+            className="w-10"
+          />
+        </div>
       </TopContainer>
 
       <div className="flex flex-1">
@@ -177,8 +205,8 @@ export const Layout = ({ children }: { children: React.ReactNode }) => {
             {/* <-- wrap SidebarMenu with SidebarProvider */}
             <SidebarMenu>
               {menuItems.map((item) => (
-                <Collapsible key={item.text} defaultOpen>
-                  <SidebarMenuItem>
+                <Collapsible key={item.text}>
+                  <SidebarMenuItem className="">
                     <CollapsibleTrigger asChild>
                       <SidebarMenuButton>
                         {item.path ? (
@@ -212,9 +240,9 @@ export const Layout = ({ children }: { children: React.ReactNode }) => {
                     </CollapsibleTrigger>
                     {item.subItems && (
                       <CollapsibleContent className="transition-transform">
-                        <SidebarMenuSub>
+                        <SidebarMenuSub className="">
                           {item.subItems.map((sub) => (
-                            <SidebarMenuSubItem key={sub.text}>
+                            <SidebarMenuSubItem key={sub.text} className="">
                               <Link
                                 to={sub.path!}
                                 className={cn(
