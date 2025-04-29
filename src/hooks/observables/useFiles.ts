@@ -1,5 +1,8 @@
 import { useQuery } from '@apollo/client';
-import { SEARCH_FILE_OBSERVABLES } from '../../graphql/observables/file';
+import {
+  FIND_FILE_OBSERVABLE,
+  SEARCH_FILE_OBSERVABLES,
+} from '../../graphql/observables/file';
 import { File } from '../../types/observables/file';
 
 export const useFiles = ({
@@ -58,9 +61,14 @@ export const useFiles = ({
   };
 };
 
-// export const useFile = (fileId: string) => {
-//   const { files, loading, error } = useFiles();
-//   const file = files.find((f) => f.id === fileId);
+export const useFile = (fileId: string) => {
+  const { data, loading, error } = useQuery(FIND_FILE_OBSERVABLE, {
+    variables: {
+      id: fileId,
+    },
+    notifyOnNetworkStatusChange: true,
+  });
+  const file: File = data?.file || [];
 
-//   return { file, loading, error };
-// };
+  return { file, loading, error };
+};

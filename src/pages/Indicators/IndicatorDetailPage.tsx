@@ -4,13 +4,12 @@ import { useIndicator } from '@/hooks/useIndicators';
 import { Loading } from '@/components/common/Loading/Loading';
 import { ErrorMessage } from '@/components/common/ErrorMessage/ErrorMessage';
 import { TopContainer } from '@/components/common/TopContainer';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { IndicatorOverview } from '@/components/indicator/overview';
 import { TabsType, TopTab } from '@/components/common/TopTab';
 
 export const IndicatorDetailPage = () => {
   const { id } = useParams<{ id: string }>();
-  const { indicator, loading, error } = useIndicator(id || '');
+  const { indicator, loading, error } = useIndicator(id);
   const tabs = {
     titles: [
       'overview',

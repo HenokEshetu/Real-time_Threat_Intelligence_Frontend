@@ -212,7 +212,7 @@ export const ThreatActorsPage = () => {
                       className={`max-w-28 ${getTlpColors(
                         marking.replaceAll('tlp:', '') ||
                           threatActor.object_marking_refs[0],
-                      )} uppercase truncate`}
+                      )} border-2 uppercase truncate`}
                     >
                       {marking || `TLP:${threatActor.object_marking_refs[0]}`}
                     </Badge>

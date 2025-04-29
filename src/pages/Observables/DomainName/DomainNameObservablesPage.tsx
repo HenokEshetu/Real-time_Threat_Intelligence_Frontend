@@ -211,7 +211,7 @@ export const DomainNameObservablesPage = () => {
                       className={`max-w-28 ${getTlpColors(
                         marking.replaceAll('tlp:', '') ||
                           domain.object_marking_refs[0],
-                      )} uppercase truncate`}
+                      )} border-2 uppercase truncate`}
                     >
                       {marking || `TLP:${domain.object_marking_refs[0]}`}
                     </Badge>

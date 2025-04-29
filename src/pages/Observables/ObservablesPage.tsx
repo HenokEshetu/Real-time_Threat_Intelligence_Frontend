@@ -17,12 +17,12 @@ import { UserAccountObservablesPage } from './UserAccount/UserAccountObservables
 import { X509CertificateObservablesPage } from './X509Certificate/X509CertificateObservablesPage';
 import { EmailsObservablesPage } from './EmailsObservablesPage';
 
-export const ObservablesPage = () => {
+export const ObservablesPage = ({ defaultTab }: { defaultTab?: string }) => {
   const tabs = {
     titles: [
       'files',
       'urls',
-      'domains',
+      'domain-names',
       'ipv4-addresses',
       'ipv6-addresses',
       'macs',
@@ -63,6 +63,9 @@ export const ObservablesPage = () => {
         triggerStyle="text-xs font-semibold"
         listStyle="!gap-3"
         containerStyle="!top-29"
+        isPage={true}
+        rootPath="/observables"
+        defaultTab={defaultTab || tabs.titles[0]}
       />
     </div>
   );

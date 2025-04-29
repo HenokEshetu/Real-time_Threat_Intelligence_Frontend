@@ -1,5 +1,8 @@
 import { useQuery } from '@apollo/client';
-import { SEARCH_URL_OBSERVABLES } from '@/graphql/observables/url';
+import {
+  FIND_URL_OBSERVABLE,
+  SEARCH_URL_OBSERVABLES,
+} from '@/graphql/observables/url';
 import { URL } from '../../types/observables/url';
 
 export const useURLs = ({
@@ -55,9 +58,15 @@ export const useURLs = ({
   };
 };
 
-// export const useFile = (fileId: string) => {
-//   const { files, loading, error } = useFiles();
-//   const file = files.find((f) => f.id === fileId);
+export const useURL = (urlId: string) => {
+  const { data, loading, error } = useQuery(FIND_URL_OBSERVABLE, {
+    variables: {
+      id: urlId,
+    },
+    notifyOnNetworkStatusChange: true,
+  });
 
-//   return { file, loading, error };
-// };
+  const url: URL = data?.url || [];
+
+  return { url, loading, error };
+};

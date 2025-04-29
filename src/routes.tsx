@@ -131,7 +131,79 @@ export const AppRoutes = () => {
       <Route path="/reports/:id/edit" element={<ReportsEditPage />} />
       <Route path="/reports/create" element={<ReportsCreatePage />} />
 
-      <Route path="/observables" element={<ObservablesPage />} />
+      <Route
+        path="/observables"
+        element={<ObservablesPage defaultTab="files" />}
+      />
+
+      <Route
+        path="/observables/files"
+        element={<ObservablesPage defaultTab="files" />}
+      />
+      <Route
+        path="/observables/urls"
+        element={<ObservablesPage defaultTab="urls" />}
+      />
+      <Route
+        path="/observables/domain-names"
+        element={<ObservablesPage defaultTab="domain-names" />}
+      />
+      <Route
+        path="/observables/ipv4-addresses"
+        element={<ObservablesPage defaultTab="ipv4-addresses" />}
+      />
+      <Route
+        path="/observables/ipv6-addresses"
+        element={<ObservablesPage defaultTab="ipv6-addresses" />}
+      />
+      <Route
+        path="/observables/mac-addresses"
+        element={<ObservablesPage defaultTab="mac-addresses" />}
+      />
+      <Route
+        path="/observables/directories"
+        element={<ObservablesPage defaultTab="directories" />}
+      />
+      <Route
+        path="/observables/processes"
+        element={<ObservablesPage defaultTab="processes" />}
+      />
+      <Route
+        path="/observables/softwares"
+        element={<ObservablesPage defaultTab="softwares" />}
+      />
+      <Route
+        path="/observables/windows-registry-keys"
+        element={<ObservablesPage defaultTab="win-registry-keys" />}
+      />
+      <Route
+        path="/observables/email-addresses"
+        element={<ObservablesPage defaultTab="email-addresses" />}
+      />
+      <Route
+        path="/observables/email-messages"
+        element={<ObservablesPage defaultTab="email-messages" />}
+      />
+      <Route
+        path="/observables/network-traffics"
+        element={<ObservablesPage defaultTab="network-traffics" />}
+      />
+      <Route
+        path="/observables/autonomous-systems"
+        element={<ObservablesPage defaultTab="autonomous-systems" />}
+      />
+      <Route
+        path="/observables/mutexes"
+        element={<ObservablesPage defaultTab="mutexes" />}
+      />
+      <Route
+        path="/observables/user-accounts"
+        element={<ObservablesPage defaultTab="user-accounts" />}
+      />
+      <Route
+        path="/observables/x509-certificates"
+        element={<ObservablesPage defaultTab="x509-certificates" />}
+      />
 
       <Route
         path="/observables/files/:id"

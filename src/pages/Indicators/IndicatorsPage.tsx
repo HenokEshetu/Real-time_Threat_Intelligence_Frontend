@@ -14,7 +14,7 @@ import {
 } from '@/components/ui/table';
 import { Indicator } from '@/types/indicator';
 import { Button } from '@/components/ui/button';
-import { ChevronsLeft, ChevronsRight } from 'lucide-react';
+import { ChevronsLeft, ChevronsRight, DatabaseIcon } from 'lucide-react';
 
 const tailwindColors = [
   { bg: 'bg-red-50', border: 'border-red-500', text: 'text-red-600' },
@@ -189,8 +189,9 @@ export const IndicatorsPage = () => {
                   <TableCell className="p-4 text-gray-700">
                     <Badge
                       variant="outline"
-                      className="text-blue-500 border-blue-500 bg-blue-50"
+                      className="text-cyan-500 border-cyan-500 bg-blue-50 px-8"
                     >
+                      <DatabaseIcon />
                       {indicator.pattern_type}
                     </Badge>
                   </TableCell>
@@ -202,16 +203,16 @@ export const IndicatorsPage = () => {
                       variant="outline"
                       className={`max-w-28 ${getTlpColors(
                         marking.replaceAll('tlp:', '') ||
-                          indicator.object_marking_refs
+                          indicator.object_marking_refs.length > 0
                           ? indicator.object_marking_refs[0]
-                          : 'unknown',
-                      )} uppercase truncate`}
+                          : 'clear',
+                      )} border-2 uppercase truncate`}
                     >
                       {marking ||
                         `TLP:${
                           indicator.object_marking_refs
                             ? indicator.object_marking_refs[0]
-                            : 'unknown'
+                            : 'clear'
                         }`}
                     </Badge>
                   </TableCell>

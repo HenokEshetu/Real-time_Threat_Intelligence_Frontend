@@ -211,7 +211,7 @@ export const ReportsPage = () => {
                       className={`max-w-28 ${getTlpColors(
                         marking.replaceAll('tlp:', '') ||
                           report.object_marking_refs[0],
-                      )} uppercase truncate`}
+                      )} border-2 uppercase truncate`}
                     >
                       {marking || `TLP:${report.object_marking_refs[0]}`}
                     </Badge>

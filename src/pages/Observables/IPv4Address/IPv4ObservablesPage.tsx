@@ -211,7 +211,7 @@ export const IPv4ObservablesPage = () => {
                       className={`max-w-28 ${getTlpColors(
                         marking.replaceAll('tlp:', '') ||
                           ipv4.object_marking_refs[0],
-                      )} uppercase truncate`}
+                      )} border-2 uppercase truncate`}
                     >
                       {marking || `TLP:${ipv4.object_marking_refs[0]}`}
                     </Badge>

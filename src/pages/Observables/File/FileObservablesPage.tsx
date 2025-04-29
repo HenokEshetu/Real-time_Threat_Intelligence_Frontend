@@ -202,7 +202,9 @@ export const FileObservablesPage = () => {
                     </Badge>
                   </TableCell>
                   <TableCell className="p-4 font-medium text-gray-900 hover:underline max-w-100 truncate">
-                    {file.hashes.SHA_512
+                    {file.name
+                      ? file.name_enc
+                      : file.hashes.SHA_512
                       ? file.hashes.SHA_512
                       : file.hashes.SHA_256
                       ? file.hashes.SHA_256
@@ -220,7 +222,7 @@ export const FileObservablesPage = () => {
                       className={`max-w-28 ${getTlpColors(
                         marking.replaceAll('tlp:', '') ||
                           file.object_marking_refs[0],
-                      )} uppercase truncate`}
+                      )} border-2 uppercase truncate`}
                     >
                       {marking || `TLP:${file.object_marking_refs[0]}`}
                     </Badge>
