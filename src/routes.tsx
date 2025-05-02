@@ -98,6 +98,7 @@ import { UserAccountObservablesCreatePage } from './pages/Observables/UserAccoun
 import { X509CertificateObservablesDetailPage } from './pages/Observables/X509Certificate/X509CertificateObservablesDetailPage';
 import { X509CertificateObservablesEditPage } from './pages/Observables/X509Certificate/X509CertificateObservablesEditPage';
 import { X509CertificateObservablesCreatePage } from './pages/Observables/X509Certificate/X509CertificateObservablesCreatePage';
+import { RelationshipsPage } from './pages/Relationships/RelationshipsPage';
 
 export const AppRoutes = () => {
   const { isAuthenticated } = useAuth();
@@ -422,10 +423,12 @@ export const AppRoutes = () => {
       <Route path="/indicators/:id/edit" element={<IndicatorEditPage />} />
       <Route path="/indicators/create" element={<IndicatorCreatePage />} />
 
-      <Route path="/identity" element={<IdentityListPage />} />
-      <Route path="/identity/create" element={<IdentityCreatePage />} />
-      <Route path="/identity/:id/edit" element={<IdentityEditPage />} />
-      <Route path="/identity/:id" element={<IdentityDetailPage />} />
+      <Route path="/identities" element={<IdentityListPage />} />
+      <Route path="/identities/create" element={<IdentityCreatePage />} />
+      <Route path="/identities/:id/edit" element={<IdentityEditPage />} />
+      <Route path="/identities/:id" element={<IdentityDetailPage />} />
+
+      <Route path="/relationships" element={<RelationshipsPage />} />
 
       <Route path="/ingestion" element={<Ingestion />} />
 

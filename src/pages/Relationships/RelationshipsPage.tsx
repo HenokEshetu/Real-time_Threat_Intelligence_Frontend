@@ -10,85 +10,40 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
+import { useURLs } from '@/hooks/observables/useURLs';
 import {
+  useRelationshipObjects,
+  useRelationships,
+} from '@/hooks/useRelationships';
+import { tailwindColors } from '@/lib/tailwindcolors';
+import { URL } from '@/types/observables/url';
+import { StixRelationship } from '@/types/relationship';
+import {
+  CableIcon,
   ChevronLeft,
   ChevronRight,
   ChevronsLeft,
   ChevronsRight,
-  SignalIcon,
 } from 'lucide-react';
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useIPv4 } from '@/hooks/observables/useIPv4Adresses';
-import { IPv4Address } from '@/types/observables/ipv4';
+import { getRelEssentials } from './RelationshipEssentials';
 
-const tailwindColors = [
-  { bg: 'bg-red-50', border: 'border-red-500', text: 'text-red-600' },
-  { bg: 'bg-orange-50', border: 'border-orange-500', text: 'text-orange-600' },
-  { bg: 'bg-yellow-50', border: 'border-yellow-500', text: 'text-yellow-600' },
-  { bg: 'bg-green-50', border: 'border-green-500', text: 'text-green-600' },
-  { bg: 'bg-teal-50', border: 'border-teal-500', text: 'text-teal-600' },
-  { bg: 'bg-blue-50', border: 'border-blue-500', text: 'text-blue-600' },
-  { bg: 'bg-indigo-50', border: 'border-indigo-500', text: 'text-indigo-600' },
-  { bg: 'bg-purple-50', border: 'border-purple-500', text: 'text-purple-600' },
-  { bg: 'bg-pink-50', border: 'border-pink-500', text: 'text-pink-600' },
-  { bg: 'bg-rose-50', border: 'border-rose-500', text: 'text-rose-600' },
-  { bg: 'bg-amber-50', border: 'border-amber-500', text: 'text-amber-600' },
-  { bg: 'bg-lime-50', border: 'border-lime-500', text: 'text-lime-600' },
-  {
-    bg: 'bg-emerald-50',
-    border: 'border-emerald-500',
-    text: 'text-emerald-600',
-  },
-  { bg: 'bg-cyan-50', border: 'border-cyan-500', text: 'text-cyan-600' },
-  { bg: 'bg-sky-50', border: 'border-sky-500', text: 'text-sky-600' },
-  { bg: 'bg-violet-50', border: 'border-violet-500', text: 'text-violet-600' },
-  {
-    bg: 'bg-fuchsia-50',
-    border: 'border-fuchsia-500',
-    text: 'text-fuchsia-600',
-  },
-  {
-    bg: 'bg-neutral-100',
-    border: 'border-neutral-500',
-    text: 'text-neutral-600',
-  },
-  { bg: 'bg-slate-100', border: 'border-slate-500', text: 'text-slate-600' },
-  { bg: 'bg-gray-100', border: 'border-gray-500', text: 'text-gray-600' },
-];
-
-let availableColors = [...tailwindColors];
-
-const getRandomTailwindColor = () => {
-  if (availableColors.length === 0) {
-    availableColors = [...tailwindColors];
-  }
-
-  const idx = Math.floor(Math.random() * availableColors.length);
-  const color = availableColors[idx];
-  availableColors.splice(idx, 1);
-  return color;
-};
-
-export const IPv4ObservablesPage = () => {
+export const RelationshipsPage = () => {
   const navigate = useNavigate();
   const [currentPage, setCurrentPage] = useState(1);
   const pageSize = 50;
 
-  const { loading, error, loadMore, total, ipv4addresses } = useIPv4({
-    filter: {},
-    page: currentPage,
-    pageSize: pageSize,
-  });
-
-  const labelColorMap = React.useRef<Map<string, (typeof tailwindColors)[0]>>(
-    new Map(),
-  );
+  const { loading, error, loadMore, total, relationships, all_objects } =
+    useRelationships({
+      filter: { },
+      page: currentPage,
+      pageSize: pageSize,
+    });
 
   const totalPages = Math.ceil((total || 0) / pageSize);
 
-  const handleViewIPv4 = (id: string) =>
-    navigate(`/observables/ipv4addresses/${id}`);
+  const handleViewRelation = (id: string) => navigate(`/relationships/${id}`);
 
   const handlePageChange = (newPage: number) => {
     setCurrentPage(Math.max(1, Math.min(newPage, totalPages)));
@@ -109,7 +64,7 @@ export const IPv4ObservablesPage = () => {
     }
   };
 
-  if (loading && ipv4addresses.length === 0) {
+  if (loading && relationships.length === 0) {
     return (
       <div className="w-full px-4 py-6 space-y-4">
         <div className="flex justify-between items-center">
@@ -131,7 +86,7 @@ export const IPv4ObservablesPage = () => {
       <div className="container py-6">
         <Alert variant="destructive">
           <AlertDescription>
-            Error loading IPv4 addresses: {error.message}
+            Error loading relationships: {error.message}
           </AlertDescription>
         </Alert>
       </div>
@@ -140,33 +95,37 @@ export const IPv4ObservablesPage = () => {
 
   return (
     <div className="w-full flex flex-col space-y-4">
-      <div className="overflow-x-auto overflow-y-auto h-[81vh] bg-white rounded-md">
+      <div className="overflow-x-auto overflow-y-auto h-[86vh] bg-white rounded-md">
         <Table className="w-full text-sm text-foreground h-full">
           <TableHeader>
             <TableRow className="bg-gray-100">
+              <TableHead className="font-bold p-4 text-gray-800"></TableHead>
+              <TableHead className="font-bold p-4 text-gray-800">
+                From Type
+              </TableHead>
+              <TableHead className="font-bold p-4 text-gray-800">
+                From Name
+              </TableHead>
               <TableHead className="font-bold p-4 text-gray-800">
                 Type
               </TableHead>
               <TableHead className="font-bold p-4 text-gray-800">
-                Representation
+                To Type
               </TableHead>
               <TableHead className="font-bold p-4 text-gray-800">
-                Marking
-              </TableHead>
-              <TableHead className="font-bold p-4 text-gray-800">
-                Labels
+                To Name
               </TableHead>
               <TableHead className="font-bold p-4 text-gray-800">
                 Created
               </TableHead>
               <TableHead className="font-bold p-4 text-gray-800">
-                Modified
+                Marking
               </TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
-            {ipv4addresses.map((ipv4: IPv4Address) => {
-              const labels = ipv4.labels || [];
+            {relationships.map((relation: StixRelationship, ind) => {
+              const labels = relation.labels || [];
               var uniqueLabels: string[] = [];
               var marking = '';
 
@@ -178,83 +137,63 @@ export const IPv4ObservablesPage = () => {
                 }
               });
 
-              const shortestThree = [...uniqueLabels]
-                .sort((a, b) => a.length - b.length)
-                .slice(0, 3);
-              const shortestSet = new Set(shortestThree);
-              const displayLabels = uniqueLabels.filter((lbl) =>
-                shortestSet.has(lbl),
-              );
-              const extraCount = uniqueLabels.length - displayLabels.length;
+              const rel_from = relation.source.type;
+              const rel_to = relation?.target?.type || 'malware';
+
+              const from_name = relation?.source?.name || 'Unknown';
+              const to_name = relation?.target?.name || 'Unknown';
 
               return (
                 <TableRow
-                  key={ipv4.id}
-                  onClick={() => handleViewIPv4(ipv4.id)}
+                  key={relation.id}
+                  onClick={() => handleViewRelation(relation.id)}
                   className="hover:bg-gray-50 transition-colors border-b border-gray-300 cursor-pointer"
                 >
-                  <TableCell className="p-4 text-gray-700">
+                  <TableCell className="p-4 text-gray-500">
+                    <div className="pl-5">
+                      <CableIcon />
+                    </div>
+                  </TableCell>
+                  <TableCell className="p-4 font-medium text-gray-900 hover:underline max-w-100 truncate">
                     <Badge
                       variant="outline"
-                      className="text-sky-600 border-sky-500 bg-sky-50 capitalize px-8"
+                      className={`max-w-28 ${getRelEssentials(rel_from).style}`}
                     >
-                      <SignalIcon />
-                      IPv4 Addresses
+                      {getRelEssentials(rel_from).icon}
+                      {rel_from}
+                    </Badge>
+                  </TableCell>
+                  <TableCell className={`p-4 text-gray-600`}>
+                    {from_name}
+                  </TableCell>
+                  <TableCell className="p-4 font-medium text-gray-900 hover:underline max-w-100 truncate">
+                    <Badge
+                      variant="outline"
+                      className={`max-w-28 ${
+                        getRelEssentials(relation.relationship_type).style
+                      }`}
+                    >
+                      {getRelEssentials(relation.relationship_type).icon}
+                      {relation.relationship_type}
                     </Badge>
                   </TableCell>
                   <TableCell className="p-4 font-medium text-gray-900 hover:underline max-w-100 truncate">
-                    {ipv4.value}
-                  </TableCell>
-                  <TableCell className={`p-4 text-gray-600`}>
                     <Badge
                       variant="outline"
-                      className={`max-w-28 ${getTlpColors(
-                        marking.replaceAll('tlp:', '') ||
-                          ipv4.object_marking_refs[0],
-                      )} border-2 uppercase truncate`}
+                      className={`max-w-28 ${getRelEssentials(rel_to).style}`}
                     >
-                      {marking || `TLP:${ipv4.object_marking_refs[0]}`}
+                      {getRelEssentials(rel_to).icon}
+                      {rel_to}
                     </Badge>
                   </TableCell>
-                  <TableCell className="p-4 max-w-100">
-                    <div className="flex flex-wrap gap-1">
-                      {displayLabels.map((label) => {
-                        if (!labelColorMap.current.has(label)) {
-                          labelColorMap.current.set(
-                            label,
-                            getRandomTailwindColor(),
-                          );
-                        }
-                        const color = labelColorMap.current.get(label)!;
-                        return (
-                          <Badge
-                            key={label}
-                            variant="outline"
-                            className={`${color.text} ${color.border} ${color.bg}`}
-                          >
-                            {label}
-                          </Badge>
-                        );
-                      })}
-                      {extraCount > 0 && (
-                        <Badge
-                          variant="outline"
-                          className="text-gray-500 border-gray-500 bg-gray-50"
-                        >
-                          +{extraCount}
-                        </Badge>
-                      )}
-                    </div>
+                  <TableCell className="p-4 text-gray-600">
+                    {to_name}
                   </TableCell>
                   <TableCell className="p-4 text-gray-600">
-                    {ipv4.created
-                      ? new Date(ipv4.created).toLocaleDateString()
-                      : '—'}
+                    {relation.created}
                   </TableCell>
                   <TableCell className="p-4 text-gray-600">
-                    {ipv4.modified
-                      ? new Date(ipv4.modified).toLocaleDateString()
-                      : '—'}
+                    {/*{realtion.marking}*/}
                   </TableCell>
                 </TableRow>
               );
@@ -265,8 +204,7 @@ export const IPv4ObservablesPage = () => {
       <div className="flex items-center justify-between px-4 py-2 border-t">
         <div className="text-sm text-muted-foreground">
           Showing {(currentPage - 1) * pageSize + 1} to{' '}
-          {Math.min(currentPage * pageSize, total || 0)} of {total || 0} IPv4
-          Addresses
+          {Math.min(currentPage * pageSize, total || 0)} of {total || 0} relationships
         </div>
         <div className="flex items-center space-x-2">
           <Button

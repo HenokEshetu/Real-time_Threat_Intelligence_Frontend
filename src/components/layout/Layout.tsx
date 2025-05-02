@@ -14,6 +14,9 @@ import {
   FingerprintIcon,
   Telescope,
   BinocularsIcon,
+  Database,
+  DatabaseIcon,
+  GitBranchIcon,
 } from 'lucide-react';
 import { Link, useLocation } from 'react-router-dom';
 import { cn } from '@/lib/utils';
@@ -96,7 +99,18 @@ const menuItems: MenuItem[] = [
   {
     text: 'Identity',
     icon: <UserIcon className="h-5 w-5" />,
-    path: '/identity',
+    path: '/identities',
+  },
+  {
+    text: 'Data',
+    icon: <DatabaseIcon />,
+    subItems: [
+      {
+        text: 'Relationships',
+        icon: <GitBranchIcon />,
+        path: '/relationships',
+      },
+    ],
   },
 ];
 
@@ -204,49 +218,31 @@ export const Layout = ({ children }: { children: React.ReactNode }) => {
             {' '}
             {/* <-- wrap SidebarMenu with SidebarProvider */}
             <SidebarMenu>
-              {menuItems.map((item) => (
-                <Collapsible key={item.text}>
-                  <SidebarMenuItem className="">
-                    <CollapsibleTrigger asChild>
-                      <SidebarMenuButton>
-                        {item.path ? (
-                          <Link
-                            to={item.path}
-                            className={cn(
-                              'flex items-center w-full px-3 py-2 text-sm font-medium rounded-md text-left',
-                              location.pathname === item.path
-                                ? 'bg-primary/10 text-primary'
-                                : 'text-muted-foreground hover:text-primary',
-                            )}
-                          >
-                            <span className="mr-3">{item.icon}</span>
-                            {item.text}
-                          </Link>
-                        ) : (
-                          <button
-                            className="flex items-center w-full px-3 py-2 text-sm font-medium rounded-md text-muted-foreground"
-                            onClick={handleDropdown}
-                          >
-                            <span className="mr-3">{item.icon}</span>
-                            {item.text}
-                            {toogleDropdown ? (
-                              <ChevronDown className="ml-auto h-4 w-4" />
-                            ) : (
-                              <ChevronDown className="ml-auto h-4 w-4 rotate-180" />
-                            )}
-                          </button>
-                        )}
-                      </SidebarMenuButton>
-                    </CollapsibleTrigger>
-                    {item.subItems && (
-                      <CollapsibleContent className="transition-transform">
-                        <SidebarMenuSub className="">
+              {menuItems.map((item) =>
+                item.subItems ? (
+                  <Collapsible key={item.text} className="group">
+                    <SidebarMenuItem>
+                      <CollapsibleTrigger asChild>
+                        <SidebarMenuButton className="flex items-center w-full px-3 py-2 text-sm font-medium rounded-md text-muted-foreground hover:text-primary">
+                          <span className="mr-3">{item.icon}</span>
+                          {item.text}
+                          <ChevronDown
+                            className="ml-auto h-4 w-4 transition-transform 
+                         group-data-[state=open]:rotate-180"
+                          />
+                        </SidebarMenuButton>
+                      </CollapsibleTrigger>
+                      <CollapsibleContent>
+                        <SidebarMenuSub className="!p-0">
                           {item.subItems.map((sub) => (
-                            <SidebarMenuSubItem key={sub.text} className="">
+                            <SidebarMenuSubItem
+                              key={sub.text}
+                              className="data-[state=open]:bg-transparent"
+                            >
                               <Link
                                 to={sub.path!}
                                 className={cn(
-                                  'flex items-center w-full px-3 py-2 text-sm font-medium rounded-md text-left pl-8',
+                                  'flex items-center w-full px-3 py-2 text-sm font-medium rounded-md pl-5 data-[state=active]:text-gray-950',
                                   location.pathname === sub.path
                                     ? 'bg-primary/10 text-primary'
                                     : 'text-muted-foreground hover:text-primary',
@@ -259,10 +255,25 @@ export const Layout = ({ children }: { children: React.ReactNode }) => {
                           ))}
                         </SidebarMenuSub>
                       </CollapsibleContent>
-                    )}
+                    </SidebarMenuItem>
+                  </Collapsible>
+                ) : (
+                  <SidebarMenuItem key={item.text}>
+                    <Link
+                      to={item.path!}
+                      className={cn(
+                        'flex items-center w-full px-3 py-2 text-sm font-medium rounded-md',
+                        location.pathname === item.path
+                          ? 'bg-primary/10 text-primary'
+                          : 'text-muted-foreground hover:text-primary',
+                      )}
+                    >
+                      <span className="mr-3">{item.icon}</span>
+                      {item.text}
+                    </Link>
                   </SidebarMenuItem>
-                </Collapsible>
-              ))}
+                ),
+              )}
             </SidebarMenu>
           </SidebarProvider>
         </aside>

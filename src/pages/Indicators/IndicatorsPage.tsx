@@ -203,9 +203,9 @@ export const IndicatorsPage = () => {
                       variant="outline"
                       className={`max-w-28 ${getTlpColors(
                         marking.replaceAll('tlp:', '') ||
-                          indicator.object_marking_refs.length > 0
-                          ? indicator.object_marking_refs[0]
-                          : 'clear',
+                          (indicator.object_marking_refs.length > 0
+                            ? indicator.object_marking_refs[0]
+                            : 'clear'),
                       )} border-2 uppercase truncate`}
                     >
                       {marking ||
