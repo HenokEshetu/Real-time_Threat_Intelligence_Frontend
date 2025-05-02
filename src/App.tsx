@@ -11,10 +11,8 @@ import { AppRoutes } from './routes'; // Import your routes
 function App() {
   return (
     <ApolloProvider client={client}>
-
       <ThemeProvider theme={theme}>
         <CssBaseline />
-
         <Layout>
           <AppRoutes />
         </Layout>

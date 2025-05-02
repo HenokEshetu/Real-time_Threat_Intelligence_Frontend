@@ -34,12 +34,11 @@ export const RelationshipsPage = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const pageSize = 50;
 
-  const { loading, error, loadMore, total, relationships, all_objects } =
-    useRelationships({
-      filter: { },
-      page: currentPage,
-      pageSize: pageSize,
-    });
+  const { loading, error, loadMore, total, relationships } = useRelationships({
+    filter: {},
+    page: currentPage,
+    pageSize: pageSize,
+  });
 
   const totalPages = Math.ceil((total || 0) / pageSize);
 
@@ -137,7 +136,7 @@ export const RelationshipsPage = () => {
                 }
               });
 
-              const rel_from = relation.source.type;
+              const rel_from = relation?.source?.type;
               const rel_to = relation?.target?.type || 'malware';
 
               const from_name = relation?.source?.name || 'Unknown';
@@ -186,9 +185,7 @@ export const RelationshipsPage = () => {
                       {rel_to}
                     </Badge>
                   </TableCell>
-                  <TableCell className="p-4 text-gray-600">
-                    {to_name}
-                  </TableCell>
+                  <TableCell className="p-4 text-gray-600">{to_name}</TableCell>
                   <TableCell className="p-4 text-gray-600">
                     {relation.created}
                   </TableCell>
@@ -204,7 +201,8 @@ export const RelationshipsPage = () => {
       <div className="flex items-center justify-between px-4 py-2 border-t">
         <div className="text-sm text-muted-foreground">
           Showing {(currentPage - 1) * pageSize + 1} to{' '}
-          {Math.min(currentPage * pageSize, total || 0)} of {total || 0} relationships
+          {Math.min(currentPage * pageSize, total || 0)} of {total || 0}{' '}
+          relationships
         </div>
         <div className="flex items-center space-x-2">
           <Button

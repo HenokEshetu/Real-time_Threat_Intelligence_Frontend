@@ -1,357 +1,436 @@
-import React, { useState } from 'react';
-import { Card, CardContent, CardHeader } from '@/components/ui/card';
-import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import { Grid } from '@/components/ui/grid';
-import { ThreatStats } from '../components/dashboard/ThreatStats';
-import { ThreatDistributionChart } from '../components/dashboard/ThreatDistributionChart';
-import { RecentIncidents } from '../components/dashboard/RecentIncidents';
-import PolarArea from '../components/dashboard/PolarArea';
-import WidgetHorizontalBars from '../components/dashboard/HorizontalBarChart';
-import WidgetMultiAreas from '../components/dashboard/WidgetMultiAreas';
-import LocationMiniMap from '../components/common/location/LocationMiniMap';
-import { Incident } from '../components/dashboard/RecentIncidents';
-import { Bug, Shield, ShieldBan, TriangleAlert } from 'lucide-react';
+import {
+  Card,
+  CardHeader,
+  CardContent,
+  CardTitle,
+  CardFooter,
+} from '@/components/ui/card';
+import { BarChart, PieChart } from '@/components/ui/charts';
+import {
+  Table,
+  TableHeader,
+  TableRow,
+  TableHead,
+  TableBody,
+  TableCell,
+} from '@/components/ui/table';
+import { Badge } from '@/components/ui/badge';
+import {
+  AlertCircle,
+  Bug,
+  Globe,
+  ShieldAlert,
+  Activity,
+  Network,
+  List,
+  MapPin,
+  Factory,
+  Hammer,
+  Bell,
+  LineChart,
+  Shield,
+  AlertTriangle,
+  Database,
+  Radar,
+  FileText,
+} from 'lucide-react';
+import React from 'react';
 
-const sampleMultiAreaData = [
-  {
-    name: 'Malware',
-    data: [
-      { x: '2023-01-01', y: 40 },
-      { x: '2023-02-01', y: 60 },
-      { x: '2023-03-01', y: 80 },
-      { x: '2023-04-01', y: 100 },
-      { x: '2023-05-01', y: 120 },
-      { x: '2023-06-01', y: 260 },
-      { x: '2023-07-01', y: 240 },
-      { x: '2023-08-01', y: 220 },
-      { x: '2023-09-01', y: 200 },
-      { x: '2023-10-01', y: 180 },
-      { x: '2023-11-01', y: 160 },
-      { x: '2023-12-01', y: 140 },
-    ],
-    color: '#FF0000',
-  },
-  {
-    name: 'Phishing',
-    data: [
-      { x: '2023-01-01', y: 50 },
-      { x: '2023-02-01', y: 70 },
-      { x: '2023-03-01', y: 90 },
-      { x: '2023-04-01', y: 110 },
-      { x: '2023-05-01', y: 130 },
-      { x: '2023-06-01', y: 270 },
-      { x: '2023-07-01', y: 250 },
-      { x: '2023-08-01', y: 230 },
-      { x: '2023-09-01', y: 210 },
-      { x: '2023-10-01', y: 190 },
-      { x: '2023-11-01', y: 170 },
-      { x: '2023-12-01', y: 150 },
-    ],
-    color: '#00FF00',
-  },
-  {
-    name: 'Ransomware',
-    data: [
-      { x: '2023-01-01', y: 30 },
-      { x: '2023-02-01', y: 50 },
-      { x: '2023-03-01', y: 70 },
-      { x: '2023-04-01', y: 90 },
-      { x: '2023-05-01', y: 110 },
-      { x: '2023-06-01', y: 250 },
-      { x: '2023-07-01', y: 230 },
-      { x: '2023-08-01', y: 210 },
-      { x: '2023-09-01', y: 190 },
-      { x: '2023-10-01', y: 170 },
-      { x: '2023-11-01', y: 150 },
-      { x: '2023-12-01', y: 130 },
-    ],
-    color: '#0000FF',
-  },
-  {
-    name: 'DDoS',
-    data: [
-      { x: '2023-01-01', y: 20 },
-      { x: '2023-02-01', y: 40 },
-      { x: '2023-03-01', y: 60 },
-      { x: '2023-04-01', y: 80 },
-      { x: '2023-05-01', y: 100 },
-      { x: '2023-06-01', y: 240 },
-      { x: '2023-07-01', y: 220 },
-      { x: '2023-08-01', y: 200 },
-      { x: '2023-09-01', y: 180 },
-      { x: '2023-10-01', y: 160 },
-      { x: '2023-11-01', y: 140 },
-      { x: '2023-12-01', y: 120 },
-    ],
-    color: '#FFFF00',
-  },
-  {
-    name: 'SQL Injection',
-    data: [
-      { x: '2023-01-01', y: 10 },
-      { x: '2023-02-01', y: 50 },
-      { x: '2023-03-01', y: 70 },
-      { x: '2023-04-01', y: 90 },
-      { x: '2023-05-01', y: 90 },
-      { x: '2023-06-01', y: 230 },
-      { x: '2023-07-01', y: 240 },
-      { x: '2023-08-01', y: 190 },
-      { x: '2023-09-01', y: 170 },
-      { x: '2023-10-01', y: 150 },
-      { x: '2023-11-01', y: 130 },
-      { x: '2023-12-01', y: 110 },
-    ],
-    color: '#FF00FF',
-  },
-  {
-    name: 'Insider Threat',
-    data: [
-      { x: '2023-01-01', y: 5 },
-      { x: '2023-02-01', y: 20 },
-      { x: '2023-03-01', y: 30 },
-      { x: '2023-04-01', y: 40 },
-      { x: '2023-05-01', y: 50 },
-      { x: '2023-06-01', y: 60 },
-      { x: '2023-07-01', y: 70 },
-      { x: '2023-08-01', y: 80 },
-      { x: '2023-09-01', y: 90 },
-      { x: '2023-10-01', y: 100 },
-      { x: '2023-11-01', y: 110 },
-      { x: '2023-12-01', y: 120 },
-    ],
-    color: '#00FFFF',
-  },
-];
-export default sampleMultiAreaData;
+const Dashboard = () => {
+  // Summary Data
+  const summaryData = [
+    {
+      id: 1,
+      title: 'Threat Actors',
+      total: 245,
+      daily: 12,
+      icon: <ShieldAlert className="h-6 w-6" />,
+    },
+    {
+      id: 2,
+      title: 'Intrusion Sets',
+      total: 143,
+      daily: 8,
+      icon: <Network className="h-6 w-6" />,
+    },
+    {
+      id: 3,
+      title: 'Campaigns',
+      total: 89,
+      daily: 5,
+      icon: <Activity className="h-6 w-6" />,
+    },
+    {
+      id: 4,
+      title: 'Malwares',
+      total: 367,
+      daily: 23,
+      icon: <Bug className="h-6 w-6" />,
+    },
+    {
+      id: 5,
+      title: 'Indicators',
+      total: 1567,
+      daily: 145,
+      icon: <List className="h-6 w-6" />,
+    },
+    {
+      id: 6,
+      title: 'Observables',
+      total: 4789,
+      daily: 389,
+      icon: <Globe className="h-6 w-6" />,
+    },
+  ];
 
-// Sample data for horizontal bar chart
-const sampleHorizontalBarData = [
-  {
-    name: 'Malware',
-    data: [45],
-  },
-  {
-    name: 'Phishing',
-    data: [30],
-  },
-  {
-    name: 'Ransomware',
-    data: [25],
-  },
-  {
-    name: 'DDoS',
-    data: [20],
-  },
-  {
-    name: 'Spyware',
-    data: [15],
-  },
-];
+  // Chart Data
+  const targetedRegions = [
+    { region: 'North America', Incidents: 245 },
+    { region: 'Europe', Incidents: 189 },
+    { region: 'Asia', Incidents: 156 },
+  ];
 
-// Sample categories for horizontal bar chart
-const sampleCategories = ['Threat Types'];
+  const targetedSectors = [
+    { sector: 'Finance', count: 45 },
+    { sector: 'Healthcare', count: 32 },
+    { sector: 'Energy', count: 28 },
+    { sector: 'Government', count: 41 },
+  ];
 
-// Stats for the dashboard displayed in widgets
-const stats = [
-  {
-    title: 'Active Threats',
-    value: 47,
-    icon: ShieldBan, // Icon for Active Threats stat
-    color: '#FF6B6B', // Color for Active Threats stat
-  },
-  {
-    title: 'Recent Incidents',
-    value: 12,
-    icon: TriangleAlert, // Icon for Recent Incidents stat
-    color: '#4ECDC4', // Color for Recent Incidents stat
-  },
-  {
-    title: 'Malware Detected',
-    value: 28,
-    icon: Bug, // Icon for Malware Detected stat
-    color: '#45B7D1', // Color for Malware Detected stat
-  },
-  {
-    title: 'Mitigations Applied',
-    value: 156,
-    icon: Shield, // Icon for Mitigations Applied stat
-    color: '#96CEB4', // Color for Mitigations Applied stat
-  },
-];
+  const malwareDistribution = [
+    { name: 'Ransomware', value: 35 },
+    { name: 'Spyware', value: 25 },
+    { name: 'Trojan', value: 20 },
+  ];
 
-// Sample threat activity data (used in ThreatActivityChart)
-const sampleThreatActivity = [
-  { date: '2023-11-01', threats: 5 },
-  { date: '2023-11-02', threats: 10 },
-  { date: '2023-11-03', threats: 7 },
-];
+  // Reports Data
+  const securityReports = [
+    {
+      id: 1,
+      title: 'Q3 Threat Landscape Analysis',
+      date: '2024-09-15',
+      type: 'PDF',
+      status: 'Published',
+    },
+    {
+      id: 2,
+      title: 'APT Group Activity Report',
+      date: '2024-09-10',
+      type: 'DOCX',
+      status: 'Draft',
+    },
+    {
+      id: 3,
+      title: 'Monthly Security Audit',
+      date: '2024-09-01',
+      type: 'PDF',
+      status: 'Archived',
+    },
+  ];
 
-// Sample data for threat distribution chart (used in ThreatDistributionChart)
-const sampleDistributionChart = [
-  { id: '1', label: 'Malware', value: 35, color: '#ff0000' },
-  { id: '2', label: 'Phishing', value: 25, color: '#00ff00' },
-  { id: '3', label: 'Ransomware', value: 20, color: '#0000ff' },
-  { id: '4', label: 'DDoS', value: 15, color: '#ff00ff' },
-  { id: '5', label: 'Other', value: 5, color: '#ffff00' },
-];
+  // Other Data
+  const threatTrends = [
+    { month: 'Jan', count: 45 },
+    { month: 'Feb', count: 60 },
+    { month: 'Mar', count: 75 },
+  ];
 
-// Sample data for polar area chart (used in PolarArea)
-const samplePolarAreaData = [
-  { label: 'Malware', value: 50 },
-  { label: 'Phishing', value: 30 },
-  { label: 'Ransomware', value: 40 },
-  { label: 'Spam', value: 20 },
-  { label: 'Spyware', value: 25 },
-];
+  const vulnerabilities = [
+    { name: 'CVE-2024-1234', severity: 'Critical', count: 45 },
+    { name: 'CVE-2024-5678', severity: 'High', count: 32 },
+    { name: 'CVE-2024-9012', severity: 'Medium', count: 28 },
+  ];
 
-// Sample recent incidents data (used in RecentIncidents)
-const sampleRecentIncidents: Incident[] = [
-  {
-    id: 'incident-1',
-    title: 'Large-Scale Phishing Attack on Government Agencies',
-    severity: 'high',
-    timestamp: new Date('2023-11-01T10:30:00'),
-  },
-  {
-    id: 'incident-2',
-    title: 'Malware Infection through Software Updates',
-    severity: 'medium',
-    timestamp: new Date('2023-11-03T14:45:00'),
-  },
-  {
-    id: 'incident-3',
-    title: 'Ransomware Attack Targeting Sensitive Data',
-    severity: 'high',
-    timestamp: new Date('2023-11-05T09:00:00'),
-  },
-  {
-    id: 'incident-4',
-    title: 'DDoS Attack on Financial Institutions',
-    severity: 'low',
-    timestamp: new Date('2023-11-07T16:00:00'),
-  },
-  {
-    id: 'incident-5',
-    title: 'Social Engineering Attack to Steal Credentials',
-    severity: 'medium',
-    timestamp: new Date('2023-11-08T12:30:00'),
-  },
-];
+  const ttps = [
+    { technique: 'Credential Dumping', frequency: 120 },
+    { technique: 'Phishing', frequency: 95 },
+    { technique: 'Lateral Movement', frequency: 75 },
+  ];
 
-export const Dashboard = () => {
-  const [error, setError] = useState<string | null>(null);
-
-  const renderComponentWithErrorHandling = (component: React.ReactNode) => {
-    try {
-      return component;
-    } catch (err) {
-      console.error('Error rendering component:', err);
-      setError('An error occurred while rendering the dashboard.');
-      return (
-        <Card>
-          <CardContent>
-            <Alert variant="destructive">
-              <AlertTitle>Error</AlertTitle>
-              <AlertDescription>
-                Something went wrong. Please try again later.
-              </AlertDescription>
-            </Alert>
-          </CardContent>
-        </Card>
-      );
-    }
-  };
+  const activityFeed = [
+    { time: '2m ago', event: 'New IOC detected in network logs' },
+    { time: '15m ago', event: 'Malware signature updated' },
+    { time: '1h ago', event: 'Suspicious domain blocked' },
+  ];
 
   return (
-    <Grid gap={4} className="w-465">
-      {error && (
+    <div className="w-full p-6 space-y-6 mx-auto">
+      {/* Summary Cards Grid */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4">
+        {summaryData.map((item) => (
+          <Card key={item.id} className="hover:shadow-lg transition-shadow">
+            <CardHeader className="flex flex-row items-center justify-between pb-2">
+              {item.icon}
+              <Badge variant="outline" className="text-green-600">
+                +{item.daily}
+              </Badge>
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold">{item.total}</div>
+              <p className="text-xs text-muted-foreground">{item.title}</p>
+            </CardContent>
+          </Card>
+        ))}
+      </div>
+
+      {/* Threat Landscape Section */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div className="lg:col-span-2 space-y-6">
+          {/* Threat Trend Analysis */}
+          <div className="grid grid-cols-2 gap-4">
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <LineChart className="h-6 w-6" />
+                  Threat Trend Analysis
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <BarChart
+                  data={threatTrends}
+                  index="month"
+                  categories={['count']}
+                  colors={['#3b82f6']}
+                />
+              </CardContent>
+            </Card>
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Bug className="h-6 w-6" />
+                  Malware Distribution
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <PieChart
+                  data={malwareDistribution}
+                  index="name"
+                  category="value"
+                  colors={['#ef4444', '#f59e0b', '#10b981']}
+                />
+              </CardContent>
+            </Card>
+          </div>
+
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+            <Card className="lg:col-span-1">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <MapPin className="h-6 w-6" />
+                  Targeted Regions
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <BarChart
+                  data={targetedRegions}
+                  index="region"
+                  categories={['Incidents']}
+                  colors={['#3b82f6']}
+                />
+              </CardContent>
+            </Card>
+            <Card className="lg:col-span-1">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <AlertTriangle className="h-6 w-6" />
+                  Critical Vulnerabilities
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>CVE ID</TableHead>
+                      <TableHead>Severity</TableHead>
+                      <TableHead className="text-right">
+                        Affected Systems
+                      </TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {vulnerabilities.map((vuln) => (
+                      <TableRow key={vuln.name}>
+                        <TableCell>{vuln.name}</TableCell>
+                        <TableCell>
+                          <Badge
+                            variant={
+                              vuln.severity === 'Critical'
+                                ? 'destructive'
+                                : vuln.severity === 'High'
+                                ? 'default'
+                                : 'secondary'
+                            }
+                          >
+                            {vuln.severity}
+                          </Badge>
+                        </TableCell>
+                        <TableCell className="text-right">
+                          {vuln.count}
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+
+        {/* Security Reports */}
         <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <FileText className="h-6 w-6" />
+              Security Reports
+            </CardTitle>
+          </CardHeader>
           <CardContent>
-            <Alert variant="destructive">
-              <AlertTitle>Error</AlertTitle>
-              <AlertDescription>{error}</AlertDescription>
-            </Alert>
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Report</TableHead>
+                  <TableHead>Date</TableHead>
+                  <TableHead className="text-right">Status</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {securityReports.map((report) => (
+                  <TableRow key={report.id}>
+                    <TableCell className="font-medium">
+                      {report.title}
+                    </TableCell>
+                    <TableCell>{report.date}</TableCell>
+                    <TableCell className="text-right">
+                      <Badge
+                        variant={
+                          report.status === 'Published'
+                            ? 'default'
+                            : report.status === 'Draft'
+                            ? 'secondary'
+                            : 'outline'
+                        }
+                      >
+                        {report.status}
+                      </Badge>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
           </CardContent>
         </Card>
-      )}
+      </div>
 
-      <Card>
-        <CardHeader>Threat Statistics</CardHeader>
-        <CardContent>
-          {renderComponentWithErrorHandling(<ThreatStats stats={stats} />)}
-        </CardContent>
-      </Card>
-
-      <Grid cols={2} gap={4}>
-        <Card>
-          <CardHeader>Threat Distribution</CardHeader>
+      {/* Vulnerability & Activity Section */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        {/* Critical Vulnerabilities */}
+        <Card className="col-span-2">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Factory className="h-6 w-6" />
+              Targeted Sectors
+            </CardTitle>
+          </CardHeader>
           <CardContent>
-            {renderComponentWithErrorHandling(
-              <ThreatDistributionChart data={sampleDistributionChart} />,
-            )}
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Sector</TableHead>
+                  <TableHead className="text-right">Incidents</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {targetedSectors.map((sector) => (
+                  <TableRow key={sector.sector}>
+                    <TableCell>{sector.sector}</TableCell>
+                    <TableCell className="text-right">{sector.count}</TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
           </CardContent>
         </Card>
 
-        <Card>
-          <CardHeader>Threat Types</CardHeader>
-          <CardContent>
-            {renderComponentWithErrorHandling(
-              <WidgetHorizontalBars
-                series={sampleHorizontalBarData}
-                categories={sampleCategories}
-                total={true}
-                legend={true}
-                withExport={true}
-              />,
-            )}
+        {/* Real-time Activity Feed */}
+        <Card className="lg:col-span-1">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Activity className="h-6 w-6" />
+              Real-time Activity
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            {activityFeed.map((activity, index) => (
+              <div key={index} className="flex items-start gap-3">
+                <div className="h-2 w-2 mt-2 rounded-full bg-primary" />
+                <div>
+                  <p className="font-medium">{activity.event}</p>
+                  <p className="text-sm text-muted-foreground">
+                    {activity.time}
+                  </p>
+                </div>
+              </div>
+            ))}
           </CardContent>
         </Card>
-      </Grid>
+      </div>
 
-      <Grid cols={2} gap={4}>
-        <Card>
-          <CardHeader>Threat Trends</CardHeader>
+      {/* Additional Metrics */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        <Card className="hover:shadow-lg transition-shadow">
+          <CardHeader className="flex flex-row items-center justify-between pb-2">
+            <Shield className="h-6 w-6" />
+            <Badge variant="outline" className="text-green-600">
+              +12%
+            </Badge>
+          </CardHeader>
           <CardContent>
-            {renderComponentWithErrorHandling(
-              <WidgetMultiAreas
-                series={sampleMultiAreaData}
-                interval="month"
-                isStacked={false}
-                hasLegend={true}
-                withExport={false}
-                readonly={false}
-              />,
-            )}
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader>Location Map</CardHeader>
-          <CardContent>
-            {renderComponentWithErrorHandling(<LocationMiniMap />)}
-          </CardContent>
-        </Card>
-      </Grid>
-
-      <Grid cols={2} gap={4}>
-        <Card>
-          <CardHeader>Recent Incidents</CardHeader>
-          <CardContent>
-            {renderComponentWithErrorHandling(
-              <RecentIncidents data={sampleRecentIncidents} />,
-            )}
+            <div className="text-2xl font-bold">98%</div>
+            <p className="text-xs text-muted-foreground">Prevention Rate</p>
           </CardContent>
         </Card>
 
-        <Card>
-          <CardHeader>Threat Breakdown</CardHeader>
+        <Card className="hover:shadow-lg transition-shadow">
+          <CardHeader className="flex flex-row items-center justify-between pb-2">
+            <AlertCircle className="h-6 w-6" />
+            <Badge variant="outline" className="text-red-600">
+              -8%
+            </Badge>
+          </CardHeader>
           <CardContent>
-            {renderComponentWithErrorHandling(
-              <PolarArea data={samplePolarAreaData} groupBy="Threat Type" />,
-            )}
+            <div className="text-2xl font-bold">2.4s</div>
+            <p className="text-xs text-muted-foreground">Avg. Response Time</p>
           </CardContent>
         </Card>
-      </Grid>
-    </Grid>
+
+        <Card className="hover:shadow-lg transition-shadow">
+          <CardHeader className="flex flex-row items-center justify-between pb-2">
+            <Globe className="h-6 w-6" />
+            <Badge variant="outline" className="text-blue-600">
+              +23
+            </Badge>
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">156</div>
+            <p className="text-xs text-muted-foreground">Active Connections</p>
+          </CardContent>
+        </Card>
+
+        <Card className="hover:shadow-lg transition-shadow">
+          <CardHeader className="flex flex-row items-center justify-between pb-2">
+            <Hammer className="h-6 w-6" />
+            <Badge variant="outline" className="text-purple-600">
+              +5
+            </Badge>
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">89</div>
+            <p className="text-xs text-muted-foreground">Mitigation Actions</p>
+          </CardContent>
+        </Card>
+      </div>
+    </div>
   );
 };
+
+export default Dashboard;
