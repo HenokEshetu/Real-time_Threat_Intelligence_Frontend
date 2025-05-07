@@ -5,8 +5,6 @@ import {
 } from '@/graphql/relationship';
 import { StixRelationship } from '@/types/relationship';
 
-import { Indicator } from '@/types/indicator';
-
 import * as React from 'react';
 
 export const useRelationships = ({
@@ -24,7 +22,7 @@ export const useRelationships = ({
     error: relError,
     fetchMore,
   } = useQuery(SEARCH_RELATIONSHIP, {
-    variables: { filers: filter, page, pageSize },
+    variables: { filers: filter, page: page, pageSize: pageSize },
     notifyOnNetworkStatusChange: true,
   });
 

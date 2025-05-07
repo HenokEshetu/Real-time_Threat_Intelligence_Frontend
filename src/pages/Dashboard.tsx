@@ -5,7 +5,12 @@ import {
   CardTitle,
   CardFooter,
 } from '@/components/ui/card';
-import { BarChart, PieChart } from '@/components/ui/charts';
+import {
+  AreaChartGradient,
+  BarChartHorizontal,
+  BarChartVertical,
+  PieChart,
+} from '@/components/ui/charts';
 import {
   Table,
   TableHeader,
@@ -36,7 +41,7 @@ import {
 } from 'lucide-react';
 import React from 'react';
 
-const Dashboard = () => {
+export const Dashboard = () => {
   // Summary Data
   const summaryData = [
     {
@@ -175,26 +180,10 @@ const Dashboard = () => {
 
       {/* Threat Landscape Section */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <div className="lg:col-span-2 space-y-6">
+        <div className="lg:col-span-3 space-y-6">
           {/* Threat Trend Analysis */}
-          <div className="grid grid-cols-2 gap-4">
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <LineChart className="h-6 w-6" />
-                  Threat Trend Analysis
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <BarChart
-                  data={threatTrends}
-                  index="month"
-                  categories={['count']}
-                  colors={['#3b82f6']}
-                />
-              </CardContent>
-            </Card>
-            <Card>
+          <div className="grid grid-cols-4 gap-4">
+            <Card className="lg:col-span-1">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <Bug className="h-6 w-6" />
@@ -210,26 +199,7 @@ const Dashboard = () => {
                 />
               </CardContent>
             </Card>
-          </div>
-
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-            <Card className="lg:col-span-1">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <MapPin className="h-6 w-6" />
-                  Targeted Regions
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <BarChart
-                  data={targetedRegions}
-                  index="region"
-                  categories={['Incidents']}
-                  colors={['#3b82f6']}
-                />
-              </CardContent>
-            </Card>
-            <Card className="lg:col-span-1">
+            <Card className="lg:col-span-2">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <AlertTriangle className="h-6 w-6" />
@@ -273,52 +243,56 @@ const Dashboard = () => {
                 </Table>
               </CardContent>
             </Card>
+            <AreaChartGradient />
+          </div>
+
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+            {/* Targeted Regions */}
+            <BarChartHorizontal />
+            <Card className="lg:col-span-2">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <FileText className="h-6 w-6" />
+                  Security Reports
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Report</TableHead>
+                      <TableHead>Date</TableHead>
+                      <TableHead className="text-right">Status</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {securityReports.map((report) => (
+                      <TableRow key={report.id}>
+                        <TableCell className="font-medium">
+                          {report.title}
+                        </TableCell>
+                        <TableCell>{report.date}</TableCell>
+                        <TableCell className="text-right">
+                          <Badge
+                            variant={
+                              report.status === 'Published'
+                                ? 'default'
+                                : report.status === 'Draft'
+                                ? 'secondary'
+                                : 'outline'
+                            }
+                          >
+                            {report.status}
+                          </Badge>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </CardContent>
+            </Card>
           </div>
         </div>
-
-        {/* Security Reports */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <FileText className="h-6 w-6" />
-              Security Reports
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Report</TableHead>
-                  <TableHead>Date</TableHead>
-                  <TableHead className="text-right">Status</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {securityReports.map((report) => (
-                  <TableRow key={report.id}>
-                    <TableCell className="font-medium">
-                      {report.title}
-                    </TableCell>
-                    <TableCell>{report.date}</TableCell>
-                    <TableCell className="text-right">
-                      <Badge
-                        variant={
-                          report.status === 'Published'
-                            ? 'default'
-                            : report.status === 'Draft'
-                            ? 'secondary'
-                            : 'outline'
-                        }
-                      >
-                        {report.status}
-                      </Badge>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </CardContent>
-        </Card>
       </div>
 
       {/* Vulnerability & Activity Section */}

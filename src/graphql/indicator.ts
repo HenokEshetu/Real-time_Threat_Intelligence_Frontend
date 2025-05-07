@@ -12,20 +12,20 @@ export const SEARCH_INDICATORS = gql`
         created
         created_by_ref
         description
-        enrichment {
-          abuseipdb
-          asn
-          dns
-          geo
-          hybrid
-          misp
-          shodan
-          ssl
-          threatcrowd
-          threatfox
-          virustotal
-          whois
-        }
+        # enrichment {
+        #   abuseipdb
+        #   asn
+        #   dns
+        #   geo
+        #   hybrid
+        #   misp
+        #   shodan
+        #   ssl
+        #   threatcrowd
+        #   threatfox
+        #   virustotal
+        #   whois
+        # }
         extensions
         external_references {
           description

@@ -7,17 +7,35 @@ import {
   Bar,
   Pie,
   Cell,
+  Area,
+  AreaChart,
   XAxis,
   YAxis,
   CartesianGrid,
   Tooltip,
   Legend,
   ResponsiveContainer,
+  BarChart,
 } from 'recharts';
 import { cn } from '@/lib/utils';
-import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
+import { TrendingUp } from 'lucide-react';
+import {
+  Card,
+  CardHeader,
+  CardTitle,
+  CardContent,
+  CardDescription,
+  CardFooter,
+} from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import React from 'react';
+
+import {
+  ChartConfig,
+  ChartContainer,
+  ChartTooltip,
+  ChartTooltipContent,
+} from '@/components/ui/chart';
 
 const DEFAULT_COLORS = [
   '#3b82f6', // blue-500
@@ -47,7 +65,176 @@ type BarChartProps = {
   tickFormatter?: (value: any) => string;
 };
 
-export const BarChart = ({
+const chartData = [
+  { month: 'January', desktop: 186, mobile: 80 },
+  { month: 'February', desktop: 305, mobile: 200 },
+  { month: 'March', desktop: 237, mobile: 120 },
+  { month: 'April', desktop: 73, mobile: 190 },
+  { month: 'May', desktop: 209, mobile: 130 },
+  { month: 'June', desktop: 214, mobile: 140 },
+];
+
+const chartConfig = {
+  desktop: {
+    label: 'Desktop',
+    color: 'hsl(var(--chart-1))',
+  },
+  mobile: {
+    label: 'Mobile',
+    color: 'hsl(var(--chart-2))',
+  },
+} satisfies ChartConfig;
+
+export const AreaChartGradient = () => {
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle>Area Chart - Gradient</CardTitle>
+        <CardDescription>
+          Showing total visitors for the last 6 months
+        </CardDescription>
+      </CardHeader>
+      <CardContent>
+        <ChartContainer config={chartConfig}>
+          <AreaChart
+            accessibilityLayer
+            data={chartData}
+            margin={{
+              left: 12,
+              right: 12,
+            }}
+          >
+            <CartesianGrid vertical={false} />
+            <XAxis
+              dataKey="month"
+              tickLine={false}
+              axisLine={false}
+              tickMargin={8}
+              tickFormatter={(value) => value.slice(0, 3)}
+            />
+            <ChartTooltip cursor={false} content={<ChartTooltipContent />} />
+            <defs>
+              <linearGradient id="fillDesktop" x1="0" y1="0" x2="0" y2="1">
+                <stop
+                  offset="5%"
+                  stopColor="var(--color-desktop)"
+                  stopOpacity={0.8}
+                />
+                <stop
+                  offset="95%"
+                  stopColor="var(--color-desktop)"
+                  stopOpacity={0.1}
+                />
+              </linearGradient>
+              <linearGradient id="fillMobile" x1="0" y1="0" x2="0" y2="1">
+                <stop
+                  offset="5%"
+                  stopColor="var(--color-mobile)"
+                  stopOpacity={0.8}
+                />
+                <stop
+                  offset="95%"
+                  stopColor="var(--color-mobile)"
+                  stopOpacity={0.1}
+                />
+              </linearGradient>
+            </defs>
+            <Area
+              dataKey="mobile"
+              type="natural"
+              fill="url(#fillMobile)"
+              fillOpacity={0.4}
+              stroke="var(--color-mobile)"
+              stackId="a"
+            />
+            <Area
+              dataKey="desktop"
+              type="natural"
+              fill="url(#fillDesktop)"
+              fillOpacity={0.4}
+              stroke="var(--color-desktop)"
+              stackId="a"
+            />
+          </AreaChart>
+        </ChartContainer>
+      </CardContent>
+      <CardFooter>
+        <div className="flex w-full items-start gap-2 text-sm">
+          <div className="grid gap-2">
+            <div className="flex items-center gap-2 font-medium leading-none">
+              Trending up by 5.2% this month <TrendingUp className="h-4 w-4" />
+            </div>
+            <div className="flex items-center gap-2 leading-none text-muted-foreground">
+              January - June 2024
+            </div>
+          </div>
+        </div>
+      </CardFooter>
+    </Card>
+  );
+};
+
+const barChart_chartData = [
+  { month: 'January', desktop: 186 },
+  { month: 'February', desktop: 305 },
+  { month: 'March', desktop: 237 },
+  { month: 'April', desktop: 73 },
+  { month: 'May', desktop: 209 },
+  { month: 'June', desktop: 214 },
+];
+const barChart_chartConfig = {
+  desktop: {
+    label: 'Desktop',
+    color: 'hsl(var(--chart-1))',
+  },
+} satisfies ChartConfig;
+export function BarChartHorizontal() {
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle>Bar Chart - Horizontal</CardTitle>
+        <CardDescription>January - June 2024</CardDescription>
+      </CardHeader>
+      <CardContent>
+        <ChartContainer config={barChart_chartConfig}>
+          <BarChart
+            accessibilityLayer
+            data={barChart_chartData}
+            layout="vertical"
+            margin={{
+              left: -20,
+            }}
+          >
+            <XAxis type="number" dataKey="desktop" hide />
+            <YAxis
+              dataKey="month"
+              type="category"
+              tickLine={false}
+              tickMargin={10}
+              axisLine={false}
+              tickFormatter={(value) => value.slice(0, 3)}
+            />
+            <ChartTooltip
+              cursor={false}
+              content={<ChartTooltipContent hideLabel />}
+            />
+            <Bar dataKey="desktop" fill="var(--color-desktop)" radius={5} />
+          </BarChart>
+        </ChartContainer>
+      </CardContent>
+      <CardFooter className="flex-col items-start gap-2 text-sm">
+        <div className="flex gap-2 font-medium leading-none">
+          Trending up by 5.2% this month <TrendingUp className="h-4 w-4" />
+        </div>
+        <div className="leading-none text-muted-foreground">
+          Showing total visitors for the last 6 months
+        </div>
+      </CardFooter>
+    </Card>
+  );
+}
+
+export const BarChartVertical = ({
   data,
   index,
   categories,

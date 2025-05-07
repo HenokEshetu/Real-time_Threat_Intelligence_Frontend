@@ -49,7 +49,19 @@ import {
   CollapsibleContent,
   CollapsibleTrigger,
 } from '../ui/collapsible';
-import { Input } from '../ui/input';
+import { useAuth } from '@/auth/AuthContext';
+import { Loading } from '../common/Loading/Loading';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from '../ui/alert-dialog';
 
 interface MenuItem {
   text: string;
@@ -120,6 +132,9 @@ export const Layout = ({ children }: { children: React.ReactNode }) => {
   const location = useLocation();
   const [toogleDropdown, setToggleDropdown] = useState(true);
   const [page, setPage] = useState(1);
+  const { isAuthenticated, user, loading, logout } = useAuth();
+
+  console.log('🔄 Layout render, isAuthenticated =', isAuthenticated);
 
   const toggleTheme = () => setTheme(theme === 'dark' ? 'light' : 'dark');
 
@@ -135,6 +150,10 @@ export const Layout = ({ children }: { children: React.ReactNode }) => {
       setPage(1);
     }
   };
+
+  if (loading) {
+    return <Loading />;
+  }
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -157,58 +176,102 @@ export const Layout = ({ children }: { children: React.ReactNode }) => {
           <Breadcrumb className="hidden md:flex ml-4" />
         </div>
         <div className="flex items-center gap-2">
-          <Button variant="ghost" size="icon" onClick={toggleTheme}>
+          {/* Theme toggle */}
+          <Button
+            variant="ghost"
+            size="icon"
+            aria-label="Toggle theme"
+            onClick={toggleTheme}
+          >
             {theme === 'dark' ? (
               <SunIcon className="h-5 w-5" />
             ) : (
               <MoonIcon className="h-5 w-5" />
             )}
           </Button>
+
+          {/* Profile dropdown */}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="ghost" className="rounded-full h-8 w-8 p-0">
-                <Avatar>
-                  <AvatarImage src="" alt="user" />
-                  <AvatarFallback>U</AvatarFallback>
+              <Button
+                variant="ghost"
+                size="icon"
+                className="p-0 rounded-full focus-visible:ring-offset-0"
+              >
+                <Avatar className="h-8 w-8">
+                  <AvatarImage src={user?.avatarUrl} alt={user?.email} />
+                  <AvatarFallback>
+                    {user?.email?.[0].toUpperCase() || 'U'}
+                  </AvatarFallback>
                 </Avatar>
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent className="w-56" align="end">
+
+            <DropdownMenuContent
+              className="w-56 z-[100]"
+              align="end"
+              onCloseAutoFocus={(e) => e.preventDefault()}
+            >
               <DropdownMenuLabel>
                 <div className="flex flex-col">
-                  <span className="text-sm font-medium">User Name</span>
+                  <span className="text-sm font-medium">
+                    {user?.email.split('@')[0] || 'Unknown User'}
+                  </span>
                   <span className="text-xs text-muted-foreground">
-                    user@example.com
+                    {user?.email}
                   </span>
                 </div>
               </DropdownMenuLabel>
+
               <DropdownMenuSeparator />
+
               <DropdownMenuItem asChild>
-                <Link to="/profile">Profile</Link>
+                <Link to="/profile" className="w-full cursor-pointer">
+                  Profile
+                </Link>
               </DropdownMenuItem>
               <DropdownMenuItem asChild>
-                <Link to="/settings">Settings</Link>
+                <Link to="/settings" className="w-full cursor-pointer">
+                  Settings
+                </Link>
               </DropdownMenuItem>
+
               <DropdownMenuSeparator />
-              <DropdownMenuItem className="text-destructive">
-                Logout
-              </DropdownMenuItem>
+              {isAuthenticated && (
+                <AlertDialog>
+                  <AlertDialogTrigger className="w-full">
+                    <DropdownMenuItem
+                      className="text-destructive focus:bg-destructive/10 cursor-pointer"
+                      onSelect={(e) => e.preventDefault()}
+                    >
+                      Logout
+                    </DropdownMenuItem>
+                  </AlertDialogTrigger>
+
+                  <AlertDialogContent>
+                    <AlertDialogHeader>
+                      <AlertDialogTitle>Confirm Logout</AlertDialogTitle>
+                      <AlertDialogDescription>
+                        Are you sure you want to log out? You'll need to sign in
+                        again to access your account.
+                      </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                      <AlertDialogCancel>Cancel</AlertDialogCancel>
+                      <AlertDialogAction onClick={() => logout()}>
+                        Yes, log me out
+                      </AlertDialogAction>
+                    </AlertDialogFooter>
+                  </AlertDialogContent>
+                </AlertDialog>
+              )}
             </DropdownMenuContent>
           </DropdownMenu>
         </div>
       </header>
 
-      <TopContainer className="h-12 justify-between">
+      <TopContainer className="h-12 justify-between w-[90.5%]">
         <TopBreadcrumb />
-        <div className="flex items-center">
-          <h1 className="px-4">Page</h1>
-          <Input
-            placeholder="Page NO"
-            value={page}
-            onChange={handlePageChange}
-            className="w-10"
-          />
-        </div>
       </TopContainer>
 
       <div className="flex flex-1">
