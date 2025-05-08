@@ -196,21 +196,27 @@ export const IndicatorsPage = () => {
                     </Badge>
                   </TableCell>
                   <TableCell className="p-4 font-medium text-gray-900 hover:underline max-w-100 truncate">
-                    {indicator.name.replace('Indicator: ', '') || 'Unknown'}
+                    {indicator.name || 'Unknown'}
                   </TableCell>
                   <TableCell className={`p-4 text-gray-600`}>
                     <Badge
                       variant="outline"
-                      className={`max-w-28 ${getTlpColors(
-                        marking.replaceAll('tlp:', '') ||
-                          (indicator.object_marking_refs.length > 0
-                            ? indicator.object_marking_refs[0]
-                            : 'clear'),
-                      )} border-2 uppercase truncate`}
+                      className={`max-w-28 ${
+                        marking && typeof marking === 'string'
+                          ? getTlpColors(marking.replaceAll('tlp:', ''))
+                          : getTlpColors(
+                              Array.isArray(indicator.object_marking_refs) &&
+                              indicator.object_marking_refs.length > 0 &&
+                              typeof indicator.object_marking_refs[0] === 'string'
+                                ? indicator.object_marking_refs[0]
+                                : 'clear'
+                            )
+                      } border-2 uppercase truncate`}
                     >
                       {marking ||
                         `TLP:${
-                          indicator.object_marking_refs
+                          Array.isArray(indicator.object_marking_refs) &&
+                          indicator.object_marking_refs.length > 0
                             ? indicator.object_marking_refs[0]
                             : 'clear'
                         }`}

@@ -5,7 +5,7 @@ import { Link } from 'react-router-dom';
 
 export interface TabsType {
   titles?: string[];
-  comoponents?: React.ReactNode[];
+  components?: React.ReactNode[];
 }
 
 export const TopTab = ({
@@ -18,6 +18,7 @@ export const TopTab = ({
   rootPath,
 }: {
   tabs?: TabsType;
+  
   triggerStyle?: string;
   listStyle?: string;
   containerStyle?: string;
@@ -57,7 +58,7 @@ export const TopTab = ({
         </TabsList>
       </TopContainer>
 
-      {tabs.comoponents?.map((component, i) => (
+      {tabs.components?.map((component, i) => (
         <TabsContent key={i} value={tabs?.titles[i]}>
           {component}
         </TabsContent>

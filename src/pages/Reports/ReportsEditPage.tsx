@@ -1,65 +1,306 @@
-import React from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
-import { useReport, useUpdateReport } from '../../hooks/useReports';
-import { EntityForm } from '../../components/common/EntityForm/EntityForm';
+import React, { useState, useEffect } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
+import {
+  Box,
+  Typography,
+  TextField,
+  IconButton,
+  AppBar,
+  Toolbar,
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem,
+  OutlinedInput,
+  FormHelperText,
+  Slider,
+} from '@mui/material';
+import CloseIcon from '@mui/icons-material/Close';
+import Sparkles from '@mui/icons-material/AutoAwesome';
 import { Button } from '@/components/ui/button';
-import { FileText, Sparkles } from 'lucide-react';
+import { useQuery } from '@apollo/client';
+import { GET_REPORT } from '@/graphql/report';
+
+const REPORT_TYPES = ['internal-report', 'misp-event', 'threat-report'];
+const RELIABILITY_OPTIONS = [
+  'A - Completely reliable',
+  'B - Usually reliable',
+  'C - Fairly reliable',
+  'D - Not usually reliable',
+  'E - Unreliable',
+  'F - Reliability cannot be judged',
+];
+const CONFIDENCE_LEVELS = [
+  { value: 100, label: '1 - Confirmed by other sources' },
+  { value: 80, label: '2 - Probably True' },
+  { value: 60, label: '3 - Possibly True' },
+  { value: 40, label: '4 - Doubtful' },
+  { value: 20, label: '5 - Improbable' },
+  { value: 0, label: '6 - Truth Cannot be judged' },
+];
+const MARKING_LABELS = [
+  'TLP:CLEAR',
+  'TLP:GREEN',
+  'TLP:AMBER+STRICT',
+  'TLP:AMBER',
+  'TLP:RED',
+];
 
 export const ReportsEditPage = () => {
-  const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const { report, loading, error } = useReport(id || '');
-  const [updateReport, { loading: updating, error: updateError }] = useUpdateReport();
+  const { id } = useParams();
 
-  const fieldConfig = [
-    { name: 'name', label: 'Report Name', type: 'text', required: true, icon: <FileText /> },
-    { name: 'description', label: 'Description', type: 'textarea', required: false },
-    { name: 'authors', label: 'Authors', type: 'multiselect', options: [] as string[], required: false },
-    { name: 'published', label: 'Published Date', type: 'date', required: false },
-    { name: 'report_types', label: 'Report Types', type: 'multiselect', options: [] as string[], required: false },
-    { name: 'confidence', label: 'Confidence', type: 'slider', min: 0, max: 100, required: false },
-    { name: 'labels', label: 'Labels', type: 'multiselect', options: [] as string[], required: false },
-    { name: 'external_references', label: 'External References', type: 'dynamic-list', fields: [
-      { name: 'source_name', label: 'Source Name', type: 'text', required: true },
-      { name: 'url', label: 'URL', type: 'text', required: false },
-      { name: 'external_id', label: 'External ID', type: 'text', required: false },
-    ]},
-  ];
+  const { data, loading, error } = useQuery(GET_REPORT, { variables: { id } });
 
-  const handleSubmit = async (values: any) => {
-    try {
-      await updateReport({ variables: { id, input: values } });
-      navigate(`/reports/${id}`);
-    } catch (err) {
-      // error handled below
+  const [values, setValues] = useState({
+    name: '',
+    published: '',
+    report_types: [],
+    reliability: '',
+    confidence: 100,
+    confidenceLevel: CONFIDENCE_LEVELS[0].label,
+    description: '',
+    markingLabels: [],
+  });
+  const [errors, setErrors] = useState<{ [key: string]: string }>({});
+
+  // Populate form with real data when loaded
+  useEffect(() => {
+    if (data?.report) {
+      const report = data.report;
+      setValues({
+        name: report.name || '',
+        published: report.published ? report.published.slice(0, 10) : '',
+        report_types: report.report_types || [],
+        reliability: report.reliability || '',
+        confidence: typeof report.confidence === 'number' ? report.confidence : 100,
+        confidenceLevel:
+          CONFIDENCE_LEVELS.find(l => l.value === report.confidence)?.label ||
+          CONFIDENCE_LEVELS[0].label,
+        description: report.description || '',
+        markingLabels: report.object_marking_refs || [],
+      });
+    }
+  }, [data]);
+
+  const handleChange = (field: string, value: any) => {
+    setValues((prev) => ({ ...prev, [field]: value }));
+    setErrors((prev) => ({ ...prev, [field]: '' }));
+  };
+
+  const validate = () => {
+    const newErrors: { [key: string]: string } = {};
+    if (!values.name) newErrors.name = 'This field is required';
+    if (!values.published) newErrors.published = 'This field is required';
+    if (!values.report_types.length) newErrors.report_types = 'This field is required';
+    if (!values.reliability) newErrors.reliability = 'This field is required';
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!validate()) return;
+    // submit update logic here
+  };
+
+  const getConfidenceLabel = (val: number) => {
+    for (let i = 0; i < CONFIDENCE_LEVELS.length; i++) {
+      if (val >= CONFIDENCE_LEVELS[i].value) return CONFIDENCE_LEVELS[i].label;
+    }
+    return CONFIDENCE_LEVELS[CONFIDENCE_LEVELS.length - 1].label;
+  };
+
+  const getConfidenceValue = (label: string) => {
+    const found = CONFIDENCE_LEVELS.find((l) => l.label === label);
+    return found ? found.value : 0;
+  };
+
+  const getSliderColor = (val: number) => {
+    if (val >= 80) return '#43a047';
+    if (val >= 60) return '#b2ff59';
+    if (val >= 40) return '#ffee58';
+    if (val >= 20) return '#ffa726';
+    return '#ef5350';
+  };
+
+  const handleConfidenceChange = (field: 'confidence' | 'confidenceLevel', value: number | string) => {
+    if (field === 'confidence') {
+      const num = typeof value === 'number' ? value : parseInt(value as string, 10);
+      setValues((prev) => ({
+        ...prev,
+        confidence: num,
+        confidenceLevel: getConfidenceLabel(num),
+      }));
+    } else {
+      setValues((prev) => ({
+        ...prev,
+        confidenceLevel: value as string,
+        confidence: getConfidenceValue(value as string),
+      }));
     }
   };
 
-  if (loading) return <div className="text-center py-10">Loading report...</div>;
-  if (error) return <div className="text-red-600 text-center py-10">Error loading report.</div>;
-  if (!report) return <div className="text-center py-10">Report not found.</div>;
+  if (loading) {
+    return (
+      <Box sx={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff' }}>
+        Loading...
+      </Box>
+    );
+  }
+  if (error || !data?.report) {
+    return (
+      <Box sx={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff' }}>
+        Failed to load report.
+      </Box>
+    );
+  }
 
   return (
-    <div className="max-w-2xl mx-auto px-4 py-10 bg-gradient-to-br from-yellow-50 via-white to-blue-100 dark:from-zinc-900 dark:via-zinc-950 dark:to-blue-950 rounded-3xl shadow-2xl animate-fade-in">
-      <div className="flex items-center gap-3 mb-8">
-        <span className="bg-yellow-400 text-white rounded-full p-3 shadow-lg">
-          <Sparkles className="w-7 h-7" />
-        </span>
-        <h1 className="text-3xl font-extrabold text-yellow-700 dark:text-yellow-200 tracking-tight flex items-center gap-2">
-          Edit Your Amazing Report
-        </h1>
-      </div>
-      {updateError && (
-        <div className="mb-4 bg-red-100 text-red-700 px-4 py-2 rounded shadow">
-          Error: {updateError.message}
-        </div>
-      )}
-      <EntityForm
-        initialValues={report}
-        onSubmit={handleSubmit}
-        isSubmitting={updating}
-        fieldConfig={fieldConfig}
-      />
-    </div>
+    <Box sx={{ bgcolor: '#fafafa', minHeight: '100vh' }}>
+      <AppBar position="static" color="default" elevation={0}>
+        <Toolbar>
+          <IconButton edge="start" onClick={() => navigate(-1)}>
+            <CloseIcon />
+          </IconButton>
+          <Typography variant="h6" sx={{ flexGrow: 1 }}>
+            Update a report
+          </Typography>
+        </Toolbar>
+      </AppBar>
+      <Box component="form" onSubmit={handleSubmit} sx={{ maxWidth: 600, mx: 'auto', mt: 4, p: 3 }}>
+        <FormControl fullWidth margin="normal" error={!!errors.name}>
+          <InputLabel required shrink>Name</InputLabel>
+          <OutlinedInput
+            value={values.name}
+            onChange={(e) => handleChange('name', e.target.value)}
+            startAdornment={<Sparkles sx={{ color: 'purple', mr: 1 }} />}
+            label="Name"
+          />
+          {errors.name && (
+            <FormHelperText>{errors.name}</FormHelperText>
+          )}
+        </FormControl>
+        <FormControl fullWidth margin="normal" error={!!errors.published}>
+          <InputLabel required shrink>Publication date</InputLabel>
+          <TextField
+            type="date"
+            value={values.published}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleChange('published', e.target.value)}
+            InputLabelProps={{ shrink: true }}
+            error={!!errors.published}
+            helperText={errors.published}
+            label="Publication date"
+          />
+        </FormControl>
+        <FormControl fullWidth margin="normal" error={!!errors.report_types}>
+          <InputLabel required shrink>Report types</InputLabel>
+          <Select
+            multiple
+            value={values.report_types}
+            onChange={(e) => handleChange('report_types', e.target.value)}
+            input={<OutlinedInput label="Report types" />}
+            renderValue={(selected) => (selected as string[]).join(', ')}
+          >
+            {REPORT_TYPES.map((type) => (
+              <MenuItem key={type} value={type}>
+                {type}
+              </MenuItem>
+            ))}
+          </Select>
+          {errors.report_types && (
+            <FormHelperText>{errors.report_types}</FormHelperText>
+          )}
+        </FormControl>
+        <FormControl fullWidth margin="normal" error={!!errors.reliability}>
+          <InputLabel required shrink>Reliability</InputLabel>
+          <Select
+            value={values.reliability}
+            onChange={(e) => handleChange('reliability', e.target.value)}
+            input={<OutlinedInput label="Reliability" />}
+            displayEmpty
+          >
+            {RELIABILITY_OPTIONS.map((option) => (
+              <MenuItem key={option} value={option}>
+                {option}
+              </MenuItem>
+            ))}
+          </Select>
+          {errors.reliability && (
+            <FormHelperText>{errors.reliability}</FormHelperText>
+          )}
+        </FormControl>
+        <FormControl fullWidth margin="normal">
+          <InputLabel shrink>Confidence level</InputLabel>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+            <TextField
+              type="number"
+              label=""
+              value={values.confidence}
+              inputProps={{ min: 0, max: 100 }}
+              onChange={(e) => handleConfidenceChange('confidence', Number(e.target.value))}
+              sx={{ width: 80 }}
+            />
+            <Select
+              value={values.confidenceLevel}
+              onChange={(e) => handleConfidenceChange('confidenceLevel', e.target.value)}
+              sx={{ minWidth: 260 }}
+            >
+              {CONFIDENCE_LEVELS.map((level) => (
+                <MenuItem key={level.label} value={level.label}>
+                  {level.label}
+                </MenuItem>
+              ))}
+            </Select>
+          </Box>
+          <Box sx={{ px: 1, pt: 2 }}>
+            <Slider
+              min={0}
+              max={100}
+              step={1}
+              value={values.confidence}
+              onChange={(_, val) => handleConfidenceChange('confidence', val as number)}
+              sx={{
+                color: getSliderColor(values.confidence),
+                height: 4,
+              }}
+            />
+          </Box>
+        </FormControl>
+        <FormControl fullWidth margin="normal">
+          <InputLabel shrink>Description</InputLabel>
+          <TextField
+            multiline
+            minRows={4}
+            value={values.description}
+            onChange={(e) => setValues((prev) => ({ ...prev, description: e.target.value }))}
+            placeholder="Write a description in markdown..."
+            variant="outlined"
+            fullWidth
+          />
+        </FormControl>
+        <FormControl fullWidth margin="normal">
+          <InputLabel shrink>Markings</InputLabel>
+          <Select
+            multiple
+            value={values.markingLabels}
+            onChange={(e) => handleChange('markingLabels', e.target.value)}
+            input={<OutlinedInput label="Markings" />}
+            renderValue={(selected) => (selected as string[]).join(', ')}
+          >
+            {MARKING_LABELS.map((label) => (
+              <MenuItem key={label} value={label}>
+                {label}
+              </MenuItem>
+            ))}
+          </Select>
+        </FormControl>
+        <Box mt={3}>
+          <Button type="submit" variant="default" color="primary">
+            Update
+          </Button>
+        </Box>
+      </Box>
+    </Box>
   );
 };

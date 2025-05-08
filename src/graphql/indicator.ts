@@ -12,20 +12,6 @@ export const SEARCH_INDICATORS = gql`
         created
         created_by_ref
         description
-        # enrichment {
-        #   abuseipdb
-        #   asn
-        #   dns
-        #   geo
-        #   hybrid
-        #   misp
-        #   shodan
-        #   ssl
-        #   threatcrowd
-        #   threatfox
-        #   virustotal
-        #   whois
-        # }
         extensions
         external_references {
           description
@@ -54,20 +40,6 @@ export const SEARCH_INDICATORS = gql`
           created
           created_by_ref
           description
-          enrichment {
-            abuseipdb
-            asn
-            dns
-            geo
-            hybrid
-            misp
-            shodan
-            ssl
-            threatcrowd
-            threatfox
-            virustotal
-            whois
-          }
           extensions
           external_references {
             description
@@ -133,20 +105,6 @@ export const GET_INDICATOR = gql`
       created
       created_by_ref
       description
-      enrichment {
-        abuseipdb
-        asn
-        dns
-        geo
-        hybrid
-        misp
-        shodan
-        ssl
-        threatcrowd
-        threatfox
-        virustotal
-        whois
-      }
       extensions
       external_references {
         description
@@ -175,20 +133,6 @@ export const GET_INDICATOR = gql`
         created
         created_by_ref
         description
-        enrichment {
-          abuseipdb
-          asn
-          dns
-          geo
-          hybrid
-          misp
-          shodan
-          ssl
-          threatcrowd
-          threatfox
-          virustotal
-          whois
-        }
         extensions
         external_references {
           description

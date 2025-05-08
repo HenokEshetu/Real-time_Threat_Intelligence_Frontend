@@ -27,14 +27,17 @@ export const useReports = ({
 
   const loadMore = () => {
     fetchMore({
-      variables: { filter: filters, page: page + 1, pageSize },
+      variables: { filters, page: page + 1, pageSize },
       updateQuery: (prev, { fetchMoreResult }) => {
         if (!fetchMoreResult) return prev;
         return {
-          searchReports: [
-            ...(prev?.searchReports || []),
+          searchReports: {
             ...fetchMoreResult.searchReports,
-          ],
+            results: [
+              ...(prev?.searchReports?.results || []),
+              ...(fetchMoreResult.searchReports?.results || []),
+            ],
+          },
         };
       },
     });
@@ -52,7 +55,7 @@ export const useReports = ({
 
 export const useReport = (id: string) => {
   const { data, loading, error } = useQuery(GET_REPORT, { variables: { id } });
-  return { report: data?.getReport, loading, error };
+  return { report: data?.report, loading, error };
 };
 
 export const useCreateReport = () => useMutation(CREATE_REPORT);
