@@ -1,15 +1,12 @@
-import {
-  Card,
-  CardHeader,
-  CardContent,
-  CardTitle,
-  CardFooter,
-} from '@/components/ui/card';
+import { Card, CardHeader, CardContent, CardTitle } from '@/components/ui/card';
 import {
   AreaChartGradient,
+  BarChartCustomLabel,
   BarChartHorizontal,
-  BarChartVertical,
-  PieChart,
+  BarChartInteractive,
+  PieChartInteractive,
+  // PieChart,
+  RadialChart,
 } from '@/components/ui/charts';
 import {
   Table,
@@ -28,21 +25,35 @@ import {
   Activity,
   Network,
   List,
-  MapPin,
   Factory,
   Hammer,
-  Bell,
-  LineChart,
   Shield,
   AlertTriangle,
-  Database,
-  Radar,
   FileText,
 } from 'lucide-react';
-import React from 'react';
+import React, { useEffect } from 'react';
+import { MapContainer, TileLayer, useMap, ZoomControl } from 'react-leaflet';
+import L from 'leaflet';
+
+// delete L.Icon.Default.prototype._getIconUrl;
+L.Icon.Default.mergeOptions({
+  iconRetinaUrl:
+    'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon-2x.png',
+  iconUrl:
+    'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon.png',
+  shadowUrl:
+    'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png',
+});
+
+function ResizeHandler() {
+  const map = useMap();
+  useEffect(() => {
+    map.invalidateSize();
+  }, [map]);
+  return <></>;
+}
 
 export const Dashboard = () => {
-  // Summary Data
   const summaryData = [
     {
       id: 1,
@@ -158,13 +169,16 @@ export const Dashboard = () => {
     { time: '1h ago', event: 'Suspicious domain blocked' },
   ];
 
+  const position = [0, 0];
+  const zoom = 1;
+
   return (
     <div className="w-full p-6 space-y-6 mx-auto">
       {/* Summary Cards Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4">
         {summaryData.map((item) => (
-          <Card key={item.id} className="hover:shadow-lg transition-shadow">
-            <CardHeader className="flex flex-row items-center justify-between pb-2">
+          <Card key={item.id} className="!shadow-none">
+            <CardHeader className="flex flex-row items-center justify-between">
               {item.icon}
               <Badge variant="outline" className="text-green-600">
                 +{item.daily}
@@ -182,24 +196,32 @@ export const Dashboard = () => {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div className="lg:col-span-3 space-y-6">
           {/* Threat Trend Analysis */}
-          <div className="grid grid-cols-4 gap-4">
-            <Card className="lg:col-span-1">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Bug className="h-6 w-6" />
-                  Malware Distribution
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <PieChart
-                  data={malwareDistribution}
-                  index="name"
-                  category="value"
-                  colors={['#ef4444', '#f59e0b', '#10b981']}
+          <div className="grid grid-cols-4 gap-4 h-auto">
+            {/* <RadialChart /> */}
+            <PieChartInteractive />
+            <div className="lg:col-span-2 h-112 overflow-hidden border rounded-xl shadow-sm">
+              <MapContainer
+                center={position}
+                zoom={zoom}
+                scrollWheelZoom={true}
+                style={{ height: '100%', width: '100%' }}
+                zoomControl={true}
+                dragging={true}
+                doubleClickZoom={true}
+                attributionControl={false}
+              >
+                <ResizeHandler />
+
+                {/* Add zoom control in bottom right */}
+                <ZoomControl position="bottomright" />
+
+                <TileLayer
+                  url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                  attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
                 />
-              </CardContent>
-            </Card>
-            <Card className="lg:col-span-2">
+              </MapContainer>
+            </div>
+            {/* <Card className="lg:col-span-2">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <AlertTriangle className="h-6 w-6" />
@@ -242,12 +264,13 @@ export const Dashboard = () => {
                   </TableBody>
                 </Table>
               </CardContent>
-            </Card>
+            </Card> */}
             <AreaChartGradient />
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 lg:grid-cols-4 gap-4 h-auto">
             {/* Targeted Regions */}
+            <BarChartHorizontal />
             <BarChartHorizontal />
             <Card className="lg:col-span-2">
               <CardHeader>
@@ -293,6 +316,12 @@ export const Dashboard = () => {
             </Card>
           </div>
         </div>
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-4 gap-4 h-auto">
+        <RadialChart />
+        <BarChartInteractive className="lg:col-span-2" />
+        <BarChartCustomLabel />
       </div>
 
       {/* Vulnerability & Activity Section */}

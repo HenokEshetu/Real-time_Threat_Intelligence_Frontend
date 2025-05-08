@@ -105,7 +105,6 @@ export function LoginForm({
       });
       const token = data.login.access_token;
       auth.login(token);
-      alert(auth.isAuthenticated);
     } catch (e) {
       // Apollo will surface validation / network errors here
       // You could also use RHF’s setError() to show a form‐level message

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   LayoutDashboard,
   ShieldAlertIcon,
@@ -17,6 +17,8 @@ import {
   Database,
   DatabaseIcon,
   GitBranchIcon,
+  Sun,
+  Moon,
 } from 'lucide-react';
 import { Link, useLocation } from 'react-router-dom';
 import { cn } from '@/lib/utils';
@@ -30,7 +32,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { TopBreadcrumb } from '@/components/common/Breadcrumb';
-import { useTheme } from '@/components/ui/theme-provider';
+import { useTheme } from 'next-themes';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { SearchBar } from '@/components/common/SearchBar';
 import { Breadcrumb } from '@/components/ui/breadcrumb';
@@ -127,16 +129,18 @@ const menuItems: MenuItem[] = [
 ];
 
 export const Layout = ({ children }: { children: React.ReactNode }) => {
-  const { theme, setTheme } = useTheme();
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const location = useLocation();
-  const [toogleDropdown, setToggleDropdown] = useState(true);
-  const [page, setPage] = useState(1);
+  const { theme, setTheme } = useTheme();
   const { isAuthenticated, user, loading, logout } = useAuth();
 
-  console.log('🔄 Layout render, isAuthenticated =', isAuthenticated);
+  const [page, setPage] = useState(1);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [toogleDropdown, setToggleDropdown] = useState(true);
+  const [isDashboard, setIsDashboard] = useState(false);
 
-  const toggleTheme = () => setTheme(theme === 'dark' ? 'light' : 'dark');
+  useEffect(() => {
+    setIsDashboard(location.pathname === '/');
+  }, [location]);
 
   const handleDropdown = () => {
     setToggleDropdown(!toogleDropdown);
@@ -157,189 +161,206 @@ export const Layout = ({ children }: { children: React.ReactNode }) => {
 
   return (
     <div className="min-h-screen flex flex-col">
-      {/* Top Navbar */}
-      <header className="sticky top-0 z-40 w-full h-17 border-b bg-background px-4 py-2 flex items-center justify-between">
-        <div className="flex items-center gap-2">
-          <Button
-            variant="ghost"
-            size="icon"
-            className="md:hidden"
-            onClick={() => setMobileMenuOpen(true)}
-          >
-            <MenuIcon className="h-5 w-5" />
-          </Button>
-          <div className="flex items-center w-180">
-            <img src={logo} className="w-13 h-13 rounded-full" />
-            <h1 className="text-5xl font-semibold hidden md:block ml-2">ዳጉ</h1>
-            <SearchBar className="ml-18" />
-          </div>
-          <Breadcrumb className="hidden md:flex ml-4" />
-        </div>
-        <div className="flex items-center gap-2">
-          {/* Theme toggle */}
-          <Button
-            variant="ghost"
-            size="icon"
-            aria-label="Toggle theme"
-            onClick={toggleTheme}
-          >
-            {theme === 'dark' ? (
-              <SunIcon className="h-5 w-5" />
-            ) : (
-              <MoonIcon className="h-5 w-5" />
-            )}
-          </Button>
-
-          {/* Profile dropdown */}
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
+      {isAuthenticated && (
+        <>
+          <header className="sticky top-0 z-40 w-full h-17 border-b bg-background px-4 py-2 flex items-center justify-between">
+            <div className="flex items-center gap-2">
               <Button
                 variant="ghost"
                 size="icon"
-                className="p-0 rounded-full focus-visible:ring-offset-0"
+                className="md:hidden"
+                onClick={() => setMobileMenuOpen(true)}
               >
-                <Avatar className="h-8 w-8">
-                  <AvatarImage src={user?.avatarUrl} alt={user?.email} />
-                  <AvatarFallback>
-                    {user?.email?.[0].toUpperCase() || 'U'}
-                  </AvatarFallback>
-                </Avatar>
+                <MenuIcon className="h-5 w-5" />
               </Button>
-            </DropdownMenuTrigger>
+              <div className="flex items-center w-180">
+                <img src={logo} className="w-13 h-13 rounded-full" />
+                <h1 className="text-5xl font-semibold hidden md:block ml-2">
+                  ዳጉ
+                </h1>
+                <SearchBar className="ml-18" />
+              </div>
+              <Breadcrumb className="hidden md:flex ml-4" />
+            </div>
+            <div className="flex items-center gap-2">
+              {/* Theme toggle */}
+              <DropdownMenu>
+                <DropdownMenuTrigger>
+                  <Button variant="outline" size="icon">
+                    <Sun className="h-[1.2rem] w-[1.2rem] rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
+                    <Moon className="absolute h-[1.2rem] w-[1.2rem] rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
+                    <span className="sr-only">Toggle theme</span>
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end">
+                  <DropdownMenuItem onClick={() => setTheme('light')}>
+                    Light
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => setTheme('dark')}>
+                    Dark
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => setTheme('system')}>
+                    System
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
 
-            <DropdownMenuContent
-              className="w-56 z-[100]"
-              align="end"
-              onCloseAutoFocus={(e) => e.preventDefault()}
-            >
-              <DropdownMenuLabel>
-                <div className="flex flex-col">
-                  <span className="text-sm font-medium">
-                    {user?.email.split('@')[0] || 'Unknown User'}
-                  </span>
-                  <span className="text-xs text-muted-foreground">
-                    {user?.email}
-                  </span>
-                </div>
-              </DropdownMenuLabel>
+              {/* Profile dropdown */}
+              <DropdownMenu>
+                <DropdownMenuTrigger>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="p-0 rounded-full focus-visible:ring-offset-0"
+                  >
+                    <Avatar className="h-8 w-8">
+                      <AvatarImage src={user?.avatarUrl} alt={user?.email} />
+                      <AvatarFallback>
+                        {user?.email?.[0].toUpperCase() || 'U'}
+                      </AvatarFallback>
+                    </Avatar>
+                  </Button>
+                </DropdownMenuTrigger>
 
-              <DropdownMenuSeparator />
+                <DropdownMenuContent
+                  className="w-56 z-[100]"
+                  align="end"
+                  onCloseAutoFocus={(e) => e.preventDefault()}
+                >
+                  <DropdownMenuLabel>
+                    <div className="flex flex-col">
+                      <span className="text-sm font-medium">
+                        {user?.email.split('@')[0] || 'Unknown User'}
+                      </span>
+                      <span className="text-xs text-muted-foreground">
+                        {user?.email}
+                      </span>
+                    </div>
+                  </DropdownMenuLabel>
 
-              <DropdownMenuItem asChild>
-                <Link to="/profile" className="w-full cursor-pointer">
-                  Profile
-                </Link>
-              </DropdownMenuItem>
-              <DropdownMenuItem asChild>
-                <Link to="/settings" className="w-full cursor-pointer">
-                  Settings
-                </Link>
-              </DropdownMenuItem>
+                  <DropdownMenuSeparator />
 
-              <DropdownMenuSeparator />
-              {isAuthenticated && (
-                <AlertDialog>
-                  <AlertDialogTrigger className="w-full">
-                    <DropdownMenuItem
-                      className="text-destructive focus:bg-destructive/10 cursor-pointer"
-                      onSelect={(e) => e.preventDefault()}
-                    >
-                      Logout
-                    </DropdownMenuItem>
-                  </AlertDialogTrigger>
+                  <DropdownMenuItem asChild>
+                    <Link to="/profile" className="w-full cursor-pointer">
+                      Profile
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem asChild>
+                    <Link to="/settings" className="w-full cursor-pointer">
+                      Settings
+                    </Link>
+                  </DropdownMenuItem>
 
-                  <AlertDialogContent>
-                    <AlertDialogHeader>
-                      <AlertDialogTitle>Confirm Logout</AlertDialogTitle>
-                      <AlertDialogDescription>
-                        Are you sure you want to log out? You'll need to sign in
-                        again to access your account.
-                      </AlertDialogDescription>
-                    </AlertDialogHeader>
-                    <AlertDialogFooter>
-                      <AlertDialogCancel>Cancel</AlertDialogCancel>
-                      <AlertDialogAction onClick={() => logout()}>
-                        Yes, log me out
-                      </AlertDialogAction>
-                    </AlertDialogFooter>
-                  </AlertDialogContent>
-                </AlertDialog>
-              )}
-            </DropdownMenuContent>
-          </DropdownMenu>
-        </div>
-      </header>
+                  <DropdownMenuSeparator />
+                  {isAuthenticated && (
+                    <AlertDialog>
+                      <AlertDialogTrigger className="w-full">
+                        <DropdownMenuItem
+                          className="text-destructive focus:bg-destructive/10 cursor-pointer"
+                          onSelect={(e) => e.preventDefault()}
+                        >
+                          Logout
+                        </DropdownMenuItem>
+                      </AlertDialogTrigger>
 
-      <TopContainer className="h-12 justify-between w-[90.5%]">
-        <TopBreadcrumb />
-      </TopContainer>
+                      <AlertDialogContent>
+                        <AlertDialogHeader>
+                          <AlertDialogTitle>Confirm Logout</AlertDialogTitle>
+                          <AlertDialogDescription>
+                            Are you sure you want to log out? You'll need to
+                            sign in again to access your account.
+                          </AlertDialogDescription>
+                        </AlertDialogHeader>
+                        <AlertDialogFooter>
+                          <AlertDialogCancel>Cancel</AlertDialogCancel>
+                          <AlertDialogAction onClick={() => logout()}>
+                            Yes, log me out
+                          </AlertDialogAction>
+                        </AlertDialogFooter>
+                      </AlertDialogContent>
+                    </AlertDialog>
+                  )}
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </div>
+          </header>
+
+          {!isDashboard && (
+            <TopContainer className="h-12 justify-between w-[90.5%]">
+              <TopBreadcrumb />
+            </TopContainer>
+          )}
+        </>
+      )}
 
       <div className="flex flex-1">
         {/* Desktop Sidebar */}
-        <aside className="hidden md:flex md:flex-col md:w-50 h-full fixed top-17 border-r bg-background pt-4">
-          <SidebarProvider>
-            {' '}
-            {/* <-- wrap SidebarMenu with SidebarProvider */}
-            <SidebarMenu>
-              {menuItems.map((item) =>
-                item.subItems ? (
-                  <Collapsible key={item.text} className="group">
-                    <SidebarMenuItem>
-                      <CollapsibleTrigger asChild>
-                        <SidebarMenuButton className="flex items-center w-full px-3 py-2 text-sm font-medium rounded-md text-muted-foreground hover:text-primary">
-                          <span className="mr-3">{item.icon}</span>
-                          {item.text}
-                          <ChevronDown
-                            className="ml-auto h-4 w-4 transition-transform 
+        {isAuthenticated && (
+          <aside className="hidden md:flex md:flex-col md:w-50 h-full fixed top-17 border-r bg-background pt-4">
+            <SidebarProvider>
+              {' '}
+              {/* <-- wrap SidebarMenu with SidebarProvider */}
+              <SidebarMenu>
+                {menuItems.map((item) =>
+                  item.subItems ? (
+                    <Collapsible key={item.text} className="group">
+                      <SidebarMenuItem>
+                        <CollapsibleTrigger asChild>
+                          <SidebarMenuButton className="flex items-center w-full px-3 py-2 text-sm font-medium rounded-md text-muted-foreground hover:text-primary">
+                            <span className="mr-3">{item.icon}</span>
+                            {item.text}
+                            <ChevronDown
+                              className="ml-auto h-4 w-4 transition-transform 
                          group-data-[state=open]:rotate-180"
-                          />
-                        </SidebarMenuButton>
-                      </CollapsibleTrigger>
-                      <CollapsibleContent>
-                        <SidebarMenuSub className="!p-0">
-                          {item.subItems.map((sub) => (
-                            <SidebarMenuSubItem
-                              key={sub.text}
-                              className="data-[state=open]:bg-transparent"
-                            >
-                              <Link
-                                to={sub.path!}
-                                className={cn(
-                                  'flex items-center w-full px-3 py-2 text-sm font-medium rounded-md pl-5 data-[state=active]:text-gray-950',
-                                  location.pathname === sub.path
-                                    ? 'bg-primary/10 text-primary'
-                                    : 'text-muted-foreground hover:text-primary',
-                                )}
+                            />
+                          </SidebarMenuButton>
+                        </CollapsibleTrigger>
+                        <CollapsibleContent>
+                          <SidebarMenuSub className="!p-0">
+                            {item.subItems.map((sub) => (
+                              <SidebarMenuSubItem
+                                key={sub.text}
+                                className="data-[state=open]:bg-transparent"
                               >
-                                <span className="mr-3">{sub.icon}</span>
-                                {sub.text}
-                              </Link>
-                            </SidebarMenuSubItem>
-                          ))}
-                        </SidebarMenuSub>
-                      </CollapsibleContent>
+                                <Link
+                                  to={sub.path!}
+                                  className={cn(
+                                    'flex items-center w-full px-3 py-2 text-sm font-medium rounded-md pl-5 data-[state=active]:text-gray-950',
+                                    location.pathname === sub.path
+                                      ? 'bg-primary/10 text-primary'
+                                      : 'text-muted-foreground hover:text-primary',
+                                  )}
+                                >
+                                  <span className="mr-3">{sub.icon}</span>
+                                  {sub.text}
+                                </Link>
+                              </SidebarMenuSubItem>
+                            ))}
+                          </SidebarMenuSub>
+                        </CollapsibleContent>
+                      </SidebarMenuItem>
+                    </Collapsible>
+                  ) : (
+                    <SidebarMenuItem key={item.text}>
+                      <Link
+                        to={item.path!}
+                        className={cn(
+                          'flex items-center w-full px-3 py-2 text-sm font-medium rounded-md',
+                          location.pathname === item.path
+                            ? 'bg-primary/10 text-primary'
+                            : 'text-muted-foreground hover:text-primary',
+                        )}
+                      >
+                        <span className="mr-3">{item.icon}</span>
+                        {item.text}
+                      </Link>
                     </SidebarMenuItem>
-                  </Collapsible>
-                ) : (
-                  <SidebarMenuItem key={item.text}>
-                    <Link
-                      to={item.path!}
-                      className={cn(
-                        'flex items-center w-full px-3 py-2 text-sm font-medium rounded-md',
-                        location.pathname === item.path
-                          ? 'bg-primary/10 text-primary'
-                          : 'text-muted-foreground hover:text-primary',
-                      )}
-                    >
-                      <span className="mr-3">{item.icon}</span>
-                      {item.text}
-                    </Link>
-                  </SidebarMenuItem>
-                ),
-              )}
-            </SidebarMenu>
-          </SidebarProvider>
-        </aside>
+                  ),
+                )}
+              </SidebarMenu>
+            </SidebarProvider>
+          </aside>
+        )}
 
         {/* Mobile Sidebar */}
         <div
@@ -399,7 +420,11 @@ export const Layout = ({ children }: { children: React.ReactNode }) => {
         </div>
 
         {/* Page Content */}
-        <main className="flex justify-center w-full h-full md:pl-50">
+        <main
+          className={`flex justify-center w-full h-full ${
+            isAuthenticated ? 'md:pl-50' : ''
+          }`}
+        >
           {children}
         </main>
       </div>
