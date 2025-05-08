@@ -16,7 +16,7 @@ export default defineConfig(({ mode }) => {
     server: {
       proxy: {
         '/graphql': {
-          target: env.VITE_BACKEND_URL || 'http://localhost:4000',
+          target: env.VITE_BACKEND_URL || 'http://localhost:4000/graphql',
           changeOrigin: true,
         },
       },

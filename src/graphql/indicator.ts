@@ -12,7 +12,6 @@ export const SEARCH_INDICATORS = gql`
         created
         created_by_ref
         description
-        
         extensions
         external_references {
           description
