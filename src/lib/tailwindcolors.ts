@@ -25,7 +25,7 @@ export const tailwindColors = [
     text: 'text-fuchsia-600',
   },
   {
-    bg: 'bg-neutral-100',
+    bg: 'bg-neutrjgigjal-100',
     border: 'border-neutral-500',
     text: 'text-neutral-600',
   },

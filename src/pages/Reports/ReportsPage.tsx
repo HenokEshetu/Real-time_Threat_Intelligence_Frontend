@@ -94,21 +94,6 @@ export const ReportsPage = () => {
     setCurrentPage(Math.max(1, Math.min(newPage, totalPages)));
   };
 
-  const getTlpColors = (tlp: string) => {
-    switch (tlp?.toUpperCase()) {
-      case 'WHITE':
-        return 'bg-white text-black border-black';
-      case 'GREEN':
-        return 'bg-green-100 text-green-800 border-green-800';
-      case 'AMBER':
-        return 'bg-yellow-100 text-yellow-800 border-yellow-800';
-      case 'RED':
-        return 'bg-red-100 text-red-800 border-red-800';
-      default:
-        return 'bg-gray-100 text-gray-800 border-gray-800';
-    }
-  };
-
   if (loading && reports.length === 0) {
     return (
       <div className="w-full px-4 py-6 space-y-4">
@@ -145,22 +130,16 @@ export const ReportsPage = () => {
           <TableHeader>
             <TableRow className="bg-gray-100">
               <TableHead className="font-bold p-4 text-gray-800">
-                Type
+                Name
               </TableHead>
               <TableHead className="font-bold p-4 text-gray-800">
-                Representation
-              </TableHead>
-              <TableHead className="font-bold p-4 text-gray-800">
-                Marking
+                Report Types
               </TableHead>
               <TableHead className="font-bold p-4 text-gray-800">
                 Labels
               </TableHead>
               <TableHead className="font-bold p-4 text-gray-800">
-                Created
-              </TableHead>
-              <TableHead className="font-bold p-4 text-gray-800">
-                Modified
+                Published
               </TableHead>
             </TableRow>
           </TableHeader>
@@ -168,16 +147,9 @@ export const ReportsPage = () => {
             {reports.map((report: Report) => {
               const labels = report.labels || [];
               var uniqueLabels: string[] = [];
-              var marking = '';
-
               labels.forEach((lbl) => {
                 if (!uniqueLabels.includes(lbl)) uniqueLabels.push(lbl);
-                if (lbl.includes('tlp:')) {
-                  marking = lbl;
-                  uniqueLabels = uniqueLabels.filter((label) => label !== lbl);
-                }
               });
-
               const shortestThree = [...uniqueLabels]
                 .sort((a, b) => a.length - b.length)
                 .slice(0, 3);
@@ -193,28 +165,17 @@ export const ReportsPage = () => {
                   onClick={() => handleViewReport(report.id)}
                   className="hover:bg-gray-50 transition-colors border-b border-gray-300 cursor-pointer"
                 >
-                  <TableCell className="p-4 text-gray-700">
-                    <Badge
-                      variant="outline"
-                      className="text-purple-600 border-purple-500 bg-purple-50 capitalize px-8"
-                    >
-                      <FileChartPieIcon />
-                      {report.type}
-                    </Badge>
-                  </TableCell>
                   <TableCell className="p-4 font-medium text-gray-900 hover:underline max-w-100 truncate">
                     {report.name}
                   </TableCell>
-                  <TableCell className={`p-4 text-gray-600`}>
-                    <Badge
-                      variant="outline"
-                      className={`max-w-28 ${getTlpColors(
-                        marking.replaceAll('tlp:', '') ||
-                          report.object_marking_refs[0],
-                      )} border-2 uppercase truncate`}
-                    >
-                      {marking || `TLP:${report.object_marking_refs[0]}`}
-                    </Badge>
+                  <TableCell className="p-4 text-gray-700">
+                    {
+                      Array.isArray(report.report_types)
+                        ? report.report_types.join(', ')
+                        : (typeof report.report_types === 'string' && report.report_types)
+                        ? report.report_types
+                        : ''
+                    }
                   </TableCell>
                   <TableCell className="p-4 max-w-100">
                     <div className="flex flex-wrap gap-1">
@@ -247,13 +208,8 @@ export const ReportsPage = () => {
                     </div>
                   </TableCell>
                   <TableCell className="p-4 text-gray-600">
-                    {report.created
-                      ? new Date(report.created).toLocaleDateString()
-                      : '—'}
-                  </TableCell>
-                  <TableCell className="p-4 text-gray-600">
-                    {report.modified
-                      ? new Date(report.modified).toLocaleDateString()
+                    {report.published
+                      ? new Date(report.published).toLocaleDateString()
                       : '—'}
                   </TableCell>
                 </TableRow>
@@ -305,6 +261,14 @@ export const ReportsPage = () => {
           </Button>
         </div>
       </div>
+      {/* Floating Button */}
+      <button
+        className="fixed bottom-8 right-8 z-50 w-14 h-14 rounded-full bg-[#00BFFF] hover:bg-[#0099cc] text-white shadow-xl flex items-center justify-center text-4xl transition-colors"
+        onClick={() => navigate('/reports/create')}
+        aria-label="Add Report"
+      >
+        +
+      </button>
     </div>
   );
 };

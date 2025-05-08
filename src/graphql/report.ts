@@ -2,7 +2,7 @@ import { gql } from '@apollo/client';
 
 export const GET_REPORT = gql`
   query GetReport($id: String!) {
-    getReport(id: $id) {
+    report(id: $id) {
       id
       name
       description
@@ -51,20 +51,7 @@ export const SEARCH_REPORTS = gql`
         spec_version
         type
         created_by_ref
-        enrichment {
-          abuseipdb
-          asn
-          dns
-          geo
-          hybrid
-          misp
-          shodan
-          ssl
-          threatcrowd
-          threatfox
-          virustotal
-          whois
-        }
+
         external_references {
           source_name
           url

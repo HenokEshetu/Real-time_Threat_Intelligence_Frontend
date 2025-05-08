@@ -28,20 +28,6 @@ export const SEARCH_RELATIONSHIP = gql`
         labels
         lang
         revoked
-        enrichment {
-          abuseipdb
-          asn
-          dns
-          geo
-          hybrid
-          misp
-          shodan
-          ssl
-          threatcrowd
-          threatfox
-          virustotal
-          whois
-        }
         extensions
         external_references {
           id
@@ -91,20 +77,6 @@ export const GET_RELATIONSHIP_OBJECT = gql`
         }
         object_marking_refs
         extensions
-        enrichment {
-          abuseipdb
-          asn
-          dns
-          geo
-          hybrid
-          misp
-          shodan
-          ssl
-          threatcrowd
-          threatfox
-          virustotal
-          whois
-        }
         defanged
       }
       ... on AttackPattern {
@@ -136,20 +108,6 @@ export const GET_RELATIONSHIP_OBJECT = gql`
         object_marking_refs
         extensions
         version
-        enrichment {
-          abuseipdb
-          asn
-          dns
-          geo
-          hybrid
-          misp
-          shodan
-          ssl
-          threatcrowd
-          threatfox
-          virustotal
-          whois
-        }
         relationship {
           id
           type
@@ -175,20 +133,6 @@ export const GET_RELATIONSHIP_OBJECT = gql`
           }
           object_marking_refs
           extensions
-          enrichment {
-            abuseipdb
-            asn
-            dns
-            geo
-            hybrid
-            misp
-            shodan
-            ssl
-            threatcrowd
-            threatfox
-            virustotal
-            whois
-          }
         }
       }
       ... on AutonomousSystem {
@@ -214,20 +158,6 @@ export const GET_RELATIONSHIP_OBJECT = gql`
         }
         object_marking_refs
         extensions
-        enrichment {
-          abuseipdb
-          asn
-          dns
-          geo
-          hybrid
-          misp
-          shodan
-          ssl
-          threatcrowd
-          threatfox
-          virustotal
-          whois
-        }
         defanged
       }
       ... on Campaign {
@@ -256,20 +186,6 @@ export const GET_RELATIONSHIP_OBJECT = gql`
         }
         object_marking_refs
         extensions
-        enrichment {
-          abuseipdb
-          asn
-          dns
-          geo
-          hybrid
-          misp
-          shodan
-          ssl
-          threatcrowd
-          threatfox
-          virustotal
-          whois
-        }
         relationship {
           id
           type
@@ -295,20 +211,6 @@ export const GET_RELATIONSHIP_OBJECT = gql`
           }
           object_marking_refs
           extensions
-          enrichment {
-            abuseipdb
-            asn
-            dns
-            geo
-            hybrid
-            misp
-            shodan
-            ssl
-            threatcrowd
-            threatfox
-            virustotal
-            whois
-          }
         }
       }
       ... on CourseOfAction {
@@ -337,20 +239,6 @@ export const GET_RELATIONSHIP_OBJECT = gql`
         }
         object_marking_refs
         extensions
-        enrichment {
-          abuseipdb
-          asn
-          dns
-          geo
-          hybrid
-          misp
-          shodan
-          ssl
-          threatcrowd
-          threatfox
-          virustotal
-          whois
-        }
         relationship {
           id
           type
@@ -376,20 +264,6 @@ export const GET_RELATIONSHIP_OBJECT = gql`
           }
           object_marking_refs
           extensions
-          enrichment {
-            abuseipdb
-            asn
-            dns
-            geo
-            hybrid
-            misp
-            shodan
-            ssl
-            threatcrowd
-            threatfox
-            virustotal
-            whois
-          }
         }
       }
       ... on Directory {
@@ -418,20 +292,6 @@ export const GET_RELATIONSHIP_OBJECT = gql`
         }
         object_marking_refs
         extensions
-        enrichment {
-          abuseipdb
-          asn
-          dns
-          geo
-          hybrid
-          misp
-          shodan
-          ssl
-          threatcrowd
-          threatfox
-          virustotal
-          whois
-        }
         defanged
       }
       ... on DomainName {
@@ -456,20 +316,6 @@ export const GET_RELATIONSHIP_OBJECT = gql`
         }
         object_marking_refs
         extensions
-        enrichment {
-          abuseipdb
-          asn
-          dns
-          geo
-          hybrid
-          misp
-          shodan
-          ssl
-          threatcrowd
-          threatfox
-          virustotal
-          whois
-        }
         defanged
       }
       ... on EmailAddress {
@@ -495,20 +341,6 @@ export const GET_RELATIONSHIP_OBJECT = gql`
         }
         object_marking_refs
         extensions
-        enrichment {
-          abuseipdb
-          asn
-          dns
-          geo
-          hybrid
-          misp
-          shodan
-          ssl
-          threatcrowd
-          threatfox
-          virustotal
-          whois
-        }
         defanged
       }
       ... on EmailMessage {
@@ -546,20 +378,6 @@ export const GET_RELATIONSHIP_OBJECT = gql`
         }
         object_marking_refs
         extensions
-        enrichment {
-          abuseipdb
-          asn
-          dns
-          geo
-          hybrid
-          misp
-          shodan
-          ssl
-          threatcrowd
-          threatfox
-          virustotal
-          whois
-        }
         defanged
       }
       ... on File {
@@ -648,20 +466,6 @@ export const GET_RELATIONSHIP_OBJECT = gql`
         }
         object_marking_refs
         extensions
-        enrichment {
-          abuseipdb
-          asn
-          dns
-          geo
-          hybrid
-          misp
-          shodan
-          ssl
-          threatcrowd
-          threatfox
-          virustotal
-          whois
-        }
         defanged
       }
       ... on Grouping {
@@ -688,20 +492,6 @@ export const GET_RELATIONSHIP_OBJECT = gql`
         }
         object_marking_refs
         extensions
-        enrichment {
-          abuseipdb
-          asn
-          dns
-          geo
-          hybrid
-          misp
-          shodan
-          ssl
-          threatcrowd
-          threatfox
-          virustotal
-          whois
-        }
         relationship {
           id
           type
@@ -727,20 +517,6 @@ export const GET_RELATIONSHIP_OBJECT = gql`
           }
           object_marking_refs
           extensions
-          enrichment {
-            abuseipdb
-            asn
-            dns
-            geo
-            hybrid
-            misp
-            shodan
-            ssl
-            threatcrowd
-            threatfox
-            virustotal
-            whois
-          }
         }
       }
       ... on IPv4Address {
@@ -766,20 +542,6 @@ export const GET_RELATIONSHIP_OBJECT = gql`
         }
         object_marking_refs
         extensions
-        enrichment {
-          abuseipdb
-          asn
-          dns
-          geo
-          hybrid
-          misp
-          shodan
-          ssl
-          threatcrowd
-          threatfox
-          virustotal
-          whois
-        }
         defanged
       }
       ... on IPv6Address {
@@ -804,20 +566,6 @@ export const GET_RELATIONSHIP_OBJECT = gql`
         }
         object_marking_refs
         extensions
-        enrichment {
-          abuseipdb
-          asn
-          dns
-          geo
-          hybrid
-          misp
-          shodan
-          ssl
-          threatcrowd
-          threatfox
-          virustotal
-          whois
-        }
         defanged
       }
       ... on Identity {
@@ -846,20 +594,6 @@ export const GET_RELATIONSHIP_OBJECT = gql`
         }
         object_marking_refs
         extensions
-        enrichment {
-          abuseipdb
-          asn
-          dns
-          geo
-          hybrid
-          misp
-          shodan
-          ssl
-          threatcrowd
-          threatfox
-          virustotal
-          whois
-        }
         relationship {
           id
           type
@@ -885,20 +619,6 @@ export const GET_RELATIONSHIP_OBJECT = gql`
           }
           object_marking_refs
           extensions
-          enrichment {
-            abuseipdb
-            asn
-            dns
-            geo
-            hybrid
-            misp
-            shodan
-            ssl
-            threatcrowd
-            threatfox
-            virustotal
-            whois
-          }
         }
       }
       ... on Incident {
@@ -931,20 +651,6 @@ export const GET_RELATIONSHIP_OBJECT = gql`
         }
         object_marking_refs
         extensions
-        enrichment {
-          abuseipdb
-          asn
-          dns
-          geo
-          hybrid
-          misp
-          shodan
-          ssl
-          threatcrowd
-          threatfox
-          virustotal
-          whois
-        }
         relationship {
           id
           type
@@ -970,20 +676,6 @@ export const GET_RELATIONSHIP_OBJECT = gql`
           }
           object_marking_refs
           extensions
-          enrichment {
-            abuseipdb
-            asn
-            dns
-            geo
-            hybrid
-            misp
-            shodan
-            ssl
-            threatcrowd
-            threatfox
-            virustotal
-            whois
-          }
         }
       }
       ... on Indicator {
@@ -1019,20 +711,6 @@ export const GET_RELATIONSHIP_OBJECT = gql`
         }
         object_marking_refs
         extensions
-        enrichment {
-          abuseipdb
-          asn
-          dns
-          geo
-          hybrid
-          misp
-          shodan
-          ssl
-          threatcrowd
-          threatfox
-          virustotal
-          whois
-        }
         relationship {
           id
           type
@@ -1058,20 +736,6 @@ export const GET_RELATIONSHIP_OBJECT = gql`
           }
           object_marking_refs
           extensions
-          enrichment {
-            abuseipdb
-            asn
-            dns
-            geo
-            hybrid
-            misp
-            shodan
-            ssl
-            threatcrowd
-            threatfox
-            virustotal
-            whois
-          }
         }
       }
       ... on Infrastructure {
@@ -1105,20 +769,6 @@ export const GET_RELATIONSHIP_OBJECT = gql`
         }
         object_marking_refs
         extensions
-        enrichment {
-          abuseipdb
-          asn
-          dns
-          geo
-          hybrid
-          misp
-          shodan
-          ssl
-          threatcrowd
-          threatfox
-          virustotal
-          whois
-        }
         relationship {
           id
           type
@@ -1144,20 +794,6 @@ export const GET_RELATIONSHIP_OBJECT = gql`
           }
           object_marking_refs
           extensions
-          enrichment {
-            abuseipdb
-            asn
-            dns
-            geo
-            hybrid
-            misp
-            shodan
-            ssl
-            threatcrowd
-            threatfox
-            virustotal
-            whois
-          }
         }
       }
       ... on IntrusionSet {
@@ -1194,20 +830,6 @@ export const GET_RELATIONSHIP_OBJECT = gql`
         }
         object_marking_refs
         extensions
-        enrichment {
-          abuseipdb
-          asn
-          dns
-          geo
-          hybrid
-          misp
-          shodan
-          ssl
-          threatcrowd
-          threatfox
-          virustotal
-          whois
-        }
         relationship {
           id
           type
@@ -1233,20 +855,6 @@ export const GET_RELATIONSHIP_OBJECT = gql`
           }
           object_marking_refs
           extensions
-          enrichment {
-            abuseipdb
-            asn
-            dns
-            geo
-            hybrid
-            misp
-            shodan
-            ssl
-            threatcrowd
-            threatfox
-            virustotal
-            whois
-          }
         }
       }
       ... on Location {
@@ -1281,20 +889,6 @@ export const GET_RELATIONSHIP_OBJECT = gql`
         }
         object_marking_refs
         extensions
-        enrichment {
-          abuseipdb
-          asn
-          dns
-          geo
-          hybrid
-          misp
-          shodan
-          ssl
-          threatcrowd
-          threatfox
-          virustotal
-          whois
-        }
         relationship {
           id
           type
@@ -1320,20 +914,6 @@ export const GET_RELATIONSHIP_OBJECT = gql`
           }
           object_marking_refs
           extensions
-          enrichment {
-            abuseipdb
-            asn
-            dns
-            geo
-            hybrid
-            misp
-            shodan
-            ssl
-            threatcrowd
-            threatfox
-            virustotal
-            whois
-          }
         }
       }
       ... on MACAddress {
@@ -1357,20 +937,6 @@ export const GET_RELATIONSHIP_OBJECT = gql`
         }
         object_marking_refs
         extensions
-        enrichment {
-          abuseipdb
-          asn
-          dns
-          geo
-          hybrid
-          misp
-          shodan
-          ssl
-          threatcrowd
-          threatfox
-          virustotal
-          whois
-        }
         defanged
       }
       ... on Malware {
@@ -1410,20 +976,6 @@ export const GET_RELATIONSHIP_OBJECT = gql`
         }
         object_marking_refs
         extensions
-        enrichment {
-          abuseipdb
-          asn
-          dns
-          geo
-          hybrid
-          misp
-          shodan
-          ssl
-          threatcrowd
-          threatfox
-          virustotal
-          whois
-        }
         relationship {
           id
           type
@@ -1449,20 +1001,6 @@ export const GET_RELATIONSHIP_OBJECT = gql`
           }
           object_marking_refs
           extensions
-          enrichment {
-            abuseipdb
-            asn
-            dns
-            geo
-            hybrid
-            misp
-            shodan
-            ssl
-            threatcrowd
-            threatfox
-            virustotal
-            whois
-          }
         }
       }
       ... on MalwareAnalysis {
@@ -1500,20 +1038,6 @@ export const GET_RELATIONSHIP_OBJECT = gql`
         }
         object_marking_refs
         extensions
-        enrichment {
-          abuseipdb
-          asn
-          dns
-          geo
-          hybrid
-          misp
-          shodan
-          ssl
-          threatcrowd
-          threatfox
-          virustotal
-          whois
-        }
         relationship {
           id
           type
@@ -1539,20 +1063,6 @@ export const GET_RELATIONSHIP_OBJECT = gql`
           }
           object_marking_refs
           extensions
-          enrichment {
-            abuseipdb
-            asn
-            dns
-            geo
-            hybrid
-            misp
-            shodan
-            ssl
-            threatcrowd
-            threatfox
-            virustotal
-            whois
-          }
         }
       }
       ... on Mutex {
@@ -1576,20 +1086,6 @@ export const GET_RELATIONSHIP_OBJECT = gql`
         }
         object_marking_refs
         extensions
-        enrichment {
-          abuseipdb
-          asn
-          dns
-          geo
-          hybrid
-          misp
-          shodan
-          ssl
-          threatcrowd
-          threatfox
-          virustotal
-          whois
-        }
         defanged
       }
       ... on NetworkTraffic {
@@ -1629,20 +1125,6 @@ export const GET_RELATIONSHIP_OBJECT = gql`
         }
         object_marking_refs
         extensions
-        enrichment {
-          abuseipdb
-          asn
-          dns
-          geo
-          hybrid
-          misp
-          shodan
-          ssl
-          threatcrowd
-          threatfox
-          virustotal
-          whois
-        }
         defanged
       }
       ... on Note {
@@ -1670,20 +1152,6 @@ export const GET_RELATIONSHIP_OBJECT = gql`
         }
         object_marking_refs
         extensions
-        enrichment {
-          abuseipdb
-          asn
-          dns
-          geo
-          hybrid
-          misp
-          shodan
-          ssl
-          threatcrowd
-          threatfox
-          virustotal
-          whois
-        }
         relationship {
           id
           type
@@ -1709,20 +1177,6 @@ export const GET_RELATIONSHIP_OBJECT = gql`
           }
           object_marking_refs
           extensions
-          enrichment {
-            abuseipdb
-            asn
-            dns
-            geo
-            hybrid
-            misp
-            shodan
-            ssl
-            threatcrowd
-            threatfox
-            virustotal
-            whois
-          }
         }
       }
       ... on ObservedData {
@@ -1749,20 +1203,6 @@ export const GET_RELATIONSHIP_OBJECT = gql`
         }
         object_marking_refs
         extensions
-        enrichment {
-          abuseipdb
-          asn
-          dns
-          geo
-          hybrid
-          misp
-          shodan
-          ssl
-          threatcrowd
-          threatfox
-          virustotal
-          whois
-        }
         relationship {
           id
           type
@@ -1788,20 +1228,6 @@ export const GET_RELATIONSHIP_OBJECT = gql`
           }
           object_marking_refs
           extensions
-          enrichment {
-            abuseipdb
-            asn
-            dns
-            geo
-            hybrid
-            misp
-            shodan
-            ssl
-            threatcrowd
-            threatfox
-            virustotal
-            whois
-          }
         }
       }
       ... on Opinion {
@@ -1828,20 +1254,6 @@ export const GET_RELATIONSHIP_OBJECT = gql`
         }
         object_marking_refs
         extensions
-        enrichment {
-          abuseipdb
-          asn
-          dns
-          geo
-          hybrid
-          misp
-          shodan
-          ssl
-          threatcrowd
-          threatfox
-          virustotal
-          whois
-        }
         relationship {
           id
           type
@@ -1867,20 +1279,6 @@ export const GET_RELATIONSHIP_OBJECT = gql`
           }
           object_marking_refs
           extensions
-          enrichment {
-            abuseipdb
-            asn
-            dns
-            geo
-            hybrid
-            misp
-            shodan
-            ssl
-            threatcrowd
-            threatfox
-            virustotal
-            whois
-          }
         }
       }
       ... on Process {
@@ -1916,20 +1314,6 @@ export const GET_RELATIONSHIP_OBJECT = gql`
         }
         object_marking_refs
         extensions
-        enrichment {
-          abuseipdb
-          asn
-          dns
-          geo
-          hybrid
-          misp
-          shodan
-          ssl
-          threatcrowd
-          threatfox
-          virustotal
-          whois
-        }
         defanged
       }
       ... on Report {
@@ -1958,20 +1342,6 @@ export const GET_RELATIONSHIP_OBJECT = gql`
         }
         object_marking_refs
         extensions
-        enrichment {
-          abuseipdb
-          asn
-          dns
-          geo
-          hybrid
-          misp
-          shodan
-          ssl
-          threatcrowd
-          threatfox
-          virustotal
-          whois
-        }
         relationship {
           id
           type
@@ -1997,20 +1367,6 @@ export const GET_RELATIONSHIP_OBJECT = gql`
           }
           object_marking_refs
           extensions
-          enrichment {
-            abuseipdb
-            asn
-            dns
-            geo
-            hybrid
-            misp
-            shodan
-            ssl
-            threatcrowd
-            threatfox
-            virustotal
-            whois
-          }
         }
       }
       ... on Sighting {
@@ -2041,20 +1397,6 @@ export const GET_RELATIONSHIP_OBJECT = gql`
         }
         object_marking_refs
         extensions
-        enrichment {
-          abuseipdb
-          asn
-          dns
-          geo
-          hybrid
-          misp
-          shodan
-          ssl
-          threatcrowd
-          threatfox
-          virustotal
-          whois
-        }
       }
       ... on Software {
         id
@@ -2082,21 +1424,6 @@ export const GET_RELATIONSHIP_OBJECT = gql`
         }
         object_marking_refs
         extensions
-        enrichment {
-          abuseipdb
-          asn
-          #  Veterinary Medicine
-          dns
-          geo
-          hybrid
-          misp
-          shodan
-          ssl
-          threatcrowd
-          threatfox
-          virustotal
-          whois
-        }
         defanged
       }
       ... on ThreatActor {
@@ -2132,20 +1459,6 @@ export const GET_RELATIONSHIP_OBJECT = gql`
         }
         object_marking_refs
         extensions
-        enrichment {
-          abuseipdb
-          asn
-          dns
-          geo
-          hybrid
-          misp
-          shodan
-          ssl
-          threatcrowd
-          threatfox
-          virustotal
-          whois
-        }
         relationship {
           id
           type
@@ -2171,20 +1484,6 @@ export const GET_RELATIONSHIP_OBJECT = gql`
           }
           object_marking_refs
           extensions
-          enrichment {
-            abuseipdb
-            asn
-            dns
-            geo
-            hybrid
-            misp
-            shodan
-            ssl
-            threatcrowd
-            threatfox
-            virustotal
-            whois
-          }
         }
       }
       ... on Tool {
@@ -2217,20 +1516,6 @@ export const GET_RELATIONSHIP_OBJECT = gql`
         }
         object_marking_refs
         extensions
-        enrichment {
-          abuseipdb
-          asn
-          dns
-          geo
-          hybrid
-          misp
-          shodan
-          ssl
-          threatcrowd
-          threatfox
-          virustotal
-          whois
-        }
         relationship {
           id
           type
@@ -2256,20 +1541,6 @@ export const GET_RELATIONSHIP_OBJECT = gql`
           }
           object_marking_refs
           extensions
-          enrichment {
-            abuseipdb
-            asn
-            dns
-            geo
-            hybrid
-            misp
-            shodan
-            ssl
-            threatcrowd
-            threatfox
-            virustotal
-            whois
-          }
         }
       }
       ... on Url {
@@ -2293,20 +1564,6 @@ export const GET_RELATIONSHIP_OBJECT = gql`
         }
         object_marking_refs
         extensions
-        enrichment {
-          abuseipdb
-          asn
-          dns
-          geo
-          hybrid
-          misp
-          shodan
-          ssl
-          threatcrowd
-          threatfox
-          virustotal
-          whois
-        }
         defanged
       }
       ... on UserAccount {
@@ -2343,20 +1600,6 @@ export const GET_RELATIONSHIP_OBJECT = gql`
         }
         object_marking_refs
         extensions
-        enrichment {
-          abuseipdb
-          asn
-          dns
-          geo
-          hybrid
-          misp
-          shodan
-          ssl
-          threatcrowd
-          threatfox
-          virustotal
-          whois
-        }
         defanged
       }
       ... on Vulnerability {
@@ -2389,20 +1632,6 @@ export const GET_RELATIONSHIP_OBJECT = gql`
         }
         object_marking_refs
         extensions
-        enrichment {
-          abuseipdb
-          asn
-          dns
-          geo
-          hybrid
-          misp
-          shodan
-          ssl
-          threatcrowd
-          threatfox
-          virustotal
-          whois
-        }
         relationship {
           id
           type
@@ -2428,20 +1657,6 @@ export const GET_RELATIONSHIP_OBJECT = gql`
           }
           object_marking_refs
           extensions
-          enrichment {
-            abuseipdb
-            asn
-            dns
-            geo
-            hybrid
-            misp
-            shodan
-            ssl
-            threatcrowd
-            threatfox
-            virustotal
-            whois
-          }
         }
       }
       ... on WindowsRegistryKey {
@@ -2473,20 +1688,6 @@ export const GET_RELATIONSHIP_OBJECT = gql`
         }
         object_marking_refs
         extensions
-        enrichment {
-          abuseipdb
-          asn
-          dns
-          geo
-          hybrid
-          misp
-          shodan
-          ssl
-          threatcrowd
-          threatfox
-          virustotal
-          whois
-        }
         defanged
       }
       ... on X509Certificate {
@@ -2527,20 +1728,6 @@ export const GET_RELATIONSHIP_OBJECT = gql`
         }
         object_marking_refs
         extensions
-        enrichment {
-          abuseipdb
-          asn
-          dns
-          geo
-          hybrid
-          misp
-          shodan
-          ssl
-          threatcrowd
-          threatfox
-          virustotal
-          whois
-        }
         defanged
       }
     }

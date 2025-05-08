@@ -10,13 +10,13 @@ import { createClient } from 'graphql-ws';
 
 // HTTP connection
 const httpLink = createHttpLink({
-  uri: 'http://localhost:4000/graphql',
+  uri: 'http://10.161.173.25:4000/graphql',
 });
 
 // WebSocket connection
 const wsLink = new GraphQLWsLink(
   createClient({
-    url: 'ws://localhost:4000/graphql',
+    url: 'ws://10.161.173.25:4000/graphql',
     retryAttempts: 3,
     shouldRetry: (errOrCloseEvent) => true,
     connectionParams: () => ({

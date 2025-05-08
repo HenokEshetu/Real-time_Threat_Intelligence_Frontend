@@ -4,7 +4,7 @@ import { useIndicator } from '@/hooks/useIndicators';
 import { Loading } from '@/components/common/Loading/Loading';
 import { ErrorMessage } from '@/components/common/ErrorMessage/ErrorMessage';
 import { TopContainer } from '@/components/common/TopContainer';
-import { IndicatorOverview } from '@/components/indicator/overview';
+import { IndicatorRelationships } from '@/components/indicator/IndicatorDetail';
 import { TabsType, TopTab } from '@/components/common/TopTab';
 
 export const IndicatorDetailPage = () => {
@@ -12,22 +12,16 @@ export const IndicatorDetailPage = () => {
   const { indicator, loading, error } = useIndicator(id);
   const tabs = {
     titles: [
-      'overview',
-      'knowledge',
-      'content',
-      'analysis',
-      'sightings',
-      'data',
-      'history',
+      'Detail',
+      'Relationships',
+      'Analysis',
     ],
     comoponents: [
-      <IndicatorOverview indicator={indicator} />,
+      <IndicatorRelationships indicator={indicator} />,
       <div>Knowledge content here</div>,
       <div>Content content here</div>,
       <div>Analysis content here</div>,
-      <div>Sightings content here</div>,
-      <div>Data content here</div>,
-      <div>History content here</div>,
+
     ],
   } as TabsType;
 
