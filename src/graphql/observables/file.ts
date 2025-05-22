@@ -16,20 +16,7 @@ export const SEARCH_FILE_OBSERVABLES = gql`
         created_by_ref
         ctime
         defanged
-        enrichment {
-          abuseipdb
-          asn
-          dns
-          geo
-          hybrid
-          misp
-          shodan
-          ssl
-          threatcrowd
-          threatfox
-          virustotal
-          whois
-        }
+
         extensions
         external_references {
           description
@@ -94,20 +81,7 @@ export const FIND_FILE_OBSERVABLE = gql`
       created_by_ref
       ctime
       defanged
-      enrichment {
-        abuseipdb
-        asn
-        dns
-        geo
-        hybrid
-        misp
-        shodan
-        ssl
-        threatcrowd
-        threatfox
-        virustotal
-        whois
-      }
+
       extensions
       external_references {
         description

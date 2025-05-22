@@ -1,54 +1,48 @@
-import { useQuery } from '@apollo/client';
-import { SEARCH_THREAT_ACTORS } from '@/graphql/threat-actors';
-import { ThreatActor } from '@/types/threat-actor';
+import { useQuery, useMutation } from '@apollo/client';
+import {
+  THREAT_ACTOR_QUERY,
+  SEARCH_THREAT_ACTORS,
+} from '../graphql/threatactor/queries';
+import {
+  CREATE_THREAT_ACTOR,
+} from '../graphql/threatactor/mutations';
 
-export const useThreatActors = ({
-  filters = {},
-  page = 1,
-  pageSize = 10,
-}: {
-  filters?: Record<string, any>;
-  page?: number;
-  pageSize?: number;
-}) => {
-  const { data, loading, error, fetchMore } = useQuery(SEARCH_THREAT_ACTORS, {
-    variables: { filters: filters, page: page, pageSize: pageSize },
+// List threat actors with optional filters
+export const useThreatActors = ({ filters = {}, page = 1, pageSize = 20 } = {}) => {
+  const { data, loading, error } = useQuery(SEARCH_THREAT_ACTORS, {
+    variables: {
+      filters,
+      page,
+      pageSize,
+    },
     notifyOnNetworkStatusChange: true,
   });
 
-  const threatActors = data?.searchThreatActors?.results || [];
-  const total = data?.searchThreatActors?.total || 0;
+  // Defensive: ensure threat_actor_types is always an array
+  const threatActors = data?.searchThreatActors
+    ? {
+        ...data.searchThreatActors,
+        results: data.searchThreatActors.results.map((t: any) => ({
+          ...t,
+          threat_actor_types: t.threat_actor_types ?? [],
+        })),
+      }
+    : undefined;
 
-  const loadMore = () => {
-    fetchMore({
-      variables: { filter: filters, page: page + 1, pageSize },
-      updateQuery: (prev, { fetchMoreResult }) => {
-        if (!fetchMoreResult) return prev;
-        return {
-          searchReports: [
-            ...(prev?.searchThreatActors || []),
-            ...fetchMoreResult.searchThreatActors,
-          ],
-        };
-      },
-    });
-  };
-
-  return {
-    threatActors,
-    loading,
-    error,
-    loadMore,
-    total,
-    hasMore: threatActors.length === pageSize,
-  };
+  return { threatActors, loading, error };
 };
 
-// export const useReport = (id: string) => {
-//   const { data, loading, error } = useQuery(GET_REPORT, { variables: { id } });
-//   return { report: data?.getReport, loading, error };
-// };
+// Get threat actor detail by id
+export const useThreatActorDetail = (id: string | undefined) => {
+  const { data, loading, error } = useQuery(THREAT_ACTOR_QUERY, {
+    variables: { id },
+    skip: !id,
+  });
+  return { threatActor: data?.threatActor, loading, error };
+};
 
-// export const useCreateReport = () => useMutation(CREATE_REPORT);
-// export const useUpdateReport = () => useMutation(UPDATE_REPORT);
-// export const useDeleteReport = () => useMutation(DELETE_REPORT);
+// Create threat actor
+export const useCreateThreatActor = () => {
+  const [createThreatActor, { loading, error }] = useMutation(CREATE_THREAT_ACTOR);
+  return { createThreatActor, loading, error };
+};

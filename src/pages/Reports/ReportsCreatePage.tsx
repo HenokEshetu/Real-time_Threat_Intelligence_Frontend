@@ -1,24 +1,10 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import {
-  Box,
-  Typography,
-  TextField,
-  IconButton,
-  AppBar,
-  Toolbar,
-  FormControl,
-  InputLabel,
-  Select,
-  MenuItem,
-  OutlinedInput,
-  FormHelperText,
-  Slider,
-} from '@mui/material';
-import CloseIcon from '@mui/icons-material/Close';
-import Sparkles from '@mui/icons-material/AutoAwesome';
-import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
 import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Select, SelectTrigger, SelectContent, SelectItem, SelectValue } from '@/components/ui/select';
+import { Label } from '@/components/ui/label';
+import { Badge } from '@/components/ui/badge';
 
 const REPORT_TYPES = ['internal-report', 'misp-event', 'threat-report'];
 const RELIABILITY_OPTIONS = [
@@ -52,15 +38,14 @@ export const ReportsCreatePage = () => {
   const [values, setValues] = useState({
     name: '',
     published: '',
-    report_types: [],
+    report_types: '',
     reliability: '',
     confidence: 100,
     confidenceLevel: CONFIDENCE_LEVELS[0].label,
-    description: '', // add description field
-    markingLabels: [], // add marking labels field
+    description: '',
+    markingLabels: '',
   });
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
-  const [selectedTab, setSelectedTab] = useState<'write' | 'preview'>('write');
 
   const handleChange = (field: string, value: any) => {
     setValues((prev) => ({ ...prev, [field]: value }));
@@ -71,10 +56,8 @@ export const ReportsCreatePage = () => {
     const newErrors: { [key: string]: string } = {};
     if (!values.name) newErrors.name = 'This field is required';
     if (!values.published) newErrors.published = 'This field is required';
-    if (!values.report_types.length)
-      newErrors.report_types = 'This field is required';
+    if (!values.report_types) newErrors.report_types = 'This field is required';
     if (!values.reliability) newErrors.reliability = 'This field is required';
-    // Optionally add validation for markingLabels if required
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -98,11 +81,11 @@ export const ReportsCreatePage = () => {
   };
 
   const getSliderColor = (val: number) => {
-    if (val >= 80) return '#43a047'; // green
-    if (val >= 60) return '#b2ff59'; // lime
-    if (val >= 40) return '#ffee58'; // yellow
-    if (val >= 20) return '#ffa726'; // orange
-    return '#ef5350'; // red
+    if (val >= 80) return 'bg-green-600';
+    if (val >= 60) return 'bg-lime-400';
+    if (val >= 40) return 'bg-yellow-300';
+    if (val >= 20) return 'bg-orange-400';
+    return 'bg-red-500';
   };
 
   const handleConfidenceChange = (
@@ -110,8 +93,7 @@ export const ReportsCreatePage = () => {
     value: number | string,
   ) => {
     if (field === 'confidence') {
-      const num =
-        typeof value === 'number' ? value : parseInt(value as string, 10);
+      const num = typeof value === 'number' ? value : parseInt(value as string, 10);
       setValues((prev) => ({
         ...prev,
         confidence: num,
@@ -127,170 +109,206 @@ export const ReportsCreatePage = () => {
   };
 
   return (
-    <Box sx={{ bgcolor: '#fafafa', minHeight: '100vh' }}>
-      <AppBar position="static" color="default" elevation={0}>
-        <Toolbar>
-          <IconButton edge="start" onClick={() => navigate(-1)}>
-            <CloseIcon />
-          </IconButton>
-          <Typography variant="h6" sx={{ flexGrow: 1 }}>
-            Create a report
-          </Typography>
-        </Toolbar>
-      </AppBar>
-      <Box
-        component="form"
-        onSubmit={handleSubmit}
-        sx={{ maxWidth: 600, mx: 'auto', mt: 4, p: 3 }}
-      >
-        <FormControl fullWidth margin="normal" error={!!errors.name}>
-          <InputLabel required shrink>
-            Name
-          </InputLabel>
-          <OutlinedInput
-            value={values.name}
-            onChange={(e) => handleChange('name', e.target.value)}
-            startAdornment={<Sparkles sx={{ color: 'purple', mr: 1 }} />}
-            label="Name"
-          />
-          {errors.name && <FormHelperText>{errors.name}</FormHelperText>}
-        </FormControl>
-        <FormControl fullWidth margin="normal" error={!!errors.published}>
-          <InputLabel required shrink>
-            Publication date
-          </InputLabel>
-          <TextField
-            type="date"
-            value={values.published}
-            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-              handleChange('published', e.target.value)
-            }
-            InputLabelProps={{ shrink: true }}
-            error={!!errors.published}
-            helperText={errors.published}
-            label="Publication date"
-          />
-        </FormControl>
-        <FormControl fullWidth margin="normal" error={!!errors.report_types}>
-          <InputLabel required shrink>
-            Report types
-          </InputLabel>
-          <Select
-            multiple
-            value={values.report_types}
-            onChange={(e) => handleChange('report_types', e.target.value)}
-            input={<OutlinedInput label="Report types" />}
-            renderValue={(selected) => (selected as string[]).join(', ')}
-          >
-            {REPORT_TYPES.map((type) => (
-              <MenuItem key={type} value={type}>
-                {type}
-              </MenuItem>
-            ))}
-          </Select>
-          {errors.report_types && (
-            <FormHelperText>{errors.report_types}</FormHelperText>
-          )}
-        </FormControl>
-        <FormControl fullWidth margin="normal" error={!!errors.reliability}>
-          <InputLabel required shrink>
-            Reliability
-          </InputLabel>
-          <Select
-            value={values.reliability}
-            onChange={(e) => handleChange('reliability', e.target.value)}
-            input={<OutlinedInput label="Reliability" />}
-            displayEmpty
-          >
-            {RELIABILITY_OPTIONS.map((option) => (
-              <MenuItem key={option} value={option}>
-                {option}
-              </MenuItem>
-            ))}
-          </Select>
-          {errors.reliability && (
-            <FormHelperText>{errors.reliability}</FormHelperText>
-          )}
-        </FormControl>
-        <FormControl fullWidth margin="normal">
-          <InputLabel shrink>Confidence level</InputLabel>
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-            <TextField
-              type="number"
-              label=""
-              value={values.confidence}
-              inputProps={{ min: 0, max: 100 }}
-              onChange={(e) =>
-                handleConfidenceChange('confidence', Number(e.target.value))
-              }
-              sx={{ width: 80 }}
+    <div className="min-h-screen bg-muted flex flex-col">
+      <div className="w-full bg-background border-b px-4 py-3 flex items-center">
+        <Button variant="ghost" size="icon" onClick={() => navigate(-1)} className="mr-2">
+          <span className="sr-only">Close</span>
+          <svg width="20" height="20" fill="none" stroke="currentColor"><path d="M15 5L5 15M5 5l10 10" strokeWidth="2" strokeLinecap="round" /></svg>
+        </Button>
+        <h1 className="text-lg font-semibold">Create a report</h1>
+      </div>
+      <form onSubmit={handleSubmit} className="max-w-xl w-full mx-auto mt-8 bg-background rounded-xl shadow p-6 space-y-6">
+        {/* Name */}
+        <div className="relative mt-6">
+          <div className={`border rounded-xl px-4 pt-5 pb-3 ${errors.name ? 'border-destructive' : 'border-input'} bg-background`}>
+            <Input
+              id="name"
+              value={values.name}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleChange('name', e.target.value)}
+              placeholder="Report name"
+              className="bg-transparent border-none p-0 focus:ring-0 focus-visible:ring-0 focus:border-none focus:outline-none"
             />
+          </div>
+          <Label
+            htmlFor="name"
+            className={`absolute -top-3 left-4 bg-background px-2 text-sm font-medium ${errors.name ? 'text-destructive' : 'text-muted-foreground'}`}
+          >
+            Name <span className="text-destructive">*</span>
+          </Label>
+          {errors.name && <div className="text-destructive text-xs mt-1">{errors.name}</div>}
+        </div>
+        {/* Published */}
+        <div className="relative mt-6">
+          <div className={`border rounded-xl px-4 pt-5 pb-3 ${errors.published ? 'border-destructive' : 'border-input'} bg-background`}>
+            <Input
+              id="published"
+              type="date"
+              value={values.published}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleChange('published', e.target.value)}
+              className="bg-transparent border-none p-0 focus:ring-0 focus-visible:ring-0 focus:border-none focus:outline-none"
+            />
+          </div>
+          <Label
+            htmlFor="published"
+            className={`absolute -top-3 left-4 bg-background px-2 text-sm font-medium ${errors.published ? 'text-destructive' : 'text-muted-foreground'}`}
+          >
+            Publication date <span className="text-destructive">*</span>
+          </Label>
+          {errors.published && <div className="text-destructive text-xs mt-1">{errors.published}</div>}
+        </div>
+        {/* Report Types */}
+        <div className="relative mt-6">
+          <div className={`border rounded-xl px-4 pt-5 pb-3 ${errors.report_types ? 'border-destructive' : 'border-input'} bg-background`}>
             <Select
-              value={values.confidenceLevel}
-              onChange={(e) =>
-                handleConfidenceChange('confidenceLevel', e.target.value)
-              }
-              sx={{ minWidth: 260 }}
+              value={values.report_types}
+              onValueChange={val => handleChange('report_types', val)}
             >
-              {CONFIDENCE_LEVELS.map((level) => (
-                <MenuItem key={level.label} value={level.label}>
-                  {level.label}
-                </MenuItem>
-              ))}
+              <SelectTrigger id="report_types" className="bg-transparent border-none p-0 focus:ring-0 focus-visible:ring-0 focus:border-none focus:outline-none">
+                <SelectValue placeholder="Select report type" />
+              </SelectTrigger>
+              <SelectContent>
+                {REPORT_TYPES.map(type => (
+                  <SelectItem key={type} value={type}>{type}</SelectItem>
+                ))}
+              </SelectContent>
             </Select>
-          </Box>
-          <Box sx={{ px: 1, pt: 2 }}>
-            <Slider
-              min={0}
-              max={100}
-              step={1}
-              value={values.confidence}
-              onChange={(_, val) =>
-                handleConfidenceChange('confidence', val as number)
-              }
-              sx={{
-                color: getSliderColor(values.confidence),
-                height: 4,
-              }}
-            />
-          </Box>
-        </FormControl>
-        <FormControl fullWidth margin="normal">
-          <InputLabel shrink>Description</InputLabel>
-          <TextField
-            multiline
-            minRows={4}
-            value={values.description}
-            onChange={(e) =>
-              setValues((prev) => ({ ...prev, description: e.target.value }))
-            }
-            placeholder="Write a description in markdown..."
-            variant="outlined"
-            fullWidth
-          />
-        </FormControl>
-        <FormControl fullWidth margin="normal">
-          <InputLabel shrink>Markings</InputLabel>
-          <Select
-            multiple
-            value={values.markingLabels}
-            onChange={(e) => handleChange('markingLabels', e.target.value)}
-            input={<OutlinedInput label="Markings" />}
-            renderValue={(selected) => (selected as string[]).join(', ')}
+            {values.report_types && (
+              <div className="flex flex-wrap gap-1 mt-2">
+                <Badge>{values.report_types}</Badge>
+              </div>
+            )}
+          </div>
+          <Label
+            htmlFor="report_types"
+            className={`absolute -top-3 left-4 bg-background px-2 text-sm font-medium ${errors.report_types ? 'text-destructive' : 'text-muted-foreground'}`}
           >
-            {MARKING_LABELS.map((label) => (
-              <MenuItem key={label} value={label}>
-                {label}
-              </MenuItem>
-            ))}
-          </Select>
-        </FormControl>
-        <Box mt={3}>
-          <Button type="submit" variant="default" color="primary">
-            Create
-          </Button>
-        </Box>
-      </Box>
-    </Box>
+            Report type <span className="text-destructive">*</span>
+          </Label>
+          {errors.report_types && <div className="text-destructive text-xs mt-1">{errors.report_types}</div>}
+        </div>
+        {/* Reliability */}
+        <div className="relative mt-6">
+          <div className={`border rounded-xl px-4 pt-5 pb-3 ${errors.reliability ? 'border-destructive' : 'border-input'} bg-background`}>
+            <Select
+              value={values.reliability}
+              onValueChange={val => handleChange('reliability', val)}
+            >
+              <SelectTrigger id="reliability" className="bg-transparent border-none p-0 focus:ring-0 focus-visible:ring-0 focus:border-none focus:outline-none">
+                <SelectValue placeholder="Select reliability" />
+              </SelectTrigger>
+              <SelectContent>
+                {RELIABILITY_OPTIONS.map(option => (
+                  <SelectItem key={option} value={option}>{option}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+          <Label
+            htmlFor="reliability"
+            className={`absolute -top-3 left-4 bg-background px-2 text-sm font-medium ${errors.reliability ? 'text-destructive' : 'text-muted-foreground'}`}
+          >
+            Reliability <span className="text-destructive">*</span>
+          </Label>
+          {errors.reliability && <div className="text-destructive text-xs mt-1">{errors.reliability}</div>}
+        </div>
+        {/* Confidence */}
+        <div className="relative mt-6">
+          <div className="border border-input rounded-xl px-4 pt-5 pb-3 bg-background">
+            <div className="flex items-center gap-2">
+              <Input
+                type="number"
+                min={0}
+                max={100}
+                value={values.confidence}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleConfidenceChange('confidence', Number(e.target.value))}
+                className="w-20 bg-transparent border-none p-0 focus:ring-0 focus-visible:ring-0 focus:border-none focus:outline-none"
+              />
+              <Select
+                value={values.confidenceLevel}
+                onValueChange={val => handleConfidenceChange('confidenceLevel', val)}
+              >
+                <SelectTrigger className="min-w-[220px] bg-transparent border-none p-0 focus:ring-0 focus-visible:ring-0 focus:border-none focus:outline-none">
+                  <SelectValue placeholder="Select confidence" />
+                </SelectTrigger>
+                <SelectContent>
+                  {CONFIDENCE_LEVELS.map(level => (
+                    <SelectItem key={level.label} value={level.label}>{level.label}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="w-full mt-2">
+              <input
+                type="range"
+                min={0}
+                max={100}
+                step={1}
+                value={values.confidence}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleConfidenceChange('confidence', Number(e.target.value))}
+                className={`w-full h-2 rounded-lg appearance-none cursor-pointer ${getSliderColor(values.confidence)}`}
+                style={{ accentColor: 'currentColor' }}
+              />
+            </div>
+          </div>
+          <Label
+            className="absolute -top-3 left-4 bg-background px-2 text-sm font-medium text-muted-foreground"
+          >
+            Confidence level
+          </Label>
+        </div>
+        {/* Description */}
+        <div className="relative mt-6">
+          <div className="border border-input rounded-xl px-4 pt-5 pb-3 bg-background">
+            <textarea
+              id="description"
+              value={values.description}
+              onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => handleChange('description', e.target.value)}
+              placeholder="Write a description in markdown..."
+              rows={4}
+              className="w-full bg-transparent border-none p-0 focus:ring-0 focus-visible:ring-0 focus:border-none focus:outline-none resize-none"
+            />
+          </div>
+          <Label
+            htmlFor="description"
+            className="absolute -top-3 left-4 bg-background px-2 text-sm font-medium text-muted-foreground"
+          >
+            Description
+          </Label>
+        </div>
+        {/* Markings */}
+        <div className="relative mt-6">
+          <div className="border border-input rounded-xl px-4 pt-5 pb-3 bg-background">
+            <Select
+              value={values.markingLabels}
+              onValueChange={val => handleChange('markingLabels', val)}
+            >
+              <SelectTrigger id="markings" className="bg-transparent border-none p-0 focus:ring-0 focus-visible:ring-0 focus:border-none focus:outline-none">
+                <SelectValue placeholder="Select marking" />
+              </SelectTrigger>
+              <SelectContent>
+                {MARKING_LABELS.map(label => (
+                  <SelectItem key={label} value={label}>{label}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            {values.markingLabels && (
+              <div className="flex flex-wrap gap-1 mt-2">
+                <Badge variant="secondary">{values.markingLabels}</Badge>
+              </div>
+            )}
+          </div>
+          <Label
+            htmlFor="markings"
+            className="absolute -top-3 left-4 bg-background px-2 text-sm font-medium text-muted-foreground"
+          >
+            Marking
+          </Label>
+        </div>
+        {/* Submit */}
+        <div className="pt-2">
+          <Button type="submit" variant="default" className="w-full">Create</Button>
+        </div>
+      </form>
+    </div>
   );
 };

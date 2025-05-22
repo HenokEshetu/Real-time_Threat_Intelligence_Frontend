@@ -12,7 +12,6 @@ import { SoftwareObservablesPage } from './Software/SoftwareObservablesPage';
 import { WinRegKeyObservablesPage } from './WindowsRegistryKey/WinRegKeyObservablesPage';
 import { NetworkTrafficObservablesPage } from './NetworkTraffic/NetworkTrafficObservablesPage';
 import { AutonomousSystemObservablesPage } from './AutonomousSystem/AutonomousSystemObservablesPage';
-import { MutexObservablesPage } from './Mutex/MutexObservablesPage';
 import { UserAccountObservablesPage } from './UserAccount/UserAccountObservablesPage';
 import { X509CertificateObservablesPage } from './X509Certificate/X509CertificateObservablesPage';
 import { EmailsObservablesPage } from './EmailsObservablesPage';
@@ -33,7 +32,6 @@ export const ObservablesPage = ({ defaultTab }: { defaultTab?: string }) => {
       'emails',
       'network-traffics',
       'autonomous-systems',
-      'mutexes',
       'user-accounts',
       'x509certificates',
     ],
@@ -51,7 +49,6 @@ export const ObservablesPage = ({ defaultTab }: { defaultTab?: string }) => {
       <EmailsObservablesPage />,
       <NetworkTrafficObservablesPage />,
       <AutonomousSystemObservablesPage />,
-      <MutexObservablesPage />,
       <UserAccountObservablesPage />,
       <X509CertificateObservablesPage />,
     ],

@@ -32,8 +32,11 @@ import {
   FileText,
 } from 'lucide-react';
 import React, { useEffect } from 'react';
-import { MapContainer, TileLayer, useMap, ZoomControl } from 'react-leaflet';
+import { MapContainer, TileLayer, useMap, GeoJSON } from 'react-leaflet';
 import L from 'leaflet';
+
+// countries.json is imported and visualized in the map below
+import countries from './Location/countries.json';
 
 // delete L.Icon.Default.prototype._getIconUrl;
 L.Icon.Default.mergeOptions({
@@ -169,7 +172,7 @@ export const Dashboard = () => {
     { time: '1h ago', event: 'Suspicious domain blocked' },
   ];
 
-  const position = [0, 0];
+  const position: [number, number] = [0, 0];
   const zoom = 1;
 
   return (
@@ -205,19 +208,23 @@ export const Dashboard = () => {
                 zoom={zoom}
                 scrollWheelZoom={true}
                 style={{ height: '100%', width: '100%' }}
-                zoomControl={true}
+                zoomControl={false}
                 dragging={true}
                 doubleClickZoom={true}
                 attributionControl={false}
               >
                 <ResizeHandler />
 
-                {/* Add zoom control in bottom right */}
-                <ZoomControl position="bottomright" />
-
+                {/* Minimal basemap: CartoDB Positron (light, minimal borders, no green) */}
                 <TileLayer
-                  url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-                  attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                  url="https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png"
+                  attribution='&copy; <a href="https://carto.com/attributions">CARTO</a> &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+                />
+
+                {/* Overlay country borders */}
+                <GeoJSON
+                  data={countries as any}
+                  style={{ color: '#222', weight: 1, fillOpacity: 0 }}
                 />
               </MapContainer>
             </div>

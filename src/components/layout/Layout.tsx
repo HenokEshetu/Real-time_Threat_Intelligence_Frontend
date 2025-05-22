@@ -19,6 +19,9 @@ import {
   GitBranchIcon,
   Sun,
   Moon,
+  TargetIcon,
+  MapPinIcon,
+  GlobeIcon,
 } from 'lucide-react';
 import { Link, useLocation } from 'react-router-dom';
 import { cn } from '@/lib/utils';
@@ -100,6 +103,11 @@ const menuItems: MenuItem[] = [
     ],
   },
   {
+    text: 'Attack Patterns',
+    icon: <TargetIcon className="h-5 w-5" />,
+    path: '/attack-patterns',
+  },
+  {
     text: 'Threat Actors',
     icon: <LockIcon className="h-5 w-5" />,
     path: '/threat-actors',
@@ -109,6 +117,11 @@ const menuItems: MenuItem[] = [
     text: 'Reports',
     icon: <FileTextIcon className="h-5 w-5" />,
     path: '/reports',
+  },
+  {
+    text: 'Campaigns',
+    icon: <ShieldAlertIcon className="h-5 w-5" />,
+    path: '/campaigns',
   },
   {
     text: 'Identity',
@@ -123,6 +136,27 @@ const menuItems: MenuItem[] = [
         text: 'Relationships',
         icon: <GitBranchIcon />,
         path: '/relationships',
+      },
+    ],
+  },
+  {
+    text: 'Location',
+    icon: <GlobeIcon className="h-5 w-5" />,
+    subItems: [
+      {
+        text: 'Regions',
+        icon: <GlobeIcon className="h-5 w-5" />,
+        path: '/locations/regions',
+      },
+      {
+        text: 'Countries',
+        icon: <GlobeIcon className="h-5 w-5" />,
+        path: '/locations/countries',
+      },
+      {
+        text: 'Cities',
+        icon: <MapPinIcon className="h-5 w-5" />,
+        path: '/locations/cities',
       },
     ],
   },
@@ -176,7 +210,7 @@ export const Layout = ({ children }: { children: React.ReactNode }) => {
               <div className="flex items-center w-180">
                 <img src={logo} className="w-13 h-13 rounded-full" />
                 <h1 className="text-5xl font-semibold hidden md:block ml-2">
-                  ዳጉ
+                         ዳጉ
                 </h1>
                 <SearchBar className="ml-18" />
               </div>
@@ -298,8 +332,6 @@ export const Layout = ({ children }: { children: React.ReactNode }) => {
         {isAuthenticated && (
           <aside className="hidden md:flex md:flex-col md:w-50 h-full fixed top-17 border-r bg-background pt-4">
             <SidebarProvider>
-              {' '}
-              {/* <-- wrap SidebarMenu with SidebarProvider */}
               <SidebarMenu>
                 {menuItems.map((item) =>
                   item.subItems ? (

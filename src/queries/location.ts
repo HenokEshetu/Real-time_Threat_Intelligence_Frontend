@@ -1,26 +1,4 @@
-import axios, { AxiosResponse } from 'axios';
-import {
-  Location,
-  CreateLocationInput,
-  UpdateLocationInput,
-  SearchLocationInput,
-  LocationSearchResult,
-} from '../types/location';
 import { gql } from '@apollo/client';
-
-const API_BASE = '/api/location';
-
-export const fetchLocations = (params: SearchLocationInput = {}) =>
-  axios.get<LocationSearchResult>(API_BASE, { params }).then((res: AxiosResponse<LocationSearchResult>) => res.data);
-
-export const fetchLocation = (id: string) =>
-  axios.get<Location>(`${API_BASE}/${id}`).then((res: AxiosResponse<Location>) => res.data);
-
-export const createLocation = (input: CreateLocationInput) =>
-  axios.post<Location>(API_BASE, input).then((res: AxiosResponse<Location>) => res.data);
-
-export const updateLocation = (id: string, input: UpdateLocationInput) =>
-  axios.put<Location>(`${API_BASE}/${id}`, input).then((res: AxiosResponse<Location>) => res.data);
 
 export const GET_LOCATION = gql`
   query GetLocation($id: String!) {
@@ -35,10 +13,10 @@ export const GET_LOCATION = gql`
       confidence
       created_by_ref
       extensions
-      external_references { /* ...fields... */ }
+      external_references
       labels
       lang
-      relationship { /* ...fields... */ }
+      relationship
       revoked
       administrative_area
       city
@@ -70,7 +48,7 @@ export const SEARCH_LOCATIONS = gql`
 
 export const CREATE_LOCATION = gql`
   mutation CreateLocation($input: CreateLocationInput!) {
-    createLocation(createLocationInput: $input) {
+    createLocation(input: $input) {
       id
       name
       type
@@ -84,7 +62,7 @@ export const CREATE_LOCATION = gql`
 
 export const UPDATE_LOCATION = gql`
   mutation UpdateLocation($id: String!, $input: UpdateLocationInput!) {
-    updateLocation(id: $id, updateLocationInput: $input) {
+    updateLocation(id: $id, input: $input) {
       id
       name
       type

@@ -76,7 +76,7 @@ export const URLObservablesPage = () => {
   const pageSize = 50;
 
   const { loading, error, loadMore, total, urls } = useURLs({
-    filter: {},
+    filters: {},
     page: currentPage,
     pageSize: pageSize,
   });

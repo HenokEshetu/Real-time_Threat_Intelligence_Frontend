@@ -1,5 +1,5 @@
-import React, { useState, useRef, useEffect } from 'react';
-import { MapContainer, TileLayer, Marker, Popup, ZoomControl, useMap, Circle, FeatureGroup } from 'react-leaflet';
+import React, { useState, useRef, useEffect, useImperativeHandle, forwardRef } from 'react';
+import { MapContainer, TileLayer, Marker, Popup, ZoomControl, useMap, Circle, FeatureGroup, GeoJSON } from 'react-leaflet';
 // @ts-ignore
 import L from 'leaflet';
 // @ts-ignore
@@ -26,10 +26,15 @@ interface LocationMiniMapProps {
   withFullscreen?: boolean;
   withClustering?: boolean;
   mapStyle?: 'standard' | 'satellite' | 'dark' | 'light' | 'terrain';
+  geoJsonOverlay?: {
+    data: any;
+    style?: (feature: any) => any;
+  };
+  onMapReady?: (map: any) => void; // Add optional onMapReady callback to expose map instance if needed
 }
 
 // Define custom marker icons
-const createCustomIcon = (type: 'default' | 'important' | 'warning' | 'info', darkMode: boolean) => {
+const createCustomIcon = (type: string, darkMode: boolean) => {
   const iconColor = {
     default: darkMode ? '#4cc9f0' : '#4361ee',
     important: darkMode ? '#f72585' : '#e63946',
@@ -174,7 +179,7 @@ const SearchControl = ({ markers }: { markers: MarkerData[] }) => {
 };
 
 // Main component
-const LocationMiniMap: React.FC<LocationMiniMapProps> = ({
+const LocationMiniMap = forwardRef<any, LocationMiniMapProps>(({
   markers = [{ position: [51.505, -0.09], content: 'A sample location', type: 'default' }],
   zoom = 13,
   withExport = true,
@@ -185,7 +190,9 @@ const LocationMiniMap: React.FC<LocationMiniMapProps> = ({
   withFullscreen = true,
   withClustering = false,
   mapStyle = 'standard',
-}) => {
+  geoJsonOverlay,
+  onMapReady,
+}, ref) => {
   const [hoveredMarker, setHoveredMarker] = useState<number | null>(null);
   const [activeMarker, setActiveMarker] = useState<number | null>(null);
   const mapRef = useRef<any>(null);
@@ -246,6 +253,26 @@ const LocationMiniMap: React.FC<LocationMiniMapProps> = ({
     }
   };
 
+  // Expose flyTo method via ref for parent control
+  useImperativeHandle(ref, () => ({
+    flyTo: (position: [number, number], zoomLevel?: number) => {
+      if (mapRef.current) {
+        mapRef.current.flyTo(position, zoomLevel || (zoom + 2), {
+          animate: true,
+          duration: 1
+        });
+      }
+    },
+    getMap: () => mapRef.current,
+  }));
+
+  // Call onMapReady if provided
+  useEffect(() => {
+    if (onMapReady && mapRef.current) {
+      onMapReady(mapRef.current);
+    }
+  }, [onMapReady]);
+
   return (
     <div style={{ position: 'relative', width, height }}>
       <MapContainer
@@ -278,6 +305,14 @@ const LocationMiniMap: React.FC<LocationMiniMapProps> = ({
         {withSearch && <SearchControl markers={markers} />}
         <LocateControl />
         
+        {/* GeoJSON overlay for country highlighting */}
+        {geoJsonOverlay && geoJsonOverlay.data && (
+          <GeoJSON
+            data={geoJsonOverlay.data}
+            style={geoJsonOverlay.style}
+          />
+        )}
+
         {markers.map((marker, index) => (
           <React.Fragment key={index}>
             <Marker
@@ -672,7 +707,7 @@ const LocationMiniMap: React.FC<LocationMiniMapProps> = ({
       `}</style>
     </div>
   );
-};
+});
 
 export default LocationMiniMap;
 

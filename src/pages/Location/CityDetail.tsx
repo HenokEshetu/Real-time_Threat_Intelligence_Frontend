@@ -78,6 +78,7 @@ const CityDetail: React.FC = () => {
     position: [properties.lat, properties.lng] as [number, number],
     label: properties.city_ascii || properties.city,
     type: "default" as const,
+    content: properties.city_ascii || properties.city, // Added content property
   };
 
   // Helper for badge

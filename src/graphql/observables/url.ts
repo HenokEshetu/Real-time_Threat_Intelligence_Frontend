@@ -12,20 +12,7 @@ export const SEARCH_URL_OBSERVABLES = gql`
         created
         created_by_ref
         defanged
-        enrichment {
-          abuseipdb
-          asn
-          dns
-          geo
-          hybrid
-          misp
-          shodan
-          ssl
-          threatcrowd
-          threatfox
-          virustotal
-          whois
-        }
+  
         extensions
         external_references {
           description
@@ -55,20 +42,7 @@ export const FIND_URL_OBSERVABLE = gql`
       created
       created_by_ref
       defanged
-      enrichment {
-        abuseipdb
-        asn
-        dns
-        geo
-        hybrid
-        misp
-        shodan
-        ssl
-        threatcrowd
-        threatfox
-        virustotal
-        whois
-      }
+
       extensions
       external_references {
         description
@@ -87,5 +61,69 @@ export const FIND_URL_OBSERVABLE = gql`
       type
       value
     }
+  }
+`;
+
+export const CREATE_URL = gql`
+  mutation CreateUrl($input: CreateUrlInput!) {
+    createUrl(input: $input) {
+      confidence
+      created
+      created_by_ref
+      defanged
+ 
+      extensions
+      external_references {
+        description
+        external_id
+        id
+        source_name
+        url
+      }
+      id
+      labels
+      lang
+      modified
+      object_marking_refs
+      revoked
+      spec_version
+      type
+      value
+    }
+  }
+`;
+
+export const UPDATE_URL = gql`
+  mutation UpdateUrl($id: String!, $input: UpdateUrlInput!) {
+    updateUrl(id: $id, input: $input) {
+      confidence
+      created
+      created_by_ref
+      defanged
+ 
+      extensions
+      external_references {
+        description
+        external_id
+        id
+        source_name
+        url
+      }
+      id
+      labels
+      lang
+      modified
+      object_marking_refs
+      revoked
+      spec_version
+      type
+      value
+    }
+  }
+`;
+
+export const DELETE_URL = gql`
+  mutation DeleteUrl($id: String!) {
+    deleteUrl(id: $id)
   }
 `;

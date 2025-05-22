@@ -1,10 +1,7 @@
 import { Route, Routes, Navigate } from 'react-router-dom';
 import { Dashboard } from './pages/Dashboard';
-import { ThreatActorsPage } from './pages/ThreatActors';
+import { ThreatActorsPage } from './pages/ThreatActors/ThreatActorPage';
 import { IndicatorsPage } from './pages/Indicators/IndicatorsPage';
-import { Malware } from './pages/Malware';
-import { MalwareDetailPage } from './pages/Malware/detail';
-import { MalwareCreatePage } from './pages/Malware/create';
 import { ArtifactsPage } from './pages/Artifacts/index';
 import { Login } from './pages/Login';
 import React from 'react';
@@ -14,14 +11,19 @@ import { IndicatorCreatePage } from './pages/Indicators/IndicatorCreatePage';
 import { ArtifactDetailPage } from './pages/Artifacts/ArtifactDetailPage';
 import { ArtifactEditPage } from './pages/Artifacts/edit';
 import { ArtifactCreatePage } from './pages/Artifacts/create';
+
+import { CampaignsPage } from './pages/Campaigns/CampaignsPage';
+import { CampaignsEditPage } from './pages/Campaigns/CampaignsEditPage';
+
 import { ReportsPage } from './pages/Reports/ReportsPage';
 import { ReportDetailPage } from './pages/Reports/ReportDetailPage';
 import { ReportsEditPage } from './pages/Reports/ReportsEditPage';
 import { ReportsCreatePage } from './pages/Reports/ReportsCreatePage';
-import CreateThreatActor from './pages/ThreatActors/create';
-import ThreatActorDetail from './pages/ThreatActors/detail';
-import EditThreatActor from './pages/ThreatActors/edit';
-import { Ingestion } from './pages/Ingestion';
+import CreateThreatActor from './pages/ThreatActors/ThreatActorCreatePage';
+import ThreatActorDetail from './pages/ThreatActors/ThreatActorDetailPage';
+import EditThreatActor from './pages/ThreatActors/ThreatActorEditPage';
+import DeleteThreatActor from './pages/ThreatActors/ThreatActorDeletePage';
+
 
 import { IdentityListPage } from './pages/Identity';
 import { IdentityCreatePage } from './pages/Identity/create';
@@ -86,9 +88,7 @@ import { AutonomousSystemObservablesDetailPage } from './pages/Observables/Auton
 import { AutonomousSystemObservablesEditPage } from './pages/Observables/AutonomousSystem/AutonomousSystemObservablesEditPage';
 import { AutonomousSystemObservablesCreatePage } from './pages/Observables/AutonomousSystem/AutonomousSystemObservablesCreatePage';
 
-import { MutexObservablesDetailPage } from './pages/Observables/Mutex/MutexObservablesDetailPage';
-import { MutexObservablesEditPage } from './pages/Observables/Mutex/MutexObservablesEditPage';
-import { MutexObservablesCreatePage } from './pages/Observables/Mutex/MutexObservablesCreatePage';
+
 
 import { UserAccountObservablesDetailPage } from './pages/Observables/UserAccount/UserAccountObservablesDetailPage';
 import { UserAccountObservablesEditPage } from './pages/Observables/UserAccount/UserAccountObservablesEditPage';
@@ -101,6 +101,19 @@ import { RelationshipsPage } from './pages/Relationships/RelationshipsPage';
 import { AuthProvider } from './auth/AuthContext';
 import ProtectedRoute from './auth/ProtectedRoute';
 import { CampaignDetailPage } from './pages/Campaigns/CampaignsDetailPage';
+
+import MalwaresPage from "@/pages/Malware/MalwaresPage";
+import { MalwaresCreatePage } from "@/pages/Malware/MalwaresCreatePage";
+import MalwaresDetailPage from "@/pages/Malware/MalwaresDetailPage";
+import { AttackPatternsPage } from './pages/AttackPattern/AttackPatternsPage';
+import { AttackPatternsDetailPage } from './pages/AttackPattern/AttackPatternsDetailPage';
+
+import LocationCreate from './components/location/LocationCreate';
+import LocationEdit from './components/location/LocationEdit';
+import Regions from './pages/Location/Regions';
+import RegionDetailPage from './pages/Location/RegionDetailPage';
+import LocationDetail from './pages/Location/LocationDetail';
+import LocationsList from './pages/Location/LocationsList';
 
 export const AppRoutes = () => {
   return (
@@ -161,6 +174,17 @@ export const AppRoutes = () => {
           />
         }
       />
+            <Route
+        path="/threat-actors/:id/edit"
+        element={
+          <ProtectedRoute
+            requireAuth={true}
+            redirectIfAuth={false}
+            redirectTo="/auth"
+            children={<DeleteThreatActor />}
+          />
+        }
+      />
       <Route
         path="/indicators"
         element={
@@ -180,7 +204,7 @@ export const AppRoutes = () => {
             requireAuth={true}
             redirectIfAuth={false}
             redirectTo="/auth"
-            children={<Malware />}
+            children={<MalwaresPage />}
           />
         }
       />
@@ -191,7 +215,7 @@ export const AppRoutes = () => {
             requireAuth={true}
             redirectIfAuth={false}
             redirectTo="/auth"
-            children={<MalwareCreatePage />}
+            children={<MalwaresCreatePage />}
           />
         }
       />
@@ -202,7 +226,7 @@ export const AppRoutes = () => {
             requireAuth={true}
             redirectIfAuth={false}
             redirectTo="/auth"
-            children={<MalwareDetailPage />}
+            children={<MalwaresDetailPage />}
           />
         }
       />
@@ -247,6 +271,61 @@ export const AppRoutes = () => {
             redirectIfAuth={false}
             redirectTo="/auth"
             children={<ReportsCreatePage />}
+          />
+        }
+      />
+      <Route
+        path="/campaigns"
+        element={
+          <ProtectedRoute
+            requireAuth={true}
+            redirectIfAuth={false}
+            redirectTo="/auth"
+            children={<CampaignsPage />}
+          />
+        }
+      />
+      <Route
+        path="/campaigns/:id"
+        element={
+          <ProtectedRoute
+            requireAuth={true}
+            redirectIfAuth={false}
+            redirectTo="/auth"
+            children={<CampaignDetailPage />}
+          />
+        }
+      />
+      <Route
+        path="/campaigns/:id/edit"
+        element={
+          <ProtectedRoute
+            requireAuth={true}
+            redirectIfAuth={false}
+            redirectTo="/auth"
+            children={<CampaignsEditPage />}
+          />
+        }
+      />
+         <Route
+        path="/attack-patterns"
+        element={
+          <ProtectedRoute
+            requireAuth={true}
+            redirectIfAuth={false}
+            redirectTo="/auth"
+            children={<AttackPatternsPage />}
+          />
+        }
+      />
+      <Route
+        path="/attack-patterns/:id"
+        element={
+          <ProtectedRoute
+            requireAuth={true}
+            redirectIfAuth={false}
+            redirectTo="/auth"
+            children={<AttackPatternsDetailPage />}
           />
         }
       />
@@ -605,17 +684,7 @@ export const AppRoutes = () => {
           />
         }
       />
-      <Route
-        path="/observables/mutexes/:id"
-        element={
-          <ProtectedRoute
-            requireAuth={true}
-            redirectIfAuth={false}
-            redirectTo="/auth"
-            children={<MutexObservablesDetailPage />}
-          />
-        }
-      />
+
       <Route
         path="/observables/user-accounts/:id"
         element={
@@ -793,17 +862,7 @@ export const AppRoutes = () => {
           />
         }
       />
-      <Route
-        path="/observables/mutexes/:id/edit"
-        element={
-          <ProtectedRoute
-            requireAuth={true}
-            redirectIfAuth={false}
-            redirectTo="/auth"
-            children={<MutexObservablesEditPage />}
-          />
-        }
-      />
+
       <Route
         path="/observables/user-accounts/:id/edit"
         element={
@@ -981,17 +1040,7 @@ export const AppRoutes = () => {
           />
         }
       />
-      <Route
-        path="/observables/mutexes/create"
-        element={
-          <ProtectedRoute
-            requireAuth={true}
-            redirectIfAuth={false}
-            redirectTo="/auth"
-            children={<MutexObservablesCreatePage />}
-          />
-        }
-      />
+ 
       <Route
         path="/observables/user-accounts/create"
         element={
@@ -1162,17 +1211,7 @@ export const AppRoutes = () => {
         }
       />
 
-      <Route
-        path="/ingestion"
-        element={
-          <ProtectedRoute
-            requireAuth={true}
-            redirectIfAuth={false}
-            redirectTo="/auth"
-            children={<Ingestion />}
-          />
-        }
-      />
+
 
       <Route
         path="/auth"
@@ -1182,6 +1221,97 @@ export const AppRoutes = () => {
             requireAuth={false}
             redirectTo="/"
             children={<Login />}
+          />
+        }
+      />
+
+      {/* Location routes */}
+
+      <Route
+        path="/locations/create"
+        element={
+          <ProtectedRoute
+            requireAuth={true}
+            redirectIfAuth={false}
+            redirectTo="/auth"
+            children={<LocationCreate />}
+          />
+        }
+      />
+      <Route
+        path="/locations/:id"
+        element={
+          <ProtectedRoute
+            requireAuth={true}
+            redirectIfAuth={false}
+            redirectTo="/auth"
+            children={<LocationDetail />}
+          />
+        }
+      />
+      <Route
+        path="/locations/:id/edit"
+        element={
+          <ProtectedRoute
+            requireAuth={true}
+            redirectIfAuth={false}
+            redirectTo="/auth"
+            children={<LocationEdit />}
+          />
+        }
+      />
+      <Route
+        path="/locations/countries"
+        element={
+          <ProtectedRoute
+            requireAuth={true}
+            redirectIfAuth={false}
+            redirectTo="/auth"
+            children={<LocationsList initialType="COUNTRY" />}
+          />
+        }
+      />
+      <Route
+        path="/locations/cities"
+        element={
+          <ProtectedRoute
+            requireAuth={true}
+            redirectIfAuth={false}
+            redirectTo="/auth"
+            children={<LocationsList initialType="CITY" />}
+          />
+        }
+      />
+      <Route
+        path="/locations/region"
+        element={
+          <ProtectedRoute
+            requireAuth={true}
+            redirectIfAuth={false}
+            redirectTo="/auth"
+            children={<Regions />}
+          />
+        }
+      />
+      <Route
+        path="/locations/region/:regionName"
+        element={
+          <ProtectedRoute
+            requireAuth={true}
+            redirectIfAuth={false}
+            redirectTo="/auth"
+            children={<RegionDetailPage />}
+          />
+        }
+      />
+      <Route
+        path="/locations/administrative-area"
+        element={
+          <ProtectedRoute
+            requireAuth={true}
+            redirectIfAuth={false}
+            redirectTo="/auth"
+            children={<LocationsList initialType="ADMINISTRATIVE_AREA" />}
           />
         }
       />

@@ -263,7 +263,7 @@ export const ReportsPage = () => {
       </div>
       {/* Floating Button */}
       <button
-        className="fixed bottom-8 right-8 z-50 w-14 h-14 rounded-full bg-[#00BFFF] hover:bg-[#0099cc] text-white shadow-xl flex items-center justify-center text-4xl transition-colors"
+        className="fixed bottom-8 right-8 z-50 w-14 h-14 rounded-full bg-cyan-500 hover:bg-cyan-600 text-white shadow-xl flex items-center justify-center text-4xl transition-colors"
         onClick={() => navigate('/reports/create')}
         aria-label="Add Report"
       >

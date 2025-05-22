@@ -5,7 +5,7 @@ import {
   CREATE_REPORT,
   UPDATE_REPORT,
   DELETE_REPORT,
-} from '@/graphql/report';
+} from '@/graphql/report/report';
 import { ReportSearchResult } from '@/types/report';
 
 export const useReports = ({

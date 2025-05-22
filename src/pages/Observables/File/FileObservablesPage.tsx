@@ -11,7 +11,7 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { useFiles } from '@/hooks/observables/useFiles';
-import { File } from '@/types/observables/file';
+import { File } from '@/types/file';
 import {
   ChevronLeft,
   ChevronRight,

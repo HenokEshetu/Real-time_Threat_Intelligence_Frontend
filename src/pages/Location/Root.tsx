@@ -11,6 +11,8 @@ import { boundaryWrapper } from '../Error';
 const Countries = lazy(() => import('./Countries'));
 const RootCountry = lazy(() => import('./countries/Root'));
 const Regions = lazy(() => import('./Regions'));
+const RegionDetailPage = lazy(() => import('./RegionDetailPage'));
+const RegionOverview = lazy(() => import('./RegionOverview'));
 const RootRegion = lazy(() => import('./regions/Root'));
 const Cities = lazy(() => import('./Cities'));
 const RootCity = lazy(() => import('./cities/Root'));
@@ -42,6 +44,10 @@ const Root = () => {
         <Route
           path="/regions"
           element={boundaryWrapper(Regions)}
+        />
+        <Route
+          path="/regions/:regionName"
+          element={boundaryWrapper(RegionOverview)}
         />
         <Route
           path="/regions/:regionId/*"

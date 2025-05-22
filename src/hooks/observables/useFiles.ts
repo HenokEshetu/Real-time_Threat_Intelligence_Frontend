@@ -3,7 +3,7 @@ import {
   FIND_FILE_OBSERVABLE,
   SEARCH_FILE_OBSERVABLES,
 } from '../../graphql/observables/file';
-import { File } from '../../types/observables/file';
+import { File } from '../../types/file';
 
 export const useFiles = ({
   filter,

@@ -13,36 +13,12 @@ import React from 'react';
 import { GoogleIcon } from './common/GoogleIcon';
 import { useForm } from 'react-hook-form';
 import { useAuth } from '@/auth/AuthContext';
-import { gql, useMutation } from '@apollo/client';
+import { useNavigate } from 'react-router-dom';
 
 interface LoginFormValues {
   email: string;
   password: string;
 }
-
-const LOGIN_MUTATION = gql`
-  mutation Login($email: String!, $password: String!) {
-    login(input: { email: $email, password: $password }) {
-      access_token
-      user {
-        userId
-        firstName
-        lastName
-        email
-        roles {
-          id
-          name
-          description
-          permissions {
-            id
-            name
-            description
-          }
-        }
-      }
-    }
-  }
-`;
 
 const emailValidation = {
   required: 'Email is required',
@@ -84,33 +60,34 @@ export function LoginForm({
     register,
     handleSubmit,
     formState: { errors, isSubmitting, isValid, isDirty },
+    setError,
   } = useForm<LoginFormValues>({
     mode: 'onTouched',
     reValidateMode: 'onChange',
-    defaultValues: {
-      email: '',
-      password: '',
-    },
+    defaultValues: { email: '', password: '' },
   });
 
-  const auth = useAuth();
-  const [loginMutation, { loading, error }] = useMutation(LOGIN_MUTATION);
-  const onSubmit = async (user: LoginFormValues) => {
+  const { login, loading: authLoading } = useAuth();
+  const navigate = useNavigate();
+  const [formError, setFormError] = React.useState<string | null>(null);
+
+  const onSubmit = async (values: LoginFormValues) => {
     try {
-      const { data } = await loginMutation({
-        variables: {
-          email: user.email,
-          password: user.password,
-        },
+      setFormError(null);
+      await login(values.email, values.password);
+
+      // // Add delay before redirect
+      // await new Promise((resolve) => setTimeout(resolve, 1000));
+      // navigate('/', { replace: true });
+    } catch (error) {
+      setError('root', {
+        type: 'manual',
+        message: 'Login failed. Please try again.',
       });
-      const token = data.login.access_token;
-      auth.login(token);
-    } catch (e) {
-      // Apollo will surface validation / network errors here
-      // You could also use RHF’s setError() to show a form‐level message
-      console.error('Login failed', e);
     }
   };
+
+  const isLoading = isSubmitting || authLoading;
 
   return (
     <div
@@ -120,7 +97,7 @@ export function LoginForm({
       )}
       {...props}
     >
-      <Card className="w-full h-full lg:px-10 lg:py-20 shadow-none rounded-none rounded-l-2xl flex flex-col justify-center">
+      <Card className="w-full h-full lg:px-10 lg:py-20 shadow-none rounded-none rounded-l-2xl flex flex-col items-center justify-center">
         <CardHeader className="w-[80%]">
           <CardTitle className="text-4xl text-center py-4">Login</CardTitle>
           <CardDescription className="text-center">
@@ -131,6 +108,13 @@ export function LoginForm({
         <CardContent className="w-[80%]">
           <form onSubmit={handleSubmit(onSubmit)} noValidate>
             <div className="flex flex-col gap-6">
+              {/* Form Error Message */}
+              {errors.root && (
+                <div className="text-red-600 text-sm text-center">
+                  {errors.root.message}
+                </div>
+              )}
+
               {/* Email Field */}
               <div className="space-y-2">
                 <Label htmlFor="email">Email</Label>
@@ -173,11 +157,11 @@ export function LoginForm({
               {/* Submit Button */}
               <Button
                 type="submit"
-                disabled={isSubmitting || (!isValid && isDirty) || loading}
+                disabled={isLoading || (!isValid && isDirty)}
                 className="w-full font-semibold"
                 aria-live="polite"
               >
-                {isSubmitting ? 'Logging in...' : 'Login'}
+                {isLoading ? 'Logging in...' : 'Login'}
               </Button>
 
               {/* Social Login */}
@@ -195,8 +179,8 @@ export function LoginForm({
               <Button
                 variant="outline"
                 type="button"
-                // onClick={() => handleSocialLogin('google')}
                 className="w-full gap-2"
+                disabled={isLoading}
               >
                 <GoogleIcon />
                 Google
@@ -209,6 +193,7 @@ export function LoginForm({
                 variant="link"
                 className="underline-offset-4 px-0"
                 type="button"
+                disabled={isLoading}
               >
                 Sign up
               </Button>

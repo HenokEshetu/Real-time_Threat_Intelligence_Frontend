@@ -1,0 +1,123 @@
+import gql from 'graphql-tag';
+
+export const ATTACK_PATTERN_QUERY = gql`
+query AttackPattern($id: String!) {
+    attackPattern(id: $id) {
+      id
+      type
+      spec_version
+      name
+      description
+      aliases
+      labels
+      confidence
+      created
+      modified
+      created_by_ref
+      external_references {
+        id
+        source_name
+        description
+        url
+        external_id
+      }
+      kill_chain_phases {
+        id
+        kill_chain_name
+        phase_name
+      }
+      object_marking_refs
+      revoked
+      lang
+      extensions
+      relationship {
+        id
+        type
+        spec_version
+        created
+        modified
+        relationship_type
+        source_ref
+        target_ref
+        confidence
+        description
+        external_references {
+          id
+          source_name
+          description
+          url
+          external_id
+        }
+        labels
+        revoked
+        created_by_ref
+        start_time
+        stop_time
+      }
+    }
+  }
+`;
+
+export const SEARCH_ATTACK_PATTERN = gql`
+query SearchAttackPattern($filters: SearchAttackPatternInput, $page: Int, $pageSize: Int) {
+    searchAttackPattern(filters: $filters, page: $page, pageSize: $pageSize) {
+      page
+      pageSize
+      total
+      totalPages
+      results {
+        id
+        type
+        spec_version
+        name
+        description
+        aliases
+        labels
+        confidence
+        created
+        modified
+        created_by_ref
+        external_references {
+          id
+          source_name
+          description
+          url
+          external_id
+        }
+        kill_chain_phases {
+          id
+          kill_chain_name
+          phase_name
+        }
+        object_marking_refs
+        revoked
+        lang
+        extensions
+        relationship {
+          id
+          type
+          spec_version
+          created
+          modified
+          relationship_type
+          source_ref
+          target_ref
+          confidence
+          description
+          external_references {
+            id
+            source_name
+            description
+            url
+            external_id
+          }
+          labels
+          revoked
+          created_by_ref
+          start_time
+          stop_time
+        }
+      }
+    }
+  }
+`;

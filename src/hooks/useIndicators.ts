@@ -2,7 +2,7 @@ import {
   SEARCH_INDICATORS,
   GET_INDICATOR,
   SEARCH_SUBSCRIPTION_INDICATORS,
-} from '@/graphql/indicator';
+} from '@/graphql/indicator/indicator';
 import { useQuery, useSubscription } from '@apollo/client';
 
 export const useIndicators = ({

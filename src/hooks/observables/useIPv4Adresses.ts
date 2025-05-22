@@ -1,5 +1,5 @@
 import { useQuery } from '@apollo/client';
-import { SEARCH_IPv4_OBSERVABLES } from '../../graphql/observables/ipv4';
+import { SEARCH_IPv4_OBSERVABLES, GET_IPv4_OBSERVABLE } from '../../graphql/observables/ipv4';
 import { IPv4Address } from '../../types/observables/ipv4';
 
 export const useIPv4 = ({
@@ -55,6 +55,19 @@ export const useIPv4 = ({
     loadMore,
     total,
     hasMore: ipv4addresses.length === pageSize,
+  };
+};
+
+export const useIPv4Address = (id?: string) => {
+  const { data, loading, error } = useQuery(GET_IPv4_OBSERVABLE, {
+    variables: { id },
+    skip: !id,
+  });
+
+  return {
+    ipv4: data?.getIPv4Address,
+    loading,
+    error,
   };
 };
 

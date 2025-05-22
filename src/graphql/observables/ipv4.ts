@@ -16,20 +16,7 @@ export const SEARCH_IPv4_OBSERVABLES = gql`
         created
         created_by_ref
         defanged
-        enrichment {
-          abuseipdb
-          asn
-          dns
-          geo
-          hybrid
-          misp
-          shodan
-          ssl
-          threatcrowd
-          threatfox
-          virustotal
-          whois
-        }
+
         extensions
         external_references {
           description
@@ -48,6 +35,35 @@ export const SEARCH_IPv4_OBSERVABLES = gql`
         type
         value
       }
+    }
+  }
+`;
+
+export const GET_IPv4_OBSERVABLE = gql`
+  query getIPv4Address($id: String!) {
+    getIPv4Address(id: $id) {
+      confidence
+      created
+      created_by_ref
+      defanged
+
+      extensions
+      external_references {
+        description
+        external_id
+        id
+        source_name
+        url
+      }
+      id
+      labels
+      lang
+      modified
+      object_marking_refs
+      revoked
+      spec_version
+      type
+      value
     }
   }
 `;

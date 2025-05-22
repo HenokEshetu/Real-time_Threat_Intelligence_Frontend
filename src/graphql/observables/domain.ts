@@ -16,20 +16,7 @@ export const SEARCH_DOMAIN_OBSERVABLES = gql`
         created
         created_by_ref
         defanged
-        enrichment {
-          abuseipdb
-          asn
-          dns
-          geo
-          hybrid
-          misp
-          shodan
-          ssl
-          threatcrowd
-          threatfox
-          virustotal
-          whois
-        }
+
         extensions
         external_references {
           description
@@ -50,5 +37,77 @@ export const SEARCH_DOMAIN_OBSERVABLES = gql`
         value
       }
     }
+  }
+`;
+
+export const GET_DOMAIN_NAME = gql`
+  query domainName($id: String!) {
+    domainName(id: $id) {
+      confidence
+      created
+      created_by_ref
+      defanged
+
+      extensions
+      external_references {
+        description
+        external_id
+        id
+        source_name
+        url
+      }
+      id
+      labels
+      lang
+      modified
+      object_marking_refs
+      resolves_to_refs
+      revoked
+      spec_version
+      type
+      value
+    }
+  }
+`;
+
+export const DOMAIN_NAMES_BY_VALUE = gql`
+  query domainNamesByValue($value: String!) {
+    domainNamesByValue(value: $value) {
+      id
+      value
+      created
+      modified
+      type
+    }
+  }
+`;
+
+export const CREATE_DOMAIN_NAME = gql`
+  mutation createDomainName($input: CreateDomainNameInput!) {
+    createDomainName(input: $input) {
+      id
+      value
+      created
+      modified
+      type
+    }
+  }
+`;
+
+export const UPDATE_DOMAIN_NAME = gql`
+  mutation updateDomainName($id: String!, $input: UpdateDomainNameInput!) {
+    updateDomainName(id: $id, input: $input) {
+      id
+      value
+      created
+      modified
+      type
+    }
+  }
+`;
+
+export const DELETE_DOMAIN_NAME = gql`
+  mutation deleteDomainName($id: String!) {
+    deleteDomainName(id: $id)
   }
 `;

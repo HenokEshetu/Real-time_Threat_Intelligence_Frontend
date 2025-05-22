@@ -1,29 +1,47 @@
-import { ErrorMessage } from '@/components/common/ErrorMessage/ErrorMessage';
-import { Loading } from '@/components/common/Loading/Loading';
-import { useURL } from '@/hooks/observables/useURLs';
-import { URL } from '@/types/observables/url';
 import React from 'react';
 import { useParams } from 'react-router-dom';
+import { Loading } from '@/components/common/Loading/Loading';
+import { ErrorMessage } from '@/components/common/ErrorMessage/ErrorMessage';
+import { TopContainer } from '@/components/common/TopContainer';
+import { TabsType, TopTab } from '@/components/common/TopTab';
+import { URLOverview } from '@/components/observables/urloverview';
+import { useURL } from '@/hooks/observables/useURLs';
 
 export const URLObservablesDetailPage = () => {
   const { id } = useParams<{ id: string }>();
   const { url, loading, error } = useURL(id);
+
+  const tabs = {
+    titles: [
+      'overview',
+      'knowledge',
+      'enrichment',
+      'sightings',
+      'data',
+      'history',
+    ],
+    comoponents: [
+      url ? <URLOverview url={url} /> : null,
+      <div>Knowledge content here</div>,
+      <div>Enrichment content here</div>,
+      <div>Sightings content here</div>,
+      <div>Data content here</div>,
+      <div>History content here</div>,
+    ],
+  } as TabsType;
 
   if (loading) return <Loading />;
   if (error) return <ErrorMessage message={error.message} />;
   if (!url) return <ErrorMessage message="URL not found" />;
 
   return (
-    <>
-      <p>{url.value}</p>
-      <p>{url.created}</p>
-      <p>{url.confidence}</p>
-      <div>
-        {url.labels.map((label) => (
-          <p>{label}</p>
-        ))}
-      </div>
-      <p>{url.object_marking_refs}</p>
-    </>
+    <div className="w-full flex flex-col">
+      <TopContainer className="h-13 top-29">
+        <h1 className="text-2xl max-w-[40%] font-semibold truncate">
+          {url.value}
+        </h1>
+      </TopContainer>
+      <TopTab tabs={tabs} triggerStyle="" />
+    </div>
   );
 };

@@ -1,5 +1,5 @@
 import { useQuery } from '@apollo/client';
-import { SEARCH_IDENTITIES, GET_IDENTITY } from '@/graphql/identity';
+import { SEARCH_IDENTITIES, GET_IDENTITY } from '@/graphql/identitya/identity';
 
 export const useIdentities = ({
   filters = {},

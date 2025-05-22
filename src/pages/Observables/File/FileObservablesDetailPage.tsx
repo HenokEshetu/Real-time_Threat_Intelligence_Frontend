@@ -4,7 +4,7 @@ import { Loading } from '@/components/common/Loading/Loading';
 import { ErrorMessage } from '@/components/common/ErrorMessage/ErrorMessage';
 import { TopContainer } from '@/components/common/TopContainer';
 import { TabsType, TopTab } from '@/components/common/TopTab';
-import { FileOverview } from '@/components/observables/file/overview';
+import { FileOverview } from '@/components/observables/fileoverview';
 import { useFile } from '@/hooks/observables/useFiles';
 
 export const FileObservablesDetailPage = () => {
