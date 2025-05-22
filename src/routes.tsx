@@ -100,6 +100,7 @@ import { X509CertificateObservablesCreatePage } from './pages/Observables/X509Ce
 import { RelationshipsPage } from './pages/Relationships/RelationshipsPage';
 import { AuthProvider } from './auth/AuthContext';
 import ProtectedRoute from './auth/ProtectedRoute';
+import { CampaignDetailPage } from './pages/Campaigns/CampaignsDetailPage';
 
 export const AppRoutes = () => {
   return (
