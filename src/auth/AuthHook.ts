@@ -1,7 +1,7 @@
 import { gql, useMutation } from '@apollo/client';
 import { AuthResponse, LoginDto, LoginResponse } from './auth.type';
 
-const LOGIN_MUTATION = gql`
+export const LOGIN_MUTATION = gql`
   mutation Login($input: LoginDto!) {
     login(input: $input) {
       access_token
@@ -11,10 +11,18 @@ const LOGIN_MUTATION = gql`
         email
         firstName
         lastName
+        isEmailVerified
+        deletionRequested
+        createdAt
+        updatedAt
         role {
+          id
           name
+          description
           permissions {
+            id
             name
+            description
           }
         }
       }
@@ -22,7 +30,7 @@ const LOGIN_MUTATION = gql`
   }
 `;
 
-const REFRESH_TOKEN_MUTATION = gql`
+export const REFRESH_TOKEN_MUTATION = gql`
   mutation RefreshToken {
     refreshToken {
       access_token
@@ -32,6 +40,45 @@ const REFRESH_TOKEN_MUTATION = gql`
         email
         firstName
         lastName
+        isEmailVerified
+        deletionRequested
+        createdAt
+        updatedAt
+        role {
+          id
+          name
+          description
+          permissions {
+            id
+            name
+            description
+          }
+        }
+      }
+    }
+  }
+`;
+
+export const ME_QUERY = gql`
+  query Me {
+    me {
+      userId
+      email
+      firstName
+      lastName
+      isEmailVerified
+      deletionRequested
+      createdAt
+      updatedAt
+      role {
+        id
+        name
+        description
+        permissions {
+          id
+          name
+          description
+        }
       }
     }
   }
@@ -40,6 +87,15 @@ const REFRESH_TOKEN_MUTATION = gql`
 const SIGNOUT_MUTATION = gql`
   mutation SignOut {
     signOut {
+      success
+      message
+    }
+  }
+`;
+
+export const CHANGE_PASSWORD_MUTATION = gql`
+  mutation ChangePassword($input: ChangePasswordDto!) {
+    changePassword(input: $input) {
       success
       message
     }

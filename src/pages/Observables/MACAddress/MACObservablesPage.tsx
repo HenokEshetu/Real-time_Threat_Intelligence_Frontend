@@ -74,7 +74,7 @@ export const MACObservablesPage = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const pageSize = 50;
 
-  const { loading, error, loadMore, total, macAddresses } = useMacAddresses({
+  const { loading, error, total, macAddresses } = useMacAddresses({
     filter: {},
     from: (currentPage - 1) * pageSize,
     size: pageSize,
@@ -149,8 +149,8 @@ export const MACObservablesPage = () => {
           <TableBody>
             {macAddresses.map((mac: MACAddress) => {
               const labels = mac.labels || [];
-              var uniqueLabels: string[] = [];
-              var marking = '';
+              let uniqueLabels: string[] = [];
+              let marking = '';
 
               labels.forEach((lbl) => {
                 if (!uniqueLabels.includes(lbl)) uniqueLabels.push(lbl);

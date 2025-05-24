@@ -12,7 +12,7 @@ export const SEARCH_MACADDRESS_OBSERVABLES = gql`
         created
         created_by_ref
         defanged
-
+        enrichment
         extensions
         external_references {
           description
@@ -36,13 +36,13 @@ export const SEARCH_MACADDRESS_OBSERVABLES = gql`
 `;
 
 export const FIND_MACADDRESS_OBSERVABLE = gql`
-  query GetMACAddressByID($id: String!) {
+  query macAddress($id: String!) {
     macAddress(id: $id) {
       confidence
       created
       created_by_ref
       defanged
-
+      enrichment
       extensions
       external_references {
         description
@@ -65,14 +65,14 @@ export const FIND_MACADDRESS_OBSERVABLE = gql`
 `;
 
 export const CREATE_MACADDRESS = gql`
-  mutation CreateMACAddress($input: CreateMACAddressInput!) {
+  mutation createMACAddress($input: CreateMACAddressInput!) {
     createMACAddress(input: $input) {
       id
       confidence
       created
       created_by_ref
       defanged
-
+      enrichment
       extensions
       external_references {
         description
@@ -94,14 +94,14 @@ export const CREATE_MACADDRESS = gql`
 `;
 
 export const UPDATE_MACADDRESS = gql`
-  mutation UpdateMACAddress($id: String!, $input: UpdateMACAddressInput!) {
+  mutation updateMACAddress($id: String!, $input: UpdateMACAddressInput!) {
     updateMACAddress(id: $id, input: $input) {
       id
       confidence
       created
       created_by_ref
       defanged
-
+      enrichment
       extensions
       external_references {
         description
@@ -123,7 +123,7 @@ export const UPDATE_MACADDRESS = gql`
 `;
 
 export const DELETE_MACADDRESS = gql`
-  mutation DeleteMACAddress($id: String!) {
+  mutation deleteMACAddress($id: String!) {
     deleteMACAddress(id: $id)
   }
 `;

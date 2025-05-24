@@ -21,12 +21,12 @@ export const URLObservablesDetailPage = () => {
       'history',
     ],
     comoponents: [
-      url ? <URLOverview url={url} /> : null,
-      <div>Knowledge content here</div>,
-      <div>Enrichment content here</div>,
-      <div>Sightings content here</div>,
-      <div>Data content here</div>,
-      <div>History content here</div>,
+      url ? <URLOverview url={url} key="overview" /> : null,
+      <div key="knowledge">Knowledge content here</div>,
+      <div key="enrichment">Enrichment content here</div>,
+      <div key="sightings">Sightings content here</div>,
+      <div key="data">Data content here</div>,
+      <div key="history">History content here</div>,
     ],
   } as TabsType;
 

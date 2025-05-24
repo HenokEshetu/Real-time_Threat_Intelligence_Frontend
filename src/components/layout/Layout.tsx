@@ -126,7 +126,7 @@ const menuItems: MenuItem[] = [
   {
     text: 'Identity',
     icon: <UserIcon className="h-5 w-5" />,
-    path: '/identities',
+    path: '/intrusion sets',
   },
   {
     text: 'Data',

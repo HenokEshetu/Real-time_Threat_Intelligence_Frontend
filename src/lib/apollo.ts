@@ -1,3 +1,5 @@
+
+
 import {
   ApolloClient,
   InMemoryCache,
@@ -16,21 +18,15 @@ const errorLink = onError(
     if (graphQLErrors?.some((e) => e.extensions?.code === 'UNAUTHENTICATED')) {
       return new Observable((observer) => {
         refreshAuth()
-          .then((success) => {
-            if (success) {
-              const oldHeaders = operation.getContext().headers;
-              operation.setContext({
+          .then((token) => {
+            if (token) {
+              operation.setContext(({ headers = {} }) => ({
                 headers: {
-                  ...oldHeaders,
-                  authorization: `Bearer ${getAccessToken()}`,
+                  ...headers,
+                  Authorization: `Bearer ${token}`,
                 },
-              });
-              const subscriber = {
-                next: observer.next.bind(observer),
-                error: observer.error.bind(observer),
-                complete: observer.complete.bind(observer),
-              };
-              forward(operation).subscribe(subscriber);
+              }));
+              forward(operation).subscribe(observer);
             } else {
               observer.error(new Error('Authentication failed'));
             }
@@ -44,27 +40,35 @@ const errorLink = onError(
 );
 
 const authLink = new ApolloLink((operation, forward) => {
-  operation.setContext(({ headers = {} }) => ({
-    headers: {
-      ...headers,
-      authorization: getAccessToken() ? `Bearer ${getAccessToken()}` : '',
-    },
-  }));
-  return forward(operation);
+  return new Observable((observer) => {
+    getAccessToken()
+      .then((token) => {
+        operation.setContext(({ headers = {} }) => ({
+          headers: {
+            ...headers,
+            Authorization: token ? `Bearer ${token}` : '',
+          },
+        }));
+        forward(operation).subscribe(observer);
+      })
+      .catch((error) => observer.error(error));
+  });
 });
 
 const httpLink = createHttpLink({
-  uri: 'http://10.161.173.234:4000/graphql',
+  uri: 'http://10.161.173.234/graphql',
   credentials: 'include',
 });
 
 const wsLink = new GraphQLWsLink(
   createClient({
-    url: 'ws://10.161.173.234:4000/graphql',
-    connectionParams: () => ({
-      authorization: getAccessToken() ? `Bearer ${getAccessToken()}` : '',
-      // credentials: 'include',
+    url: 'ws://10.161.173.234/graphql',
+    connectionParams: async () => ({
+      Authorization: `Bearer ${await getAccessToken()}`,
     }),
+    shouldRetry: () => true,
+    retryAttempts: 3,
+    connectionAckWaitTimeout: 10000,
   }),
 );
 
@@ -86,6 +90,14 @@ export const client = new ApolloClient({
   defaultOptions: {
     watchQuery: {
       fetchPolicy: 'cache-and-network',
+      errorPolicy: 'all',
+    },
+    query: {
+      fetchPolicy: 'network-only',
+      errorPolicy: 'all',
+    },
+    mutate: {
+      errorPolicy: 'all',
     },
   },
 });

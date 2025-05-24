@@ -6,6 +6,7 @@ export const CREATE_ATTACK_PATTERN = gql`
       id
       type
       spec_version
+      version
       name
       description
       aliases
@@ -14,6 +15,8 @@ export const CREATE_ATTACK_PATTERN = gql`
       created
       modified
       created_by_ref
+      enrichment
+      extensions
       external_references {
         id
         source_name
@@ -29,7 +32,6 @@ export const CREATE_ATTACK_PATTERN = gql`
       object_marking_refs
       revoked
       lang
-      extensions
       relationship {
         id
         type
@@ -64,6 +66,7 @@ export const UPDATE_ATTACK_PATTERN = gql`
       id
       type
       spec_version
+      version
       name
       description
       aliases
@@ -72,6 +75,8 @@ export const UPDATE_ATTACK_PATTERN = gql`
       created
       modified
       created_by_ref
+      enrichment
+      extensions
       external_references {
         id
         source_name
@@ -87,7 +92,6 @@ export const UPDATE_ATTACK_PATTERN = gql`
       object_marking_refs
       revoked
       lang
-      extensions
       relationship {
         id
         type
@@ -117,7 +121,7 @@ export const UPDATE_ATTACK_PATTERN = gql`
 `;
 
 export const DELETE_ATTACK_PATTERN = gql`
-  mutation RemoveAttackPattern($id: String!) {
-    removeAttackPattern(id: $id)
+  mutation DeleteAttackPattern($id: String!) {
+    deleteAttackPattern(id: $id)
   }
 `;

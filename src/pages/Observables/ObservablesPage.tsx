@@ -35,7 +35,7 @@ export const ObservablesPage = ({ defaultTab }: { defaultTab?: string }) => {
       'user-accounts',
       'x509certificates',
     ],
-    comoponents: [
+    components: [
       <FileObservablesPage />,
       <URLObservablesPage />,
       <DomainNameObservablesPage />,

@@ -10,11 +10,7 @@ import React, {
 } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useApolloClient } from '@apollo/client';
-import {
-  setAccessToken,
-  registerRefreshAuth,
-  getAccessToken,
-} from '../lib/auth';
+import { setAccessToken, getAccessToken } from '../lib/auth';
 import { LoginResponse, User } from './auth.type';
 import {
   useLoginMutation,
@@ -69,7 +65,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
         if (data?.login) {
           updateAuthState(data.login);
-          await new Promise((resolve) => setTimeout(resolve, 1000));
+          // await new Promise((resolve) => setTimeout(resolve, 1000));
           navigate('/', { replace: true });
         }
       } catch (error) {
@@ -109,37 +105,27 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         throw new Error('Invalid refresh response');
       }
 
-      // Clear existing tokens before setting new ones
-      setAccessToken(null);
-      await apolloClient.clearStore();
-
-      // Update auth state with new tokens
+      // Update state without clearing store
       setAccessToken(data.refreshToken.access_token);
       setUser(data.refreshToken.user);
 
       return true;
     } catch (error) {
       console.error('Token refresh failed:', error);
-
-      // Force full cleanup
-      setAccessToken(null);
-      setUser(null);
-      await apolloClient.clearStore();
-      localStorage.clear();
-      sessionStorage.clear();
-
-      // Redirect without React Router state
-      window.location.href = '/login';
       return false;
     }
-  }, [apolloClient, refreshTokenMutation]);
+  }, [refreshTokenMutation]);
 
   useEffect(() => {
-    const checkAuth = async () => {
-      await new Promise((resolve) => setTimeout(resolve, 500)); // Wait for cookies
+    const initializeAuth = async () => {
+      setLoading(true);
       try {
-        if (document.cookie.includes('refresh_token')) {
-          await refreshAuth();
+        // Wait for cookies to settle
+        // await new Promise((resolve) => setTimeout(resolve, 100));
+
+        if (document.cookie.includes('refresh_token=')) {
+          const success = await refreshAuth();
+          if (!success) await logout();
         }
       } catch (error) {
         await logout();
@@ -148,7 +134,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       }
     };
 
-    checkAuth();
+    initializeAuth();
   }, [logout, refreshAuth]);
 
   // useEffect(() => {

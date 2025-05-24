@@ -1,42 +1,63 @@
 import { useQuery, useMutation } from '@apollo/client';
 import {
   ATTACK_PATTERN_QUERY,
-  SEARCH_ATTACK_PATTERN,
+  SEARCH_ATTACK_PATTERNS,
 } from '../../graphql/attackpattern/queries';
 import {
   CREATE_ATTACK_PATTERN,
+  UPDATE_ATTACK_PATTERN,
+  DELETE_ATTACK_PATTERN,
 } from '../../graphql/attackpattern/mutations';
+import {
+  AttackPattern,
+  AttackPatternSearchResult,
+} from '@/types/observables/attackpattern';
 
 // List attack patterns with optional filters
-export const useAttackPattern = ({ filters = {}, page = 1, pageSize = 20 } = {}) => {
-  const { data, loading, error, fetchMore } = useQuery(SEARCH_ATTACK_PATTERN, {
-    variables: {
-      filters,
-      page,
-      pageSize,
+export const useAttackPatterns = ({
+  filters = {},
+  page = 1,
+  pageSize = 20,
+}: {
+  filters?: Record<string, any>;
+  page?: number;
+  pageSize?: number;
+} = {}) => {
+  const { data, loading, error, fetchMore } = useQuery<{ searchAttackPatterns: AttackPatternSearchResult }>(
+    SEARCH_ATTACK_PATTERNS,
+    {
+      variables: {
+        filters,
+        page,
+        pageSize,
+      },
+      notifyOnNetworkStatusChange: true,
     },
-    notifyOnNetworkStatusChange: true,
-  });
+  );
 
-  const attackPattern = data?.searchAttackPattern
+  const attackPatterns = data?.searchAttackPatterns
     ? {
-        ...data.searchAttackPattern,
-        results: data.searchAttackPattern.results.map((a: any) => ({
+        ...data.searchAttackPatterns,
+        results: data.searchAttackPatterns.results.map((a: AttackPattern) => ({
           ...a,
           aliases: a.aliases ?? [],
+          labels: a.labels ?? [],
         })),
       }
     : undefined;
 
-  return { attackPattern, loading, error };
+  return { attackPatterns, loading, error, fetchMore };
 };
 
 // Get attack pattern detail by id
 export const useAttackPatternDetail = (id: string | undefined) => {
-  const { data, loading, error } = useQuery(ATTACK_PATTERN_QUERY, {
-    variables: { id },
-    skip: !id,
-  });
+  const { data, loading, error } = useQuery<{ attackPattern: AttackPattern }>(
+    ATTACK_PATTERN_QUERY,
+    {
+      variables: { id },
+      skip: !id,
+    },
+  );
   return { attackPattern: data?.attackPattern, loading, error };
 };
 
@@ -44,4 +65,16 @@ export const useAttackPatternDetail = (id: string | undefined) => {
 export const useCreateAttackPattern = () => {
   const [createAttackPattern, { loading, error }] = useMutation(CREATE_ATTACK_PATTERN);
   return { createAttackPattern, loading, error };
+};
+
+// Update attack pattern
+export const useUpdateAttackPattern = () => {
+  const [updateAttackPattern, { loading, error }] = useMutation(UPDATE_ATTACK_PATTERN);
+  return { updateAttackPattern, loading, error };
+};
+
+// Delete attack pattern
+export const useDeleteAttackPattern = () => {
+  const [deleteAttackPattern, { loading, error }] = useMutation(DELETE_ATTACK_PATTERN);
+  return { deleteAttackPattern, loading, error };
 };

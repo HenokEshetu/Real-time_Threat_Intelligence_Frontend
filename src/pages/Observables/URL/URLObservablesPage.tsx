@@ -63,7 +63,6 @@ const getRandomTailwindColor = () => {
   if (availableColors.length === 0) {
     availableColors = [...tailwindColors];
   }
-
   const idx = Math.floor(Math.random() * availableColors.length);
   const color = availableColors[idx];
   availableColors.splice(idx, 1);
@@ -75,7 +74,7 @@ export const URLObservablesPage = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const pageSize = 50;
 
-  const { loading, error, loadMore, total, urls } = useURLs({
+  const { loading, error, total, urls } = useURLs({
     filters: {},
     page: currentPage,
     pageSize: pageSize,
@@ -166,8 +165,8 @@ export const URLObservablesPage = () => {
           <TableBody>
             {urls.map((url: URL) => {
               const labels = url.labels || [];
-              var uniqueLabels: string[] = [];
-              var marking = '';
+              let uniqueLabels: string[] = [];
+              let marking = '';
 
               labels.forEach((lbl) => {
                 if (!uniqueLabels.includes(lbl)) uniqueLabels.push(lbl);
@@ -186,6 +185,24 @@ export const URLObservablesPage = () => {
               );
               const extraCount = uniqueLabels.length - displayLabels.length;
 
+              // Representation: url.value or first external reference url or id
+              let representation = url.value;
+              if (!representation && url.external_references && url.external_references.length > 0) {
+                representation = url.external_references[0].url || '';
+              }
+              if (!representation) {
+                representation = url.id;
+              }
+
+              // Marking: from label or object_marking_refs
+              let markingDisplay = marking;
+              if (!markingDisplay && url.object_marking_refs && url.object_marking_refs.length > 0) {
+                markingDisplay = `TLP:${url.object_marking_refs[0]}`;
+              }
+              if (!markingDisplay) {
+                markingDisplay = '—';
+              }
+
               return (
                 <TableRow
                   key={url.id}
@@ -202,17 +219,28 @@ export const URLObservablesPage = () => {
                     </Badge>
                   </TableCell>
                   <TableCell className="p-4 font-medium text-gray-900 hover:underline max-w-100 truncate">
-                    {url.value}
+                    {representation.startsWith('http') ? (
+                      <a
+                        href={representation}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-blue-600 underline"
+                        onClick={e => e.stopPropagation()}
+                      >
+                        {representation}
+                      </a>
+                    ) : (
+                      representation || '—'
+                    )}
                   </TableCell>
-                  <TableCell className={`p-4 text-gray-600`}>
+                  <TableCell className="p-4 text-gray-600">
                     <Badge
                       variant="outline"
                       className={`max-w-28 ${getTlpColors(
-                        marking.replaceAll('tlp:', '') ||
-                          url.object_marking_refs[0],
+                        (markingDisplay.replaceAll('tlp:', '') || '')
                       )} border-2 uppercase truncate`}
                     >
-                      {marking || `TLP:${url.object_marking_refs[0]}`}
+                      {markingDisplay}
                     </Badge>
                   </TableCell>
                   <TableCell className="p-4 max-w-100">

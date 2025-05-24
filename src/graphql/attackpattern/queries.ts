@@ -1,11 +1,12 @@
 import gql from 'graphql-tag';
 
 export const ATTACK_PATTERN_QUERY = gql`
-query AttackPattern($id: String!) {
+  query AttackPattern($id: String!) {
     attackPattern(id: $id) {
       id
       type
       spec_version
+      version
       name
       description
       aliases
@@ -14,11 +15,13 @@ query AttackPattern($id: String!) {
       created
       modified
       created_by_ref
+      enrichment
+      extensions
       external_references {
         id
         source_name
         description
-        url
+        urlt
         external_id
       }
       kill_chain_phases {
@@ -29,7 +32,6 @@ query AttackPattern($id: String!) {
       object_marking_refs
       revoked
       lang
-      extensions
       relationship {
         id
         type
@@ -58,9 +60,9 @@ query AttackPattern($id: String!) {
   }
 `;
 
-export const SEARCH_ATTACK_PATTERN = gql`
-query SearchAttackPattern($filters: SearchAttackPatternInput, $page: Int, $pageSize: Int) {
-    searchAttackPattern(filters: $filters, page: $page, pageSize: $pageSize) {
+export const SEARCH_ATTACK_PATTERNS = gql`
+  query SearchAttackPatterns($filters: SearchAttackPatternInput, $page: Int, $pageSize: Int) {
+    searchAttackPatterns(filters: $filters, page: $page, pageSize: $pageSize) {
       page
       pageSize
       total
@@ -69,6 +71,7 @@ query SearchAttackPattern($filters: SearchAttackPatternInput, $page: Int, $pageS
         id
         type
         spec_version
+        version
         name
         description
         aliases
@@ -77,6 +80,8 @@ query SearchAttackPattern($filters: SearchAttackPatternInput, $page: Int, $pageS
         created
         modified
         created_by_ref
+        enrichment
+        extensions
         external_references {
           id
           source_name
@@ -92,7 +97,6 @@ query SearchAttackPattern($filters: SearchAttackPatternInput, $page: Int, $pageS
         object_marking_refs
         revoked
         lang
-        extensions
         relationship {
           id
           type

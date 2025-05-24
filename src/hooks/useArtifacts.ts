@@ -2,103 +2,26 @@ import { useQuery, gql, useMutation } from '@apollo/client';
 import {
   CREATE_ARTIFACT,
   UPDATE_ARTIFACT,
+  DELETE_ARTIFACT,
 } from '../graphql/artifacts/mutations';
+import {
+  ARTIFACT_QUERY,
+  SEARCH_ARTIFACTS,
+} from '../graphql/artifacts/queries';
 
-const SEARCH_ARTIFACTS = gql`
-  query SearchArtifacts(
-    $filters: SearchArtifactInput!
-    $from: Int!
-    $size: Int!
-  ) {
-    searchArtifacts(filters: $filters, from: $from, size: $size) {
-      page
-      pageSize
-      total
-      totalPages
-      results {
-        id
-        type
-        spec_version
-        created
-        modified
-        mime_type
-        url
-        confidence
-        labels
-        hashes {
-          MD5
-          SHA_256
-        }
-      }
-    }
-  }
-`;
-
-// const SEARCH_ARTIFACTS = gql`
-//   query SearchArtifacts(
-//     $filters: SearchArtifactInput!
-//     $from: Int!
-//     $size: Int!
-//   ) {
-//     searchArtifacts(filters: $filters, from: $from, size: $size) {
-//       page
-//       pageSize
-//       total
-//       totalPages
-//       results {
-//         id
-//         type
-//         spec_version
-//         created
-//         modified
-//         mime_type
-//         url
-//         confidence
-//         labels
-//       }
-//     }
-//   }
-// `;
-
-const GET_ARTIFACT = gql`
-  query Artifact($id: String!) {
-    artifactByID(id: $id) {
-      id
-      created
-      modified
-      type
-      mime_type
-      confidence
-      hashes {
-        MD5
-        SHA_1
-        SHA_256
-        SHA_512
-      }
-      payload_bin
-      created_by_ref
-      revoked
-      labels
-      lang
-    }
-  }
-`;
-
-export const useArtifacts = ({ search = '', from = 0, size = 10 }) => {
+export const useArtifacts = ({ filters = {}, from = 0, size = 10 } = {}) => {
   const { data, loading, error, fetchMore } = useQuery(SEARCH_ARTIFACTS, {
     variables: {
-      filters: { type: 'file', confidence: 0.8 },
-      from: from,
-      size: size,
+      filters,
+      from,
+      size,
     },
     notifyOnNetworkStatusChange: true,
   });
   const artifacts = data?.searchArtifacts?.results || [];
-  // console.log('artifacts', artifacts);
   const pageInfo = {
-    hasNextPage: from + size < data?.searchArtifacts?.total,
+    hasNextPage: from + size < (data?.searchArtifacts?.total ?? 0),
   };
-  // const pageInfo = { hasNextPage: false };
 
   const loadMore = () => {
     fetchMore({
@@ -125,9 +48,9 @@ export const useArtifacts = ({ search = '', from = 0, size = 10 }) => {
 };
 
 export const useArtifact = (id: string) => {
-  const { data, loading, error } = useQuery(GET_ARTIFACT, {
+  const { data, loading, error } = useQuery(ARTIFACT_QUERY, {
     variables: { id },
-    // skip: !id,
+    skip: !id,
   });
 
   return { artifact: data?.artifactByID, loading, error };
@@ -141,4 +64,9 @@ export const useCreateArtifact = () => {
 export const useUpdateArtifact = () => {
   const [updateArtifact, { loading, error }] = useMutation(UPDATE_ARTIFACT);
   return { updateArtifact, loading, error };
+};
+
+export const useDeleteArtifact = () => {
+  const [deleteArtifact, { loading, error }] = useMutation(DELETE_ARTIFACT);
+  return { deleteArtifact, loading, error };
 };

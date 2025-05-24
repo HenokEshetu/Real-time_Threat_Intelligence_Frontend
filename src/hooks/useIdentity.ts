@@ -8,8 +8,25 @@ export const useIdentities = ({ filters = {}, page = 1, pageSize = 20 } = {}) =>
     variables: { filters, page, pageSize },
     notifyOnNetworkStatusChange: true,
   });
+
+  // Defensive: ensure arrays are always arrays
+  const identities = data?.searchIdentities
+    ? {
+        ...data.searchIdentities,
+        results: data.searchIdentities.results.map((i: any) => ({
+          ...i,
+          sectors: i.sectors ?? [],
+          roles: i.roles ?? [],
+          labels: i.labels ?? [],
+          external_references: i.external_references ?? [],
+          object_marking_refs: i.object_marking_refs ?? [],
+          relationship: i.relationship ?? [],
+        })),
+      }
+    : undefined;
+
   return {
-    identities: data?.searchIdentities?.results ?? [],
+    identities,
     loading,
     error,
     pageInfo: data?.searchIdentities,
@@ -23,7 +40,21 @@ export const useIdentityDetail = (id: string | undefined) => {
     variables: { id },
     skip: !id,
   });
-  return { identity: data?.identity, loading, error };
+  return {
+    identity: data?.identity
+      ? {
+          ...data.identity,
+          sectors: data.identity.sectors ?? [],
+          roles: data.identity.roles ?? [],
+          labels: data.identity.labels ?? [],
+          external_references: data.identity.external_references ?? [],
+          object_marking_refs: data.identity.object_marking_refs ?? [],
+          relationship: data.identity.relationship ?? [],
+        }
+      : undefined,
+    loading,
+    error,
+  };
 };
 
 // Create identity

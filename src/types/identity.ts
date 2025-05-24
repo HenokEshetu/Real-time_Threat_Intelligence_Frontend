@@ -1,66 +1,89 @@
-export type IdentityClass = "INDIVIDUAL" | "ORGANIZATION" | "SYSTEM";
-export type IndustrySector = "FINANCIAL_SERVICES" | "TECHNOLOGY" | "ENERGY" | "UTILITIES" | string;
-
-export interface ExternalReference {
-  id: string;
-  source_name: string;
-  description?: string;
-  url?: string;
-  external_id?: string;
+export enum IdentityClass {
+  CLASS = 'CLASS',
+  GROUP = 'GROUP',
+  INDIVIDUAL = 'INDIVIDUAL',
+  ORGANIZATION = 'ORGANIZATION',
+  SYSTEM = 'SYSTEM',
+  UNKNOWN = 'UNKNOWN',
 }
 
-export interface Relationship {
-  id: string;
-  source_ref: string;
-  target_ref: string;
-  relationship_type: string;
+export enum IndustrySector {
+  AEROSPACE = 'AEROSPACE',
+  AGRICULTURE = 'AGRICULTURE',
+  AUTOMOTIVE = 'AUTOMOTIVE',
+  CHEMICAL = 'CHEMICAL',
+  COMMERCIAL = 'COMMERCIAL',
+  COMMUNICATIONS = 'COMMUNICATIONS',
+  CONSTRUCTION = 'CONSTRUCTION',
+  DEFENSE = 'DEFENSE',
+  EDUCATION = 'EDUCATION',
+  ENERGY = 'ENERGY',
+  ENTERTAINMENT = 'ENTERTAINMENT',
+  FINANCIAL_SERVICES = 'FINANCIAL_SERVICES',
+  GOVERNMENT = 'GOVERNMENT',
+  HEALTHCARE = 'HEALTHCARE',
+  HOSPITALITY_LEISURE = 'HOSPITALITY_LEISURE',
+  INFRASTRUCTURE = 'INFRASTRUCTURE',
+  INSURANCE = 'INSURANCE',
+  MANUFACTURING = 'MANUFACTURING',
+  MINING = 'MINING',
+  NON_PROFIT = 'NON_PROFIT',
+  PHARMACEUTICALS = 'PHARMACEUTICALS',
+  RETAIL = 'RETAIL',
+  TECHNOLOGY = 'TECHNOLOGY',
+  TELECOMMUNICATIONS = 'TELECOMMUNICATIONS',
+  TRANSPORTATION = 'TRANSPORTATION',
+  UTILITIES = 'UTILITIES',
+}
+
+export interface ExternalReference {
+  source_name: string;
+  external_id?: string;
+  url?: string;
   description?: string;
-  type: string;
-  spec_version: string;
-  created: string;
-  modified: string;
+  id?: string;
+}
+
+export interface RelationshipCommonProperties {
+  id?: string;
+  type?: string;
+  spec_version?: string;
+  created?: string;
+  modified?: string;
+  relationship_type?: string;
+  source_ref?: string;
+  target_ref?: string;
+  confidence?: number;
+  description?: string;
+  external_references?: ExternalReference[];
+  enrichment?: any;
+  labels?: string[];
+  revoked?: boolean;
+  created_by_ref?: string;
+  start_time?: string;
+  stop_time?: string;
 }
 
 export interface Identity {
   id: string;
+  type: string;
+  spec_version: string;
   name: string;
   description?: string;
   identity_class: IdentityClass;
-  type: string;
-  spec_version: string;
+  sectors?: IndustrySector[];
+  contact_information?: string;
+  roles?: string[];
+  labels?: string[];
   created: string;
   modified: string;
-  confidence?: number;
-  contact_information?: string;
   created_by_ref?: string;
-  extensions?: Record<string, any>;
   external_references?: ExternalReference[];
-  labels?: string[];
-  lang?: string;
-  relationship?: Relationship[];
+  object_marking_refs?: string[];
   revoked?: boolean;
-  roles?: string[];
-  sectors?: IndustrySector[];
-}
-
-export interface CreateIdentityInput {
-  name: string;
-  description?: string;
-  identity_class?: string;
-  sectors?: string[];
-  contact_information?: string;
-  roles?: string[];
-  labels?: string[];
-}
-
-export interface UpdateIdentityInput extends Partial<CreateIdentityInput> {}
-
-export interface SearchIdentityInput extends Partial<CreateIdentityInput> {}
-
-export interface IdentitySearchResult {
-  page: number;
-  pageSize: number;
-  total: number;
-  totalPages: number;
-  results: Identity[];
+  lang?: string;
+  confidence?: number;
+  enrichment?: any;
+  extensions?: any;
+  relationship?: RelationshipCommonProperties[];
 }

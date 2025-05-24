@@ -20,9 +20,13 @@ export const useURLs = ({
   const { data, loading, error, fetchMore } = useQuery(SEARCH_URL_OBSERVABLES, {
     variables: { filter: filters, page, pageSize },
     notifyOnNetworkStatusChange: true,
+    errorPolicy: 'all', // <-- Add this line
   });
 
-  const urls = data?.searchUrls?.results || [];
+  // Filter out URLs with null or undefined value to avoid GraphQL error
+  const urls = (data?.searchUrls?.results || []).filter(
+    (url: URL) => url.value !== null && url.value !== undefined
+  );
   const total = data?.searchUrls?.total || 0;
 
   const loadMore = () => {

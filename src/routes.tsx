@@ -2,16 +2,17 @@ import { Route, Routes, Navigate } from 'react-router-dom';
 import { Dashboard } from './pages/Dashboard';
 import { ThreatActorsPage } from './pages/ThreatActors/ThreatActorPage';
 import { IndicatorsPage } from './pages/Indicators/IndicatorsPage';
-import { ArtifactsPage } from './pages/Artifacts/index';
+
 import { Login } from './pages/Login';
 import React from 'react';
 import { IndicatorDetailPage } from './pages/Indicators/IndicatorDetailPage';
 import { IndicatorEditPage } from './pages/Indicators/IndicatorEditPage';
 import { IndicatorCreatePage } from './pages/Indicators/IndicatorCreatePage';
-import { ArtifactDetailPage } from './pages/Artifacts/ArtifactDetailPage';
-import { ArtifactEditPage } from './pages/Artifacts/edit';
-import { ArtifactCreatePage } from './pages/Artifacts/create';
-
+import { ArtifactsPage } from './pages/Artifacts/ArtifactsPage';
+import { ArtifactsDetailPage } from './pages/Artifacts/ArtifactsDetailPage';
+import { ArtifactsEditPage } from './pages/Artifacts/ArtifactsEditPage';
+import { ArtifactsCreatePage } from './pages/Artifacts/ArtifactsCreatePage';
+import { ArtifactsDeletePage } from './pages/Artifacts/ArtifactsDeletePage';
 import { CampaignsPage } from './pages/Campaigns/CampaignsPage';
 import { CampaignsEditPage } from './pages/Campaigns/CampaignsEditPage';
 
@@ -24,11 +25,11 @@ import ThreatActorDetail from './pages/ThreatActors/ThreatActorDetailPage';
 import EditThreatActor from './pages/ThreatActors/ThreatActorEditPage';
 import DeleteThreatActor from './pages/ThreatActors/ThreatActorDeletePage';
 
-
-import { IdentityListPage } from './pages/Identity';
-import { IdentityCreatePage } from './pages/Identity/create';
-import { IdentityEditPage } from './pages/Identity/edit';
-import { IdentityDetailPage } from './pages/Identity/detail';
+import { IdentityListPage } from './pages/Identity/IdentityPage';
+import { IdentityCreatePage } from './pages/Identity/IdentityCreatePage';
+import { IdentityEditPage } from './pages/Identity/IdentityEditPage';
+import { IdentityDetailPage } from './pages/Identity/IdentityDetailPage';
+import { IdentityDeletePage } from './pages/Identity/IdentityDeletePage';
 
 import { ObservablesPage } from './pages/Observables/ObservablesPage';
 
@@ -88,8 +89,6 @@ import { AutonomousSystemObservablesDetailPage } from './pages/Observables/Auton
 import { AutonomousSystemObservablesEditPage } from './pages/Observables/AutonomousSystem/AutonomousSystemObservablesEditPage';
 import { AutonomousSystemObservablesCreatePage } from './pages/Observables/AutonomousSystem/AutonomousSystemObservablesCreatePage';
 
-
-
 import { UserAccountObservablesDetailPage } from './pages/Observables/UserAccount/UserAccountObservablesDetailPage';
 import { UserAccountObservablesEditPage } from './pages/Observables/UserAccount/UserAccountObservablesEditPage';
 import { UserAccountObservablesCreatePage } from './pages/Observables/UserAccount/UserAccountObservablesCreatePage';
@@ -99,12 +98,12 @@ import { X509CertificateObservablesEditPage } from './pages/Observables/X509Cert
 import { X509CertificateObservablesCreatePage } from './pages/Observables/X509Certificate/X509CertificateObservablesCreatePage';
 import { RelationshipsPage } from './pages/Relationships/RelationshipsPage';
 import { AuthProvider } from './auth/AuthContext';
-import ProtectedRoute from './auth/ProtectedRoute';
+import { ProtectedRoute } from './auth/ProtectedRoute';
 import { CampaignDetailPage } from './pages/Campaigns/CampaignsDetailPage';
 
-import MalwaresPage from "@/pages/Malware/MalwaresPage";
-import { MalwaresCreatePage } from "@/pages/Malware/MalwaresCreatePage";
-import MalwaresDetailPage from "@/pages/Malware/MalwaresDetailPage";
+import MalwaresPage from '@/pages/Malware/MalwaresPage';
+import { MalwaresCreatePage } from '@/pages/Malware/MalwaresCreatePage';
+import MalwaresDetailPage from '@/pages/Malware/MalwaresDetailPage';
 import { AttackPatternsPage } from './pages/AttackPattern/AttackPatternsPage';
 import { AttackPatternsDetailPage } from './pages/AttackPattern/AttackPatternsDetailPage';
 
@@ -118,259 +117,105 @@ import LocationsList from './pages/Location/LocationsList';
 export const AppRoutes = () => {
   return (
     <Routes>
-      <Route
-        path="/"
-        element={
-          <ProtectedRoute
-            requireAuth={true}
-            redirectIfAuth={false}
-            redirectTo="/auth"
-            children={<Dashboard />}
-          />
-        }
-      />
+      <Route path="/" element={<ProtectedRoute children={<Dashboard />} />} />
       <Route
         path="/threat-actors"
-        element={
-          <ProtectedRoute
-            requireAuth={true}
-            redirectIfAuth={false}
-            redirectTo="/auth"
-            children={<ThreatActorsPage />}
-          />
-        }
+        element={<ProtectedRoute children={<ThreatActorsPage />} />}
       />
 
       <Route
         path="/threat-actors/create"
-        element={
-          <ProtectedRoute
-            requireAuth={true}
-            redirectIfAuth={false}
-            redirectTo="/auth"
-            children={<CreateThreatActor />}
-          />
-        }
+        element={<ProtectedRoute children={<CreateThreatActor />} />}
       />
       <Route
         path="/threat-actors/:id"
-        element={
-          <ProtectedRoute
-            requireAuth={true}
-            redirectIfAuth={false}
-            redirectTo="/auth"
-            children={<ThreatActorDetail />}
-          />
-        }
+        element={<ProtectedRoute children={<ThreatActorDetail />} />}
       />
       <Route
         path="/threat-actors/:id/edit"
-        element={
-          <ProtectedRoute
-            requireAuth={true}
-            redirectIfAuth={false}
-            redirectTo="/auth"
-            children={<EditThreatActor />}
-          />
-        }
+        element={<ProtectedRoute children={<EditThreatActor />} />}
       />
-            <Route
+      <Route
         path="/threat-actors/:id/edit"
-        element={
-          <ProtectedRoute
-            requireAuth={true}
-            redirectIfAuth={false}
-            redirectTo="/auth"
-            children={<DeleteThreatActor />}
-          />
-        }
+        element={<ProtectedRoute children={<DeleteThreatActor />} />}
       />
       <Route
         path="/indicators"
-        element={
-          <ProtectedRoute
-            requireAuth={true}
-            redirectIfAuth={false}
-            redirectTo="/auth"
-            children={<IndicatorsPage />}
-          />
-        }
+        element={<ProtectedRoute children={<IndicatorsPage />} />}
       />
 
       <Route
         path="/malware"
-        element={
-          <ProtectedRoute
-            requireAuth={true}
-            redirectIfAuth={false}
-            redirectTo="/auth"
-            children={<MalwaresPage />}
-          />
-        }
+        element={<ProtectedRoute children={<MalwaresPage />} />}
       />
       <Route
         path="/malware/create"
-        element={
-          <ProtectedRoute
-            requireAuth={true}
-            redirectIfAuth={false}
-            redirectTo="/auth"
-            children={<MalwaresCreatePage />}
-          />
-        }
+        element={<ProtectedRoute children={<MalwaresCreatePage />} />}
       />
       <Route
         path="/malware/:id"
-        element={
-          <ProtectedRoute
-            requireAuth={true}
-            redirectIfAuth={false}
-            redirectTo="/auth"
-            children={<MalwaresDetailPage />}
-          />
-        }
+        element={<ProtectedRoute children={<MalwaresDetailPage />} />}
       />
       <Route
         path="/reports"
-        element={
-          <ProtectedRoute
-            requireAuth={true}
-            redirectIfAuth={false}
-            redirectTo="/auth"
-            children={<ReportsPage />}
-          />
-        }
+        element={<ProtectedRoute children={<ReportsPage />} />}
       />
       <Route
         path="/reports/:id"
-        element={
-          <ProtectedRoute
-            requireAuth={true}
-            redirectIfAuth={false}
-            redirectTo="/auth"
-            children={<ReportDetailPage />}
-          />
-        }
+        element={<ProtectedRoute children={<ReportDetailPage />} />}
       />
       <Route
         path="/reports/:id/edit"
-        element={
-          <ProtectedRoute
-            requireAuth={true}
-            redirectIfAuth={false}
-            redirectTo="/auth"
-            children={<ReportsEditPage />}
-          />
-        }
+        element={<ProtectedRoute children={<ReportsEditPage />} />}
       />
       <Route
         path="/reports/create"
-        element={
-          <ProtectedRoute
-            requireAuth={true}
-            redirectIfAuth={false}
-            redirectTo="/auth"
-            children={<ReportsCreatePage />}
-          />
-        }
+        element={<ProtectedRoute children={<ReportsCreatePage />} />}
       />
       <Route
         path="/campaigns"
-        element={
-          <ProtectedRoute
-            requireAuth={true}
-            redirectIfAuth={false}
-            redirectTo="/auth"
-            children={<CampaignsPage />}
-          />
-        }
+        element={<ProtectedRoute children={<CampaignsPage />} />}
       />
       <Route
         path="/campaigns/:id"
-        element={
-          <ProtectedRoute
-            requireAuth={true}
-            redirectIfAuth={false}
-            redirectTo="/auth"
-            children={<CampaignDetailPage />}
-          />
-        }
+        element={<ProtectedRoute children={<CampaignDetailPage />} />}
       />
       <Route
         path="/campaigns/:id/edit"
-        element={
-          <ProtectedRoute
-            requireAuth={true}
-            redirectIfAuth={false}
-            redirectTo="/auth"
-            children={<CampaignsEditPage />}
-          />
-        }
+        element={<ProtectedRoute children={<CampaignsEditPage />} />}
       />
-         <Route
+      <Route
         path="/attack-patterns"
-        element={
-          <ProtectedRoute
-            requireAuth={true}
-            redirectIfAuth={false}
-            redirectTo="/auth"
-            children={<AttackPatternsPage />}
-          />
-        }
+        element={<ProtectedRoute children={<AttackPatternsPage />} />}
       />
       <Route
         path="/attack-patterns/:id"
-        element={
-          <ProtectedRoute
-            requireAuth={true}
-            redirectIfAuth={false}
-            redirectTo="/auth"
-            children={<AttackPatternsDetailPage />}
-          />
-        }
+        element={<ProtectedRoute children={<AttackPatternsDetailPage />} />}
       />
 
       <Route
         path="/observables"
         element={
-          <ProtectedRoute
-            requireAuth={true}
-            redirectIfAuth={false}
-            redirectTo="/auth"
-            children={<ObservablesPage defaultTab="files" />}
-          />
+          <ProtectedRoute children={<ObservablesPage defaultTab="files" />} />
         }
       />
 
       <Route
         path="/observables/files"
         element={
-          <ProtectedRoute
-            requireAuth={true}
-            redirectIfAuth={false}
-            redirectTo="/auth"
-            children={<ObservablesPage defaultTab="files" />}
-          />
+          <ProtectedRoute children={<ObservablesPage defaultTab="files" />} />
         }
       />
       <Route
         path="/observables/urls"
         element={
-          <ProtectedRoute
-            requireAuth={true}
-            redirectIfAuth={false}
-            redirectTo="/auth"
-            children={<ObservablesPage defaultTab="urls" />}
-          />
+          <ProtectedRoute children={<ObservablesPage defaultTab="urls" />} />
         }
       />
       <Route
         path="/observables/domain-names"
         element={
           <ProtectedRoute
-            requireAuth={true}
-            redirectIfAuth={false}
-            redirectTo="/auth"
             children={<ObservablesPage defaultTab="domain-names" />}
           />
         }
@@ -379,9 +224,6 @@ export const AppRoutes = () => {
         path="/observables/ipv4-addresses"
         element={
           <ProtectedRoute
-            requireAuth={true}
-            redirectIfAuth={false}
-            redirectTo="/auth"
             children={<ObservablesPage defaultTab="ipv4-addresses" />}
           />
         }
@@ -390,9 +232,6 @@ export const AppRoutes = () => {
         path="/observables/ipv6-addresses"
         element={
           <ProtectedRoute
-            requireAuth={true}
-            redirectIfAuth={false}
-            redirectTo="/auth"
             children={<ObservablesPage defaultTab="ipv6-addresses" />}
           />
         }
@@ -401,9 +240,6 @@ export const AppRoutes = () => {
         path="/observables/mac-addresses"
         element={
           <ProtectedRoute
-            requireAuth={true}
-            redirectIfAuth={false}
-            redirectTo="/auth"
             children={<ObservablesPage defaultTab="mac-addresses" />}
           />
         }
@@ -412,9 +248,6 @@ export const AppRoutes = () => {
         path="/observables/directories"
         element={
           <ProtectedRoute
-            requireAuth={true}
-            redirectIfAuth={false}
-            redirectTo="/auth"
             children={<ObservablesPage defaultTab="directories" />}
           />
         }
@@ -423,9 +256,6 @@ export const AppRoutes = () => {
         path="/observables/processes"
         element={
           <ProtectedRoute
-            requireAuth={true}
-            redirectIfAuth={false}
-            redirectTo="/auth"
             children={<ObservablesPage defaultTab="processes" />}
           />
         }
@@ -434,9 +264,6 @@ export const AppRoutes = () => {
         path="/observables/softwares"
         element={
           <ProtectedRoute
-            requireAuth={true}
-            redirectIfAuth={false}
-            redirectTo="/auth"
             children={<ObservablesPage defaultTab="softwares" />}
           />
         }
@@ -445,9 +272,6 @@ export const AppRoutes = () => {
         path="/observables/windows-registry-keys"
         element={
           <ProtectedRoute
-            requireAuth={true}
-            redirectIfAuth={false}
-            redirectTo="/auth"
             children={<ObservablesPage defaultTab="win-registry-keys" />}
           />
         }
@@ -456,9 +280,6 @@ export const AppRoutes = () => {
         path="/observables/email-addresses"
         element={
           <ProtectedRoute
-            requireAuth={true}
-            redirectIfAuth={false}
-            redirectTo="/auth"
             children={<ObservablesPage defaultTab="email-addresses" />}
           />
         }
@@ -467,9 +288,6 @@ export const AppRoutes = () => {
         path="/observables/email-messages"
         element={
           <ProtectedRoute
-            requireAuth={true}
-            redirectIfAuth={false}
-            redirectTo="/auth"
             children={<ObservablesPage defaultTab="email-messages" />}
           />
         }
@@ -478,9 +296,6 @@ export const AppRoutes = () => {
         path="/observables/network-traffics"
         element={
           <ProtectedRoute
-            requireAuth={true}
-            redirectIfAuth={false}
-            redirectTo="/auth"
             children={<ObservablesPage defaultTab="network-traffics" />}
           />
         }
@@ -489,9 +304,6 @@ export const AppRoutes = () => {
         path="/observables/autonomous-systems"
         element={
           <ProtectedRoute
-            requireAuth={true}
-            redirectIfAuth={false}
-            redirectTo="/auth"
             children={<ObservablesPage defaultTab="autonomous-systems" />}
           />
         }
@@ -499,21 +311,13 @@ export const AppRoutes = () => {
       <Route
         path="/observables/mutexes"
         element={
-          <ProtectedRoute
-            requireAuth={true}
-            redirectIfAuth={false}
-            redirectTo="/auth"
-            children={<ObservablesPage defaultTab="mutexes" />}
-          />
+          <ProtectedRoute children={<ObservablesPage defaultTab="mutexes" />} />
         }
       />
       <Route
         path="/observables/user-accounts"
         element={
           <ProtectedRoute
-            requireAuth={true}
-            redirectIfAuth={false}
-            redirectTo="/auth"
             children={<ObservablesPage defaultTab="user-accounts" />}
           />
         }
@@ -522,9 +326,6 @@ export const AppRoutes = () => {
         path="/observables/x509-certificates"
         element={
           <ProtectedRoute
-            requireAuth={true}
-            redirectIfAuth={false}
-            redirectTo="/auth"
             children={<ObservablesPage defaultTab="x509-certificates" />}
           />
         }
@@ -532,154 +333,74 @@ export const AppRoutes = () => {
 
       <Route
         path="/observables/files/:id"
-        element={
-          <ProtectedRoute
-            requireAuth={true}
-            redirectIfAuth={false}
-            redirectTo="/auth"
-            children={<FileObservablesDetailPage />}
-          />
-        }
+        element={<ProtectedRoute children={<FileObservablesDetailPage />} />}
       />
       <Route
         path="/observables/urls/:id"
-        element={
-          <ProtectedRoute
-            requireAuth={true}
-            redirectIfAuth={false}
-            redirectTo="/auth"
-            children={<URLObservablesDetailPage />}
-          />
-        }
+        element={<ProtectedRoute children={<URLObservablesDetailPage />} />}
       />
       <Route
         path="/observables/domain-names/:id"
         element={
-          <ProtectedRoute
-            requireAuth={true}
-            redirectIfAuth={false}
-            redirectTo="/auth"
-            children={<DomainNameObservablesDetailPage />}
-          />
+          <ProtectedRoute children={<DomainNameObservablesDetailPage />} />
         }
       />
       <Route
         path="/observables/ipv4-addresses/:id"
-        element={
-          <ProtectedRoute
-            requireAuth={true}
-            redirectIfAuth={false}
-            redirectTo="/auth"
-            children={<IPv4ObservablesDetailPage />}
-          />
-        }
+        element={<ProtectedRoute children={<IPv4ObservablesDetailPage />} />}
       />
       <Route
         path="/observables/ipv6-addresses/:id"
-        element={
-          <ProtectedRoute
-            requireAuth={true}
-            redirectIfAuth={false}
-            redirectTo="/auth"
-            children={<IPv6ObservablesDetailPage />}
-          />
-        }
+        element={<ProtectedRoute children={<IPv6ObservablesDetailPage />} />}
       />
       <Route
         path="/observables/mac-addresses/:id"
-        element={
-          <ProtectedRoute
-            requireAuth={true}
-            redirectIfAuth={false}
-            redirectTo="/auth"
-            children={<MACObservablesDetailPage />}
-          />
-        }
+        element={<ProtectedRoute children={<MACObservablesDetailPage />} />}
       />
       <Route
         path="/observables/directories/:id"
         element={
-          <ProtectedRoute
-            requireAuth={true}
-            redirectIfAuth={false}
-            redirectTo="/auth"
-            children={<DirectoryObservablesDetailPage />}
-          />
+          <ProtectedRoute children={<DirectoryObservablesDetailPage />} />
         }
       />
       <Route
         path="/observables/processes/:id"
-        element={
-          <ProtectedRoute
-            requireAuth={true}
-            redirectIfAuth={false}
-            redirectTo="/auth"
-            children={<ProcessObservablesDetailPage />}
-          />
-        }
+        element={<ProtectedRoute children={<ProcessObservablesDetailPage />} />}
       />
       <Route
         path="/observables/softwares/:id"
         element={
-          <ProtectedRoute
-            requireAuth={true}
-            redirectIfAuth={false}
-            redirectTo="/auth"
-            children={<SoftwareObservablesDetailPage />}
-          />
+          <ProtectedRoute children={<SoftwareObservablesDetailPage />} />
         }
       />
       <Route
         path="/observables/windows-registry-keys/:id"
         element={
-          <ProtectedRoute
-            requireAuth={true}
-            redirectIfAuth={false}
-            redirectTo="/auth"
-            children={<WinRegKeyObservablesDetailPage />}
-          />
+          <ProtectedRoute children={<WinRegKeyObservablesDetailPage />} />
         }
       />
       <Route
         path="/observables/email-addresses/:id"
         element={
-          <ProtectedRoute
-            requireAuth={true}
-            redirectIfAuth={false}
-            redirectTo="/auth"
-            children={<EmailAddressObservablesDetailPage />}
-          />
+          <ProtectedRoute children={<EmailAddressObservablesDetailPage />} />
         }
       />
       <Route
         path="/observables/email-messages/:id"
         element={
-          <ProtectedRoute
-            requireAuth={true}
-            redirectIfAuth={false}
-            redirectTo="/auth"
-            children={<EmailMessageObservablesDetailPage />}
-          />
+          <ProtectedRoute children={<EmailMessageObservablesDetailPage />} />
         }
       />
       <Route
         path="/observables/network-traffics/:id"
         element={
-          <ProtectedRoute
-            requireAuth={true}
-            redirectIfAuth={false}
-            redirectTo="/auth"
-            children={<NetworkTrafficObservablesDetailPage />}
-          />
+          <ProtectedRoute children={<NetworkTrafficObservablesDetailPage />} />
         }
       />
       <Route
         path="/observables/autonomous-systems/:id"
         element={
           <ProtectedRoute
-            requireAuth={true}
-            redirectIfAuth={false}
-            redirectTo="/auth"
             children={<AutonomousSystemObservablesDetailPage />}
           />
         }
@@ -688,629 +409,273 @@ export const AppRoutes = () => {
       <Route
         path="/observables/user-accounts/:id"
         element={
-          <ProtectedRoute
-            requireAuth={true}
-            redirectIfAuth={false}
-            redirectTo="/auth"
-            children={<UserAccountObservablesDetailPage />}
-          />
+          <ProtectedRoute children={<UserAccountObservablesDetailPage />} />
         }
       />
       <Route
         path="/observables/x509-certificates/:id"
         element={
-          <ProtectedRoute
-            requireAuth={true}
-            redirectIfAuth={false}
-            redirectTo="/auth"
-            children={<X509CertificateObservablesDetailPage />}
-          />
+          <ProtectedRoute children={<X509CertificateObservablesDetailPage />} />
         }
       />
 
       <Route
         path="/observables/files/:id/edit"
-        element={
-          <ProtectedRoute
-            requireAuth={true}
-            redirectIfAuth={false}
-            redirectTo="/auth"
-            children={<FileObservablesEditPage />}
-          />
-        }
+        element={<ProtectedRoute children={<FileObservablesEditPage />} />}
       />
       <Route
         path="/observables/urls/:id/edit"
-        element={
-          <ProtectedRoute
-            requireAuth={true}
-            redirectIfAuth={false}
-            redirectTo="/auth"
-            children={<URLObservablesEditPage />}
-          />
-        }
+        element={<ProtectedRoute children={<URLObservablesEditPage />} />}
       />
       <Route
         path="/observables/domain-names/:id/edit"
         element={
-          <ProtectedRoute
-            requireAuth={true}
-            redirectIfAuth={false}
-            redirectTo="/auth"
-            children={<DomainNameObservablesEditPage />}
-          />
+          <ProtectedRoute children={<DomainNameObservablesEditPage />} />
         }
       />
       <Route
         path="/observables/ipv4-addresses/:id/edit"
-        element={
-          <ProtectedRoute
-            requireAuth={true}
-            redirectIfAuth={false}
-            redirectTo="/auth"
-            children={<IPv4ObservablesEditPage />}
-          />
-        }
+        element={<ProtectedRoute children={<IPv4ObservablesEditPage />} />}
       />
       <Route
         path="/observables/ipv6-addresses/:id/edit"
-        element={
-          <ProtectedRoute
-            requireAuth={true}
-            redirectIfAuth={false}
-            redirectTo="/auth"
-            children={<IPv6ObservablesEditPage />}
-          />
-        }
+        element={<ProtectedRoute children={<IPv6ObservablesEditPage />} />}
       />
       <Route
         path="/observables/mac-addresses/:id/edit"
-        element={
-          <ProtectedRoute
-            requireAuth={true}
-            redirectIfAuth={false}
-            redirectTo="/auth"
-            children={<MACObservablesEditPage />}
-          />
-        }
+        element={<ProtectedRoute children={<MACObservablesEditPage />} />}
       />
       <Route
         path="/observables/directories/:id/edit"
-        element={
-          <ProtectedRoute
-            requireAuth={true}
-            redirectIfAuth={false}
-            redirectTo="/auth"
-            children={<DirectoryObservablesEditPage />}
-          />
-        }
+        element={<ProtectedRoute children={<DirectoryObservablesEditPage />} />}
       />
       <Route
         path="/observables/processes/:id/edit"
-        element={
-          <ProtectedRoute
-            requireAuth={true}
-            redirectIfAuth={false}
-            redirectTo="/auth"
-            children={<ProcessObservablesEditPage />}
-          />
-        }
+        element={<ProtectedRoute children={<ProcessObservablesEditPage />} />}
       />
       <Route
         path="/observables/softwares/:id/edit"
-        element={
-          <ProtectedRoute
-            requireAuth={true}
-            redirectIfAuth={false}
-            redirectTo="/auth"
-            children={<SoftwareObservablesEditPage />}
-          />
-        }
+        element={<ProtectedRoute children={<SoftwareObservablesEditPage />} />}
       />
       <Route
         path="/observables/windows-registry-keys/:id/edit"
-        element={
-          <ProtectedRoute
-            requireAuth={true}
-            redirectIfAuth={false}
-            redirectTo="/auth"
-            children={<WinRegKeyObservablesEditPage />}
-          />
-        }
+        element={<ProtectedRoute children={<WinRegKeyObservablesEditPage />} />}
       />
       <Route
         path="/observables/email-addresses/:id/edit"
         element={
-          <ProtectedRoute
-            requireAuth={true}
-            redirectIfAuth={false}
-            redirectTo="/auth"
-            children={<EmailAddressObservablesEditPage />}
-          />
+          <ProtectedRoute children={<EmailAddressObservablesEditPage />} />
         }
       />
       <Route
         path="/observables/email-messages/:id/edit"
         element={
-          <ProtectedRoute
-            requireAuth={true}
-            redirectIfAuth={false}
-            redirectTo="/auth"
-            children={<EmailMessageObservablesEditPage />}
-          />
+          <ProtectedRoute children={<EmailMessageObservablesEditPage />} />
         }
       />
       <Route
         path="/observables/network-traffics/:id/edit"
         element={
-          <ProtectedRoute
-            requireAuth={true}
-            redirectIfAuth={false}
-            redirectTo="/auth"
-            children={<NetworkTrafficObservablesEditPage />}
-          />
+          <ProtectedRoute children={<NetworkTrafficObservablesEditPage />} />
         }
       />
       <Route
         path="/observables/autonomous-systems/:id/edit"
         element={
-          <ProtectedRoute
-            requireAuth={true}
-            redirectIfAuth={false}
-            redirectTo="/auth"
-            children={<AutonomousSystemObservablesEditPage />}
-          />
+          <ProtectedRoute children={<AutonomousSystemObservablesEditPage />} />
         }
       />
 
       <Route
         path="/observables/user-accounts/:id/edit"
         element={
-          <ProtectedRoute
-            requireAuth={true}
-            redirectIfAuth={false}
-            redirectTo="/auth"
-            children={<UserAccountObservablesEditPage />}
-          />
+          <ProtectedRoute children={<UserAccountObservablesEditPage />} />
         }
       />
       <Route
         path="/observables/x509-certificates/:id/edit"
         element={
-          <ProtectedRoute
-            requireAuth={true}
-            redirectIfAuth={false}
-            redirectTo="/auth"
-            children={<X509CertificateObservablesEditPage />}
-          />
+          <ProtectedRoute children={<X509CertificateObservablesEditPage />} />
         }
       />
 
       <Route
         path="/observables/files/create"
-        element={
-          <ProtectedRoute
-            requireAuth={true}
-            redirectIfAuth={false}
-            redirectTo="/auth"
-            children={<FileObservablesCreatePage />}
-          />
-        }
+        element={<ProtectedRoute children={<FileObservablesCreatePage />} />}
       />
       <Route
         path="/observables/urls/create"
-        element={
-          <ProtectedRoute
-            requireAuth={true}
-            redirectIfAuth={false}
-            redirectTo="/auth"
-            children={<URLObservablesCreatePage />}
-          />
-        }
+        element={<ProtectedRoute children={<URLObservablesCreatePage />} />}
       />
       <Route
         path="/observables/domain-names/create"
         element={
-          <ProtectedRoute
-            requireAuth={true}
-            redirectIfAuth={false}
-            redirectTo="/auth"
-            children={<DomainNameObservablesCreatePage />}
-          />
+          <ProtectedRoute children={<DomainNameObservablesCreatePage />} />
         }
       />
       <Route
         path="/observables/ipv4-addresses/create"
-        element={
-          <ProtectedRoute
-            requireAuth={true}
-            redirectIfAuth={false}
-            redirectTo="/auth"
-            children={<IPv4ObservablesCreatePage />}
-          />
-        }
+        element={<ProtectedRoute children={<IPv4ObservablesCreatePage />} />}
       />
       <Route
         path="/observables/ipv6-addresses/create"
-        element={
-          <ProtectedRoute
-            requireAuth={true}
-            redirectIfAuth={false}
-            redirectTo="/auth"
-            children={<IPv6ObservablesCreatePage />}
-          />
-        }
+        element={<ProtectedRoute children={<IPv6ObservablesCreatePage />} />}
       />
       <Route
         path="/observables/mac-addresses/create"
-        element={
-          <ProtectedRoute
-            requireAuth={true}
-            redirectIfAuth={false}
-            redirectTo="/auth"
-            children={<MACObservablesCreatePage />}
-          />
-        }
+        element={<ProtectedRoute children={<MACObservablesCreatePage />} />}
       />
       <Route
         path="/observables/directories/create"
         element={
-          <ProtectedRoute
-            requireAuth={true}
-            redirectIfAuth={false}
-            redirectTo="/auth"
-            children={<DirectoryObservablesCreatePage />}
-          />
+          <ProtectedRoute children={<DirectoryObservablesCreatePage />} />
         }
       />
       <Route
         path="/observables/processes/create"
-        element={
-          <ProtectedRoute
-            requireAuth={true}
-            redirectIfAuth={false}
-            redirectTo="/auth"
-            children={<ProcessObservablesCreatePage />}
-          />
-        }
+        element={<ProtectedRoute children={<ProcessObservablesCreatePage />} />}
       />
       <Route
         path="/observables/softwares/create"
         element={
-          <ProtectedRoute
-            requireAuth={true}
-            redirectIfAuth={false}
-            redirectTo="/auth"
-            children={<SoftwareObservablesCreatePage />}
-          />
+          <ProtectedRoute children={<SoftwareObservablesCreatePage />} />
         }
       />
       <Route
         path="/observables/windows-registry-keys/create"
         element={
-          <ProtectedRoute
-            requireAuth={true}
-            redirectIfAuth={false}
-            redirectTo="/auth"
-            children={<WinRegKeyObservablesCreatePage />}
-          />
+          <ProtectedRoute children={<WinRegKeyObservablesCreatePage />} />
         }
       />
       <Route
         path="/observables/email-addresses/create"
         element={
-          <ProtectedRoute
-            requireAuth={true}
-            redirectIfAuth={false}
-            redirectTo="/auth"
-            children={<EmailAddressObservablesCreatePage />}
-          />
+          <ProtectedRoute children={<EmailAddressObservablesCreatePage />} />
         }
       />
       <Route
         path="/observables/email-messages/create"
         element={
-          <ProtectedRoute
-            requireAuth={true}
-            redirectIfAuth={false}
-            redirectTo="/auth"
-            children={<EmailMessageObservablesCreatePage />}
-          />
+          <ProtectedRoute children={<EmailMessageObservablesCreatePage />} />
         }
       />
       <Route
         path="/observables/network-traffics/create"
         element={
-          <ProtectedRoute
-            requireAuth={true}
-            redirectIfAuth={false}
-            redirectTo="/auth"
-            children={<NetworkTrafficObservablesCreatePage />}
-          />
+          <ProtectedRoute children={<NetworkTrafficObservablesCreatePage />} />
         }
       />
       <Route
         path="/observables/autonomous-systems/create"
         element={
           <ProtectedRoute
-            requireAuth={true}
-            redirectIfAuth={false}
-            redirectTo="/auth"
             children={<AutonomousSystemObservablesCreatePage />}
           />
         }
       />
- 
+
       <Route
         path="/observables/user-accounts/create"
         element={
-          <ProtectedRoute
-            requireAuth={true}
-            redirectIfAuth={false}
-            redirectTo="/auth"
-            children={<UserAccountObservablesCreatePage />}
-          />
+          <ProtectedRoute children={<UserAccountObservablesCreatePage />} />
         }
       />
       <Route
         path="/observables/x509-certificates/create"
         element={
-          <ProtectedRoute
-            requireAuth={true}
-            redirectIfAuth={false}
-            redirectTo="/auth"
-            children={<X509CertificateObservablesCreatePage />}
-          />
+          <ProtectedRoute children={<X509CertificateObservablesCreatePage />} />
         }
       />
 
+      {/* Artifacts routes */}
       <Route
         path="/artifacts"
-        element={
-          <ProtectedRoute
-            requireAuth={true}
-            redirectIfAuth={false}
-            redirectTo="/auth"
-            children={<ArtifactsPage />}
-          />
-        }
-      />
-      <Route
-        path="/artifacts/:id"
-        element={
-          <ProtectedRoute
-            requireAuth={true}
-            redirectIfAuth={false}
-            redirectTo="/auth"
-            children={<ArtifactDetailPage />}
-          />
-        }
-      />
-      <Route
-        path="/artifacts/:id/edit"
-        element={
-          <ProtectedRoute
-            requireAuth={true}
-            redirectIfAuth={false}
-            redirectTo="/auth"
-            children={<ArtifactEditPage />}
-          />
-        }
+        element={<ProtectedRoute children={<ArtifactsPage />} />}
       />
       <Route
         path="/artifacts/create"
-        element={
-          <ProtectedRoute
-            requireAuth={true}
-            redirectIfAuth={false}
-            redirectTo="/auth"
-            children={<ArtifactCreatePage />}
-          />
-        }
+        element={<ProtectedRoute children={<ArtifactsCreatePage />} />}
+      />
+      <Route
+        path="/artifacts/:id"
+        element={<ProtectedRoute children={<ArtifactsDetailPage />} />}
+      />
+      <Route
+        path="/artifacts/:id/edit"
+        element={<ProtectedRoute children={<ArtifactsEditPage />} />}
+      />
+      <Route
+        path="/artifacts/:id/delete"
+        element={<ProtectedRoute children={<ArtifactsDeletePage />} />}
       />
 
-      <Route
-        path="/indicators"
-        element={
-          <ProtectedRoute
-            requireAuth={true}
-            redirectIfAuth={false}
-            redirectTo="/auth"
-            children={<IndicatorsPage />}
-          />
-        }
-      />
-      <Route
-        path="/indicators/:id"
-        element={
-          <ProtectedRoute
-            requireAuth={true}
-            redirectIfAuth={false}
-            redirectTo="/auth"
-            children={<IndicatorDetailPage />}
-          />
-        }
-      />
-      <Route
-        path="/indicators/:id/edit"
-        element={
-          <ProtectedRoute
-            requireAuth={true}
-            redirectIfAuth={false}
-            redirectTo="/auth"
-            children={<IndicatorEditPage />}
-          />
-        }
-      />
-      <Route
-        path="/indicators/create"
-        element={
-          <ProtectedRoute
-            requireAuth={true}
-            redirectIfAuth={false}
-            redirectTo="/auth"
-            children={<IndicatorCreatePage />}
-          />
-        }
-      />
-
+      {/* Identity routes */}
       <Route
         path="/identities"
-        element={
-          <ProtectedRoute
-            requireAuth={true}
-            redirectIfAuth={false}
-            redirectTo="/auth"
-            children={<IdentityListPage />}
-          />
-        }
+        element={<ProtectedRoute children={<IdentityListPage />} />}
       />
       <Route
         path="/identities/create"
-        element={
-          <ProtectedRoute
-            requireAuth={true}
-            redirectIfAuth={false}
-            redirectTo="/auth"
-            children={<IdentityCreatePage />}
-          />
-        }
-      />
-      <Route
-        path="/identities/:id/edit"
-        element={
-          <ProtectedRoute
-            requireAuth={true}
-            redirectIfAuth={false}
-            redirectTo="/auth"
-            children={<IdentityEditPage />}
-          />
-        }
+        element={<ProtectedRoute children={<IdentityCreatePage />} />}
       />
       <Route
         path="/identities/:id"
-        element={
-          <ProtectedRoute
-            requireAuth={true}
-            redirectIfAuth={false}
-            redirectTo="/auth"
-            children={<IdentityDetailPage />}
-          />
-        }
+        element={<ProtectedRoute children={<IdentityDetailPage />} />}
+      />
+      <Route
+        path="/identities/:id/edit"
+        element={<ProtectedRoute children={<IdentityEditPage />} />}
+      />
+      <Route
+        path="/identities/:id/delete"
+        element={<ProtectedRoute children={<IdentityDeletePage />} />}
       />
 
       <Route
         path="/relationships"
-        element={
-          <ProtectedRoute
-            requireAuth={true}
-            redirectIfAuth={false}
-            redirectTo="/auth"
-            children={<RelationshipsPage />}
-          />
-        }
+        element={<ProtectedRoute children={<RelationshipsPage />} />}
       />
 
-
-
-      <Route
-        path="/auth"
-        element={
-          <ProtectedRoute
-            redirectIfAuth={true}
-            requireAuth={false}
-            redirectTo="/"
-            children={<Login />}
-          />
-        }
-      />
+      <Route path="/auth" element={<Login />} />
 
       {/* Location routes */}
 
       <Route
         path="/locations/create"
-        element={
-          <ProtectedRoute
-            requireAuth={true}
-            redirectIfAuth={false}
-            redirectTo="/auth"
-            children={<LocationCreate />}
-          />
-        }
+        element={<ProtectedRoute children={<LocationCreate />} />}
       />
       <Route
         path="/locations/:id"
-        element={
-          <ProtectedRoute
-            requireAuth={true}
-            redirectIfAuth={false}
-            redirectTo="/auth"
-            children={<LocationDetail />}
-          />
-        }
+        element={<ProtectedRoute children={<LocationDetail />} />}
       />
       <Route
         path="/locations/:id/edit"
-        element={
-          <ProtectedRoute
-            requireAuth={true}
-            redirectIfAuth={false}
-            redirectTo="/auth"
-            children={<LocationEdit />}
-          />
-        }
+        element={<ProtectedRoute children={<LocationEdit />} />}
       />
       <Route
         path="/locations/countries"
         element={
-          <ProtectedRoute
-            requireAuth={true}
-            redirectIfAuth={false}
-            redirectTo="/auth"
-            children={<LocationsList initialType="COUNTRY" />}
-          />
+          <ProtectedRoute children={<LocationsList initialType="COUNTRY" />} />
         }
       />
       <Route
         path="/locations/cities"
         element={
-          <ProtectedRoute
-            requireAuth={true}
-            redirectIfAuth={false}
-            redirectTo="/auth"
-            children={<LocationsList initialType="CITY" />}
-          />
+          <ProtectedRoute children={<LocationsList initialType="CITY" />} />
         }
       />
       <Route
         path="/locations/region"
-        element={
-          <ProtectedRoute
-            requireAuth={true}
-            redirectIfAuth={false}
-            redirectTo="/auth"
-            children={<Regions />}
-          />
-        }
+        element={<ProtectedRoute children={<Regions />} />}
       />
       <Route
         path="/locations/region/:regionName"
-        element={
-          <ProtectedRoute
-            requireAuth={true}
-            redirectIfAuth={false}
-            redirectTo="/auth"
-            children={<RegionDetailPage />}
-          />
-        }
+        element={<ProtectedRoute children={<RegionDetailPage />} />}
       />
       <Route
         path="/locations/administrative-area"
         element={
           <ProtectedRoute
-            requireAuth={true}
-            redirectIfAuth={false}
-            redirectTo="/auth"
             children={<LocationsList initialType="ADMINISTRATIVE_AREA" />}
           />
         }
