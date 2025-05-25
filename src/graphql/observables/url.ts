@@ -29,7 +29,7 @@ export const SEARCH_URL_OBSERVABLES = gql`
         revoked
         spec_version
         type
-        value
+        # value
       }
     }
   }

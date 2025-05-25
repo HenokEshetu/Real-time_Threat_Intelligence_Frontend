@@ -1,79 +1,75 @@
-import React, { useState, useEffect } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { useNote, useUpdateNote } from '@/hooks/useNotes';
+import React, { useEffect, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
+import { useNote, useUpdateNote } from "@/hooks/useNotes";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 
-export const NotesEditPage = () => {
+export const NotesEditPage: React.FC = () => {
   const navigate = useNavigate();
   const { id } = useParams<{ id: string }>();
-  const { note, loading, error } = useNote(id || '');
+  const { note, loading, error } = useNote(id || "");
   const [updateNote, { loading: updating, error: updateError }] = useUpdateNote();
 
   const [values, setValues] = useState({
-    abstract: '',
-    content: '',
-    authors: '',
+    abstract: "",
+    content: "",
+    authors: "",
     confidence: 100,
-    content_type: '',
-    lang: '',
+    content_type: "",
+    lang: "",
+    labels: "",
+    object_refs: "",
   });
-  const [errors, setErrors] = useState<{ [key: string]: string }>({});
+  const [formError, setFormError] = useState<string | null>(null);
 
   useEffect(() => {
     if (note) {
       setValues({
-        abstract: note.abstract || '',
-        content: note.content || '',
-        authors: note.authors ? note.authors.join(', ') : '',
-        confidence: typeof note.confidence === 'number' ? note.confidence : 100,
-        content_type: note.content_type || '',
-        lang: note.lang || '',
+        abstract: note.abstract || "",
+        content: note.content || "",
+        authors: note.authors ? note.authors.join(", ") : "",
+        confidence: typeof note.confidence === "number" ? note.confidence : 100,
+        content_type: note.content_type || "",
+        lang: note.lang || "",
+        labels: note.labels ? note.labels.join(", ") : "",
+        object_refs: note.object_refs ? note.object_refs.join(", ") : "",
       });
     }
   }, [note]);
 
   const handleChange = (field: string, value: any) => {
     setValues((prev) => ({ ...prev, [field]: value }));
-    setErrors((prev) => ({ ...prev, [field]: '' }));
-  };
-
-  const validate = () => {
-    const newErrors: { [key: string]: string } = {};
-    if (!values.abstract) newErrors.abstract = 'This field is required';
-    if (!values.content) newErrors.content = 'This field is required';
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
+    setFormError(null);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!validate() || !id) return;
+    if (!values.abstract || !values.content || !id) {
+      setFormError("Abstract and Content are required.");
+      return;
+    }
     try {
       await updateNote({
         variables: {
           id,
           input: {
-            abstract: values.abstract,
-            content: values.content,
-            authors: values.authors ? values.authors.split(',').map((a) => a.trim()) : [],
-            confidence: Number(values.confidence),
-            content_type: values.content_type,
-            lang: values.lang,
-          },
-        },
+            ...values,
+            authors: values.authors ? values.authors.split(",").map((s) => s.trim()) : [],
+            labels: values.labels ? values.labels.split(",").map((s) => s.trim()) : [],
+            object_refs: values.object_refs ? values.object_refs.split(",").map((s) => s.trim()) : [],
+            modified: new Date().toISOString(),
+          }
+        }
       });
-      navigate('/notes');
-    } catch {}
+      navigate("/notes");
+    } catch (err: any) {
+      setFormError(err.message || "Failed to update note.");
+    }
   };
 
-  if (loading) {
-    return <div className="min-h-screen flex items-center justify-center text-muted-foreground">Loading...</div>;
-  }
-  if (error || !note) {
-    return <div className="min-h-screen flex items-center justify-center text-destructive">Failed to load note.</div>;
-  }
+  if (loading) return <div>Loading...</div>;
+  if (error || !note) return <div>Failed to load note.</div>;
 
   return (
     <div className="min-h-screen bg-muted flex flex-col">
@@ -82,113 +78,50 @@ export const NotesEditPage = () => {
           <span className="sr-only">Close</span>
           <svg width="20" height="20" fill="none" stroke="currentColor"><path d="M15 5L5 15M5 5l10 10" strokeWidth="2" strokeLinecap="round" /></svg>
         </Button>
-        <h1 className="text-lg font-semibold">Edit note</h1>
+        <h1 className="text-lg font-semibold">Edit Note</h1>
       </div>
       <form onSubmit={handleSubmit} className="max-w-xl w-full mx-auto mt-8 bg-background rounded-xl shadow p-6 space-y-6">
-        {/* Abstract */}
-        <div className="relative mt-6">
-          <div className={`border rounded-xl px-4 pt-5 pb-3 ${errors.abstract ? 'border-destructive' : 'border-input'} bg-background`}>
-            <Input
-              id="abstract"
-              value={values.abstract}
-              onChange={e => handleChange('abstract', e.target.value)}
-              placeholder="Abstract"
-              className="bg-transparent border-none p-0 focus:ring-0"
-            />
-          </div>
-          <Label htmlFor="abstract" className={`absolute -top-3 left-4 bg-background px-2 text-sm font-medium ${errors.abstract ? 'text-destructive' : 'text-muted-foreground'}`}>
-            Abstract <span className="text-destructive">*</span>
-          </Label>
-          {errors.abstract && <div className="text-destructive text-xs mt-1">{errors.abstract}</div>}
+        <div>
+          <Label htmlFor="abstract">Abstract *</Label>
+          <Input id="abstract" value={values.abstract} onChange={e => handleChange("abstract", e.target.value)} required />
         </div>
-        {/* Content */}
-        <div className="relative mt-6">
-          <div className={`border rounded-xl px-4 pt-5 pb-3 ${errors.content ? 'border-destructive' : 'border-input'} bg-background`}>
-            <textarea
-              id="content"
-              value={values.content}
-              onChange={e => handleChange('content', e.target.value)}
-              placeholder="Content"
-              rows={4}
-              className="w-full bg-transparent border-none p-0 focus:ring-0 resize-none"
-            />
-          </div>
-          <Label htmlFor="content" className={`absolute -top-3 left-4 bg-background px-2 text-sm font-medium ${errors.content ? 'text-destructive' : 'text-muted-foreground'}`}>
-            Content <span className="text-destructive">*</span>
-          </Label>
-          {errors.content && <div className="text-destructive text-xs mt-1">{errors.content}</div>}
+        <div>
+          <Label htmlFor="content">Content *</Label>
+          <textarea id="content" value={values.content} onChange={e => handleChange("content", e.target.value)} rows={3} className="w-full border rounded" required />
         </div>
-        {/* Authors */}
-        <div className="relative mt-6">
-          <div className="border border-input rounded-xl px-4 pt-5 pb-3 bg-background">
-            <Input
-              id="authors"
-              value={values.authors}
-              onChange={e => handleChange('authors', e.target.value)}
-              placeholder="Authors (comma separated)"
-              className="bg-transparent border-none p-0 focus:ring-0"
-            />
-          </div>
-          <Label htmlFor="authors" className="absolute -top-3 left-4 bg-background px-2 text-sm font-medium text-muted-foreground">
-            Authors
-          </Label>
+        <div>
+          <Label htmlFor="authors">Authors (comma separated)</Label>
+          <Input id="authors" value={values.authors} onChange={e => handleChange("authors", e.target.value)} />
         </div>
-        {/* Confidence */}
-        <div className="relative mt-6">
-          <div className="border border-input rounded-xl px-4 pt-5 pb-3 bg-background">
-            <Input
-              id="confidence"
-              type="number"
-              min={0}
-              max={100}
-              value={values.confidence}
-              onChange={e => handleChange('confidence', e.target.value)}
-              className="w-24 bg-transparent border-none p-0 focus:ring-0"
-            />
-          </div>
-          <Label htmlFor="confidence" className="absolute -top-3 left-4 bg-background px-2 text-sm font-medium text-muted-foreground">
-            Confidence
-          </Label>
+        <div>
+          <Label htmlFor="labels">Labels (comma separated)</Label>
+          <Input id="labels" value={values.labels} onChange={e => handleChange("labels", e.target.value)} />
         </div>
-        {/* Content Type */}
-        <div className="relative mt-6">
-          <div className="border border-input rounded-xl px-4 pt-5 pb-3 bg-background">
-            <Input
-              id="content_type"
-              value={values.content_type}
-              onChange={e => handleChange('content_type', e.target.value)}
-              placeholder="Content Type"
-              className="bg-transparent border-none p-0 focus:ring-0"
-            />
-          </div>
-          <Label htmlFor="content_type" className="absolute -top-3 left-4 bg-background px-2 text-sm font-medium text-muted-foreground">
-            Content Type
-          </Label>
+        <div>
+          <Label htmlFor="object_refs">Object Refs (comma separated)</Label>
+          <Input id="object_refs" value={values.object_refs} onChange={e => handleChange("object_refs", e.target.value)} />
         </div>
-        {/* Lang */}
-        <div className="relative mt-6">
-          <div className="border border-input rounded-xl px-4 pt-5 pb-3 bg-background">
-            <Input
-              id="lang"
-              value={values.lang}
-              onChange={e => handleChange('lang', e.target.value)}
-              placeholder="Language"
-              className="bg-transparent border-none p-0 focus:ring-0"
-            />
-          </div>
-          <Label htmlFor="lang" className="absolute -top-3 left-4 bg-background px-2 text-sm font-medium text-muted-foreground">
-            Language
-          </Label>
+        <div>
+          <Label htmlFor="confidence">Confidence</Label>
+          <Input id="confidence" type="number" min={0} max={100} value={values.confidence} onChange={e => handleChange("confidence", Number(e.target.value))} />
         </div>
-        {/* Error */}
-        {updateError && <div className="text-destructive text-sm">{updateError.message}</div>}
-        {/* Submit */}
-        <div className="pt-2">
-          <Button type="submit" variant="default" className="w-full" disabled={updating}>
-            {updating ? 'Updating...' : 'Update'}
-          </Button>
+        <div>
+          <Label htmlFor="content_type">Content Type</Label>
+          <Input id="content_type" value={values.content_type} onChange={e => handleChange("content_type", e.target.value)} />
         </div>
+        <div>
+          <Label htmlFor="lang">Language</Label>
+          <Input id="lang" value={values.lang} onChange={e => handleChange("lang", e.target.value)} />
+        </div>
+        {/* Add more fields as needed */}
+        <div>
+          <Button type="submit" disabled={updating}>Update</Button>
+        </div>
+        {formError && <div className="text-red-600">{formError}</div>}
+        {updateError && <div className="text-red-600">{updateError.message}</div>}
       </form>
     </div>
   );
 };
+
+export default NotesEditPage;

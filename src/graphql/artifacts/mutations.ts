@@ -1,51 +1,123 @@
-import { gql } from '@apollo/client';
+import gql from 'graphql-tag';
 
 export const CREATE_ARTIFACT = gql`
   mutation CreateArtifact($input: CreateArtifactInput!) {
     createArtifact(input: $input) {
       id
-      name
-      mime_type
-      payload_bin
-      url
-      hashes {
-        MD5
-        SHA1
-        SHA256
-      }
+      type
+      spec_version
       created
       modified
+      mime_type
+      url
+      confidence
       labels
-      description
+      payload_bin
+      hashes {
+        MD5
+        SHA_1
+        SHA_256
+        SHA_512
+      }
+      created_by_ref
+      revoked
+      enrichment {
+        abuseipdb
+        asn
+        dns
+        geo
+        hybrid
+        misp
+        shodan
+        ssl
+        threatcrowd
+        threatfox
+        virustotal
+        whois
+      }
+      external_references {
+        id
+        source_name
+        description
+        url
+        external_id
+        hashes {
+          MD5
+          SHA_1
+          SHA_256
+          SHA_512
+        }
+      }
+      extensions
+      lang
+      decryption_key
+      encryption_algorithm
+      object_marking_refs
+      defanged
     }
   }
 `;
 
 export const UPDATE_ARTIFACT = gql`
-  mutation UpdateArtifact($id: ID!, $input: UpdateArtifactInput!) {
+  mutation UpdateArtifact($id: String!, $input: UpdateArtifactInput!) {
     updateArtifact(id: $id, input: $input) {
       id
-      name
+      type
+      spec_version
+      created
+      modified
       mime_type
-      payload_bin
       url
+      confidence
+      labels
+      payload_bin
       hashes {
         MD5
-        SHA1
-        SHA256
+        SHA_1
+        SHA_256
+        SHA_512
       }
-      modified
-      labels
-      description
+      created_by_ref
+      revoked
+      enrichment {
+        abuseipdb
+        asn
+        dns
+        geo
+        hybrid
+        misp
+        shodan
+        ssl
+        threatcrowd
+        threatfox
+        virustotal
+        whois
+      }
+      external_references {
+        id
+        source_name
+        description
+        url
+        external_id
+        hashes {
+          MD5
+          SHA_1
+          SHA_256
+          SHA_512
+        }
+      }
+      extensions
+      lang
+      decryption_key
+      encryption_algorithm
+      object_marking_refs
+      defanged
     }
   }
 `;
 
 export const DELETE_ARTIFACT = gql`
-  mutation DeleteArtifact($id: ID!) {
-    deleteArtifact(id: $id) {
-      id
-      success
-    }
+  mutation DeleteArtifact($id: String!) {
+    deleteArtifact(id: $id)
   }
 `;

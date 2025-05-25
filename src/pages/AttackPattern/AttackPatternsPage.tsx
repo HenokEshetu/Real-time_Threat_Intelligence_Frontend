@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useAttackPattern } from '@/hooks/observables/useAttackPattern';
+import { useAttackPatterns } from '@/hooks/observables/useAttackPattern';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Alert, AlertDescription } from '@/components/ui/alert';
@@ -69,7 +69,7 @@ export const AttackPatternsPage = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const pageSize = 50;
 
-  const { attackPattern, loading, error } = useAttackPattern({
+  const { attackPatterns, loading, error } = useAttackPatterns({
     filters: {},
     page: currentPage,
     pageSize,
@@ -79,9 +79,9 @@ export const AttackPatternsPage = () => {
     new Map(),
   );
 
-  const total = attackPattern?.total || 0;
-  const totalPages = attackPattern?.totalPages || 1;
-  const results = attackPattern?.results || [];
+  const total = attackPatterns?.total || 0;
+  const totalPages = attackPatterns?.totalPages || 1;
+  const results = attackPatterns?.results || [];
 
   const handleViewAttackPattern = (id: string) => navigate(`/attack-patterns/${id}`);
 
@@ -159,6 +159,11 @@ export const AttackPatternsPage = () => {
                   key={pattern.id}
                   onClick={() => handleViewAttackPattern(pattern.id)}
                   className="hover:bg-gray-50 transition-colors border-b border-gray-300 cursor-pointer"
+                  role="button"
+                  tabIndex={0}
+                  onKeyPress={e => {
+                    if (e.key === 'Enter' || e.key === ' ') handleViewAttackPattern(pattern.id);
+                  }}
                 >
                   <TableCell className="p-4 text-gray-700">
                     <Badge

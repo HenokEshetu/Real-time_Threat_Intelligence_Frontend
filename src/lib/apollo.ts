@@ -1,23 +1,19 @@
-import {
-  ApolloClient,
-  InMemoryCache,
-  createHttpLink,
-  split,
-  ApolloLink,
-} from '@apollo/client';
+import { ApolloClient } from '@apollo/client/core';
+import { InMemoryCache } from '@apollo/client/cache';
+import { createHttpLink } from '@apollo/client/link/http';
+import { ApolloLink } from '@apollo/client/link/core';
+import { split } from '@apollo/client/link/core';
 import { getMainDefinition } from '@apollo/client/utilities';
 import { GraphQLWsLink } from '@apollo/client/link/subscriptions';
 import { createClient } from 'graphql-ws';
 import { onError } from '@apollo/client/link/error';
 import { setContext } from '@apollo/client/link/context';
 
-// Singleton for access token
 let accessToken: string | null = null;
 export const setApolloAccessToken = (token: string | null) => {
   accessToken = token;
 };
 
-// Auth link that injects Authorization header except for currentToken query
 const authLink = setContext((operation, prevContext) => {
   const isCurrentTokenQuery =
     operation.operationName === 'currentToken' ||
@@ -65,7 +61,7 @@ const errorLink = onError(({ graphQLErrors, networkError }) => {
 });
 
 const splitLink = split(
-  ({ query }) => {
+  ({ query }: { query: any }) => {
     const def = getMainDefinition(query);
     return (
       def.kind === 'OperationDefinition' && def.operation === 'subscription'

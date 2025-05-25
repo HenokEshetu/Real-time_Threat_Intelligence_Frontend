@@ -17,7 +17,7 @@ export const useMacAddresses = ({
   from?: number;
   size?: number;
 }) => {
-  const { data, loading, error, fetchMore } = useQuery(
+  const { data, loading, error } = useQuery(
     SEARCH_MACADDRESS_OBSERVABLES,
     {
       variables: {
@@ -29,36 +29,13 @@ export const useMacAddresses = ({
     },
   );
 
-  const macAddresses = data?.searchMACAddresses?.results || [];
-  const total = data?.searchMACAddresses?.total || 0;
-
-  const loadMore = () => {
-    fetchMore({
-      variables: {
-        filter,
-        from: from + 1,
-        size,
-      },
-      updateQuery: (prev, { fetchMoreResult }) => {
-        if (!fetchMoreResult) return prev;
-        return {
-          searchMACAddresses: {
-            ...fetchMoreResult.searchMACAddresses,
-            results: [
-              ...(prev?.searchMACAddresses?.results || []),
-              ...fetchMoreResult.searchMACAddresses.results,
-            ],
-          },
-        };
-      },
-    });
-  };
+  const macAddresses: MACAddress[] = data?.searchMACAddresses?.results || [];
+  const total: number = data?.searchMACAddresses?.total || 0;
 
   return {
     macAddresses,
     loading,
     error,
-    loadMore,
     total,
     hasMore: macAddresses.length === size,
   };

@@ -276,7 +276,7 @@ export const Layout = ({ children }: { children: React.ReactNode }) => {
 
               {/* Profile dropdown */}
               <DropdownMenu>
-                <DropdownMenuTrigger>
+                <DropdownMenuTrigger asChild>
                   <Button
                     variant="ghost"
                     size="icon"

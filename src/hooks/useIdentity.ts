@@ -3,13 +3,37 @@ import { SEARCH_IDENTITIES, IDENTITY_QUERY } from '../graphql/identity/queries';
 import { CREATE_IDENTITY, UPDATE_IDENTITY, DELETE_IDENTITY } from '../graphql/identity/mutations';
 
 // List/search identities
-export const useIdentities = ({ filters = {}, page = 1, pageSize = 20 } = {}) => {
+export const useIdentities = ({ filters = undefined, page = 1, pageSize = 20 } = {}) => {
+  // Always send filters, but as null if not provided or empty
+  const variables: any = {
+    filters: (filters && Object.keys(filters).length > 0) ? filters : null,
+    page,
+    pageSize,
+  };
+
   const { data, loading, error, fetchMore } = useQuery(SEARCH_IDENTITIES, {
-    variables: { filters, page, pageSize },
+    variables,
     notifyOnNetworkStatusChange: true,
   });
+
+  // Defensive: ensure arrays are always arrays
+  const identities = data?.searchIdentities
+    ? {
+        ...data.searchIdentities,
+        results: data.searchIdentities.results.map((i: any) => ({
+          ...i,
+          sectors: i.sectors ?? [],
+          roles: i.roles ?? [],
+          labels: i.labels ?? [],
+          external_references: i.external_references ?? [],
+          object_marking_refs: i.object_marking_refs ?? [],
+          relationship: i.relationship ?? [],
+        })),
+      }
+    : undefined;
+
   return {
-    identities: data?.searchIdentities?.results ?? [],
+    identities,
     loading,
     error,
     pageInfo: data?.searchIdentities,
@@ -23,7 +47,21 @@ export const useIdentityDetail = (id: string | undefined) => {
     variables: { id },
     skip: !id,
   });
-  return { identity: data?.identity, loading, error };
+  return {
+    identity: data?.identity
+      ? {
+          ...data.identity,
+          sectors: data.identity.sectors ?? [],
+          roles: data.identity.roles ?? [],
+          labels: data.identity.labels ?? [],
+          external_references: data.identity.external_references ?? [],
+          object_marking_refs: data.identity.object_marking_refs ?? [],
+          relationship: data.identity.relationship ?? [],
+        }
+      : undefined,
+    loading,
+    error,
+  };
 };
 
 // Create identity

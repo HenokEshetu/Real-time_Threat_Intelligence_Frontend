@@ -6,7 +6,7 @@ import { Select, SelectTrigger, SelectContent, SelectItem, SelectValue } from '@
 import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
 import { useQuery } from '@apollo/client';
-import { GET_REPORT } from '@/graphql/report/report';
+import { GET_REPORT } from '@/graphql/report/queries';
 
 const REPORT_TYPES = ['internal-report', 'misp-event', 'threat-report'];
 const RELIABILITY_OPTIONS = [
