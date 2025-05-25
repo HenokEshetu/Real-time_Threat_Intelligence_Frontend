@@ -1,7 +1,7 @@
 import React from "react";
 import { useQuery } from "@apollo/client";
 import { useParams, useNavigate } from "react-router-dom";
-import { GET_REPORT } from "@/graphql/report/report";
+import { GET_REPORT } from "@/graphql/report/queries";
 import { EntityDistributionChart } from "../HorizontalBarChart";
 import { Radarchart } from "../RadarChart";
 

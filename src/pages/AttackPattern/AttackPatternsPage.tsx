@@ -159,6 +159,11 @@ export const AttackPatternsPage = () => {
                   key={pattern.id}
                   onClick={() => handleViewAttackPattern(pattern.id)}
                   className="hover:bg-gray-50 transition-colors border-b border-gray-300 cursor-pointer"
+                  role="button"
+                  tabIndex={0}
+                  onKeyPress={e => {
+                    if (e.key === 'Enter' || e.key === ' ') handleViewAttackPattern(pattern.id);
+                  }}
                 >
                   <TableCell className="p-4 text-gray-700">
                     <Badge

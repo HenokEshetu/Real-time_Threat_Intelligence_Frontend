@@ -15,20 +15,16 @@ export const ATTACK_PATTERN_QUERY = gql`
       created
       modified
       created_by_ref
-      enrichment
+      
       extensions
       external_references {
         id
         source_name
         description
-        urlt
+        url
         external_id
       }
-      kill_chain_phases {
-        id
-        kill_chain_name
-        phase_name
-      }
+
       object_marking_refs
       revoked
       lang
@@ -80,7 +76,7 @@ export const SEARCH_ATTACK_PATTERNS = gql`
         created
         modified
         created_by_ref
-        enrichment
+        
         extensions
         external_references {
           id
@@ -89,11 +85,7 @@ export const SEARCH_ATTACK_PATTERNS = gql`
           url
           external_id
         }
-        kill_chain_phases {
-          id
-          kill_chain_name
-          phase_name
-        }
+ 
         object_marking_refs
         revoked
         lang

@@ -27,7 +27,7 @@ export const IDENTITY_QUERY = gql`
       revoked
       lang
       confidence
-      enrichment
+      
       extensions
       relationship {
         id
@@ -47,7 +47,7 @@ export const IDENTITY_QUERY = gql`
           description
           id
         }
-        enrichment
+        
         labels
         revoked
         created_by_ref
@@ -90,7 +90,6 @@ export const SEARCH_IDENTITIES = gql`
         revoked
         lang
         confidence
-        enrichment
         extensions
         relationship {
           id
@@ -110,7 +109,7 @@ export const SEARCH_IDENTITIES = gql`
             description
             id
           }
-          enrichment
+          
           labels
           revoked
           created_by_ref

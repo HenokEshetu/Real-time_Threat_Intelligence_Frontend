@@ -1,8 +1,9 @@
-import React, { useRef } from 'react';
-import { Card, CardContent } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Radarchart } from '@/components/common/RadarChart';
+import React, { useMemo, useRef } from "react";
+import { Radarchart } from "@/components/common/RadarChart";
+import { AttackPattern } from "@/types/observables/attackpattern";
+import { Badge } from "@/components/ui/badge";
 
+// Tailwind palette for badges (copied from IndicatorDetail)
 const tailwindColors = [
   { bg: 'bg-red-50', border: 'border-red-500', text: 'text-red-600' },
   { bg: 'bg-orange-50', border: 'border-orange-500', text: 'text-orange-600' },
@@ -34,12 +35,46 @@ const getRandomTailwindColor = () => {
   return color;
 };
 
-export const AttackPatternDetail = ({ attackPattern }: { attackPattern: any }) => {
-  if (!attackPattern) return null;
+export const AttackPatternDetail: React.FC<{ attackPattern?: AttackPattern }> = ({ attackPattern }) => {
+  if (!attackPattern) {
+    return (
+      <div className="flex items-center justify-center min-h-[40vh]">
+        <span className="text-gray-400">No attack pattern data.</span>
+      </div>
+    );
+  }
+
+  // Defensive fallback for nullable fields
+  const aliases = Array.isArray(attackPattern.aliases) ? attackPattern.aliases : [];
+  const labels = Array.isArray(attackPattern.labels) ? attackPattern.labels : [];
+  const uniqueLabels = Array.from(new Set(labels));
+  const externalReferences = Array.isArray(attackPattern.external_references) ? attackPattern.external_references : [];
+  const killChainPhases = Array.isArray(attackPattern.kill_chain_phases) ? attackPattern.kill_chain_phases : [];
+  const objectMarkingRefs = Array.isArray(attackPattern.object_marking_refs) ? attackPattern.object_marking_refs : [];
+  const relationships = Array.isArray(attackPattern.relationship) ? attackPattern.relationship : [];
 
   const labelColorMap = useRef<Map<string, (typeof tailwindColors)[0]>>(new Map());
-  const uniqueLabels = Array.from(new Set((attackPattern.labels || []).filter((l: unknown): l is string => typeof l === 'string')));
-  const uniqueAliases = Array.from(new Set((attackPattern.aliases || []).filter((a: unknown): a is string => typeof a === 'string')));
+
+  const getConfidenceColor = (confidence: number) => {
+    if (confidence >= 75) return 'bg-green-100 text-green-800';
+    if (confidence >= 50) return 'bg-amber-100 text-amber-800';
+    return 'bg-red-100 text-red-800';
+  };
+
+  const getTlpColors = (tlp: string) => {
+    switch (tlp?.toUpperCase()) {
+      case 'WHITE':
+        return 'bg-white text-black border-black';
+      case 'GREEN':
+        return 'bg-green-100 text-green-800 border-green-800';
+      case 'AMBER':
+        return 'bg-yellow-100 text-yellow-800 border-yellow-800';
+      case 'RED':
+        return 'bg-red-100 text-red-800 border-red-800';
+      default:
+        return 'bg-gray-100 text-gray-800 border-gray-800';
+    }
+  };
 
   return (
     <div className="p-4 grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -48,57 +83,69 @@ export const AttackPatternDetail = ({ attackPattern }: { attackPattern: any }) =
         <h1 className="uppercase text-xs font-bold text-slate-600 p-2">
           Details
         </h1>
-        <Card className="bg-transparent border border-gray-300 rounded-sm shadow-none !py-4">
-          <CardContent className="px-3">
+        <div className="bg-transparent border border-gray-300 rounded-sm shadow-none !py-4">
+          <div className="px-3">
             {/* Name */}
             <div className="pb-3 w-full">
-              <h2 className="font-semibold text-base mb-2">Name</h2>
-              <div className="bg-slate-100 border border-slate-600 text-slate-600 font-semibold p-3 rounded text-sm">
+              <h2 className="font-semibold text-base mb-2">
+                Name
+              </h2>
+              <div className="bg-slate-100 border border-slate-600 text-slate-600 font-semibold p-3 rounded overflow-x-auto font-mono text-sm">
                 {attackPattern.name}
               </div>
             </div>
             {/* Description */}
             {attackPattern.description && (
-              <div className="pb-3 w-full">
-                <h2 className="font-semibold text-base mb-2">Description</h2>
-                <div className="border border-slate-200 p-5 rounded-sm text-md text-slate-700 text-pretty">
-                  {attackPattern.description}
+              <div className="flex justify-between py-3">
+                <div className="w-full">
+                  <h2 className="font-bold text-base mb-2">Description</h2>
+                  <p className="border border-slate-200 p-5 rounded-sm text-md text-slate-700 text-pretty">
+                    {attackPattern.description}
+                  </p>
                 </div>
               </div>
             )}
             {/* Aliases */}
-            {uniqueAliases.length > 0 && (
-              <div className="pb-3 w-full">
-                <h2 className="font-semibold text-base mb-2">Aliases</h2>
-                <div className="flex flex-wrap gap-2">
-                  {uniqueAliases.map((alias) => (
-                    <Badge key={String(alias)} variant="outline" className="bg-gray-100 border-gray-400 text-gray-700">
-                      {String(alias)}
-                    </Badge>
-                  ))}
+            {aliases.length > 0 && (
+              <div className="flex justify-between py-3">
+                <div className="w-full">
+                  <h2 className="font-bold text-base mb-2">Aliases</h2>
+                  <div className="flex flex-wrap gap-2">
+                    {aliases.map((alias) => (
+                      <Badge
+                        key={alias}
+                        variant="outline"
+                        className="text-blue-500 border-blue-500 bg-blue-50 py-1"
+                      >
+                        {alias}
+                      </Badge>
+                    ))}
+                  </div>
                 </div>
               </div>
             )}
             {/* Labels */}
             {uniqueLabels.length > 0 && (
-              <div className="pb-3 w-full">
-                <h2 className="font-semibold text-base mb-2">Labels</h2>
-                <div className="flex flex-wrap gap-2">
-                  {uniqueLabels.map((label) => {
-                    if (!labelColorMap.current.has(label as string)) {
-                      labelColorMap.current.set(label as string, getRandomTailwindColor());
-                    }
-                    const color = labelColorMap.current.get(label as string)!;
-                    return (
-                      <Badge
-                        key={String(label)}
-                        variant="outline"
-                        className={`${color.text} ${color.border} ${color.bg} rounded p-2`}
-                      >
-                        {String(label)}
-                      </Badge>
-                    );
-                  })}
+              <div className="flex justify-between py-3">
+                <div className="w-full">
+                  <h2 className="font-bold text-base mb-2">Labels</h2>
+                  <div className="flex flex-wrap gap-2">
+                    {uniqueLabels.map((label) => {
+                      if (!labelColorMap.current.has(label)) {
+                        labelColorMap.current.set(label, getRandomTailwindColor());
+                      }
+                      const color = labelColorMap.current.get(label)!;
+                      return (
+                        <Badge
+                          key={label}
+                          variant="outline"
+                          className={`${color.text} ${color.border} ${color.bg} rounded p-2`}
+                        >
+                          {label}
+                        </Badge>
+                      );
+                    })}
+                  </div>
                 </div>
               </div>
             )}
@@ -106,81 +153,27 @@ export const AttackPatternDetail = ({ attackPattern }: { attackPattern: any }) =
             <div className="flex justify-between py-3">
               <div className="w-[48%]">
                 <h2 className="font-bold text-base mb-2">Confidence</h2>
-                <span className="bg-blue-50 text-blue-600 border-blue-500 border rounded py-1 px-5 text-sm text-center">
-                  {attackPattern.confidence ?? '—'}
+                <span
+                  className={`${getConfidenceColor(
+                    attackPattern.confidence ?? 0,
+                  )} py-1 px-6 rounded text-sm text-center uppercase`}
+                >
+                  {attackPattern.confidence ?? "-"}%
                 </span>
               </div>
               <div className="w-[48%]">
                 <h2 className="font-bold text-base mb-2">Revoked</h2>
                 <span className="bg-gray-100 text-gray-800 border border-gray-400 rounded py-1 px-5 text-sm text-center">
-                  {attackPattern.revoked ? 'Yes' : 'No'}
+                  {attackPattern.revoked ? "Yes" : "No"}
                 </span>
               </div>
             </div>
-            {/* Created/Modified */}
-            <div className="flex justify-between py-3">
-              <div className="w-[48%]">
-                <h2 className="font-bold text-base mb-2">Created</h2>
-                <div className="bg-slate-200 p-2 rounded text-sm uppercase">
-                  {attackPattern.created ? new Date(attackPattern.created).toLocaleString() : '—'}
-                </div>
-              </div>
-              <div className="w-[48%]">
-                <h2 className="font-bold text-base mb-2">Modified</h2>
-                <div className="bg-slate-200 p-2 rounded text-sm uppercase">
-                  {attackPattern.modified ? new Date(attackPattern.modified).toLocaleString() : '—'}
-                </div>
-              </div>
-            </div>
-            {/* Created By */}
-            {attackPattern.created_by_ref && (
-              <div className="flex justify-between py-3">
-                <div className="w-full">
-                  <h2 className="font-bold text-base mb-2">Created By</h2>
-                  <div className="bg-slate-200 p-2 rounded text-sm uppercase">
-                    {attackPattern.created_by_ref}
-                  </div>
-                </div>
-              </div>
-            )}
-            {/* External References */}
-            {attackPattern.external_references?.length > 0 && (
-              <div className="py-3">
-                <h2 className="font-bold text-base mb-2">External References</h2>
-                <table className="w-full text-sm text-foreground">
-                  <tbody>
-                    {attackPattern.external_references.map((ref: any, index: number) => (
-                      <tr
-                        key={index}
-                        className="hover:bg-slate-100 transition-colors border-b border-gray-300 cursor-pointer"
-                      >
-                        <td className="p-4 text-gray-700">
-                          <Badge
-                            variant="outline"
-                            className="text-blue-500 border-blue-500 bg-blue-50 py-1"
-                          >
-                            {typeof ref.source_name === 'string' ? ref.source_name : String(ref.source_name ?? '')}
-                          </Badge>
-                        </td>
-                        <td className="p-4 font-medium text-gray-900 hover:underline">
-                          {typeof ref.url === 'string'
-                            ? <a href={ref.url}>{ref.url}</a>
-                            : typeof ref.description === 'string'
-                              ? ref.description
-                              : String(ref.description ?? '')}
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            )}
             {/* Kill Chain Phases */}
-            {attackPattern.kill_chain_phases?.length > 0 && (
+            {killChainPhases.length > 0 && (
               <div className="mt-4">
                 <h2 className="font-semibold mb-1">Kill Chain Phases</h2>
                 <div className="grid gap-2">
-                  {attackPattern.kill_chain_phases.map((phase: any, idx: number) => (
+                  {killChainPhases.map((phase, idx) => (
                     <div
                       key={idx}
                       className="bg-white/5 border border-white/10 rounded p-3 text-sm"
@@ -191,16 +184,78 @@ export const AttackPatternDetail = ({ attackPattern }: { attackPattern: any }) =
                 </div>
               </div>
             )}
-          </CardContent>
-        </Card>
+            {/* External References */}
+            {externalReferences.length > 0 && (
+              <div className="mt-4">
+                <h2 className="font-bold text-base mb-2">
+                  External References
+                </h2>
+                <table className="w-full text-sm text-foreground">
+                  <tbody>
+                    {externalReferences.map((ref, index) => (
+                      <tr
+                        key={index}
+                        className="hover:bg-slate-100 transition-colors border-b border-gray-300 cursor-pointer"
+                      >
+                        <td className="p-4 text-gray-700">
+                          <Badge
+                            variant="outline"
+                            className="text-blue-500 border-blue-500 bg-blue-50 py-1"
+                          >
+                            {ref.source_name}
+                          </Badge>
+                        </td>
+                        <td className="p-4 font-medium text-gray-900 hover:underline">
+                          {ref.url ? (
+                            <a href={ref.url} target="_blank" rel="noopener noreferrer">
+                              {ref.url}
+                            </a>
+                          ) : (
+                            <span className="text-gray-400">-</span>
+                          )}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
+            {/* Relationships */}
+            {relationships.length > 0 && (
+              <div className="mt-4">
+                <h2 className="font-bold text-base mb-2">Relationships</h2>
+                <table className="w-full text-sm">
+                  <thead>
+                    <tr className="border-b">
+                      <th className="text-left p-2">ID</th>
+                      <th className="text-left p-2">Source Ref</th>
+                      <th className="text-left p-2">Target Ref</th>
+                      <th className="text-left p-2">Type</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {relationships.map((rel: any, idx: number) => (
+                      <tr key={idx} className="border-b hover:bg-slate-50">
+                        <td className="p-2">{rel.id}</td>
+                        <td className="p-2">{rel.source_ref}</td>
+                        <td className="p-2">{rel.target_ref}</td>
+                        <td className="p-2">{rel.type}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
+          </div>
+        </div>
       </div>
       {/* Basic Information Section */}
       <div>
         <h1 className="uppercase text-xs font-bold text-slate-600 p-2">
           Basic Information
         </h1>
-        <Card className="bg-transparent shadow-none border border-gray-300 rounded-sm">
-          <CardContent className="space-y-4 p-6">
+        <div className="bg-transparent shadow-none border border-gray-300 rounded-sm">
+          <div className="space-y-4 p-6">
             <div className="flex justify-between py-3">
               <div className="w-[48%]">
                 <h2 className="font-bold text-sm mb-2">Type</h2>
@@ -215,18 +270,15 @@ export const AttackPatternDetail = ({ attackPattern }: { attackPattern: any }) =
                 </span>
               </div>
             </div>
-            {/* Radar Chart */}
             <div className="flex justify-between py-3">
-              <div className="w-full">
+              <div className="w-[48%]">
                 <Radarchart
                   title="Distribution of opinions"
                   desc="please give your opinion"
                   footer={
                     <div className="text-sm text-muted-foreground">
                       <span>Last updated: </span>
-                      {attackPattern.modified
-                        ? new Date(attackPattern.modified).toLocaleDateString()
-                        : '—'}
+                      {attackPattern.modified ? new Date(attackPattern.modified).toLocaleDateString() : "-"}
                     </div>
                   }
                   data={[
@@ -238,17 +290,54 @@ export const AttackPatternDetail = ({ attackPattern }: { attackPattern: any }) =
                   ]}
                 />
               </div>
+              <div className="w-[48%]">
+                <h2 className="font-bold text-base mb-2">Marking</h2>
+                <span
+                  className={`py-1 px-5 rounded text-sm text-center uppercase border ${getTlpColors(
+                    objectMarkingRefs[0],
+                  )}`}
+                >
+                  TLP:{objectMarkingRefs[0] || "-"}
+                </span>
+              </div>
+            </div>
+            <div className="flex justify-between py-2">
+              <div className="w-full">
+                <h2 className="font-bold text-base mb-2">Created By</h2>
+                <div className="bg-slate-200 p-2 rounded text-sm uppercase">
+                  {attackPattern.created_by_ref}
+                </div>
+              </div>
+            </div>
+            <div className="flex justify-between py-2">
+              <div className="w-full">
+                <h2 className="font-bold text-base mb-2">Last Updated</h2>
+                <div className="bg-slate-200 p-2 rounded text-sm uppercase">
+                  {attackPattern.modified ? new Date(attackPattern.modified).toLocaleDateString() : "-"}
+                </div>
+              </div>
             </div>
             <div className="space-y-1 text-sm">
               <div>
-                <strong>Language:</strong> {attackPattern.lang || '—'}
+                <strong>Created:</strong>{" "}
+                {attackPattern.created ? new Date(attackPattern.created).toLocaleString() : "-"}
               </div>
               <div>
-                <strong>Extensions:</strong> {attackPattern.extensions ? JSON.stringify(attackPattern.extensions) : '—'}
+                <strong>Modified:</strong>{" "}
+                {attackPattern.modified ? new Date(attackPattern.modified).toLocaleString() : "-"}
+              </div>
+              <div>
+                <strong>Language:</strong> {attackPattern.lang || "-"}
+              </div>
+              <div>
+                <strong>Extensions:</strong>{" "}
+                {typeof attackPattern.extensions === "string"
+                  ? attackPattern.extensions
+                  : JSON.stringify(attackPattern.extensions)}
               </div>
             </div>
-          </CardContent>
-        </Card>
+          </div>
+        </div>
       </div>
     </div>
   );

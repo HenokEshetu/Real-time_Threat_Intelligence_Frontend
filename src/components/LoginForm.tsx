@@ -30,13 +30,13 @@ const emailValidation = {
 
 const passwordValidation = {
   required: 'Password is required',
-  minLength: { value: 8, message: 'Password must be at least 8 characters' },
-  validate: (value: string) => {
-    if (!/[A-Z]/.test(value)) return 'Requires at least one uppercase letter';
-    if (!/[a-z]/.test(value)) return 'Requires at least one lowercase letter';
-    if (!/[0-9]/.test(value)) return 'Requires at least one number';
-    return true;
-  },
+  // minLength: { value: 8, message: 'Password must be at least 8 characters' },
+  // validate: (value: string) => {
+  //   if (!/[A-Z]/.test(value)) return 'Requires at least one uppercase letter';
+  //   if (!/[a-z]/.test(value)) return 'Requires at least one lowercase letter';
+  //   if (!/[0-9]/.test(value)) return 'Requires at least one number';
+  //   return true;
+  // },
 };
 
 const ErrorMessage = ({
@@ -75,10 +75,6 @@ export function LoginForm({
     try {
       setFormError(null);
       await login(values.email, values.password);
-
-      // // Add delay before redirect
-      // await new Promise((resolve) => setTimeout(resolve, 1000));
-      // navigate('/', { replace: true });
     } catch (error) {
       setError('root', {
         type: 'manual',
@@ -163,28 +159,6 @@ export function LoginForm({
               >
                 {isLoading ? 'Logging in...' : 'Login'}
               </Button>
-
-              {/* Social Login */}
-              <div className="relative">
-                <div className="absolute inset-0 flex items-center">
-                  <span className="w-full border-t" />
-                </div>
-                <div className="relative flex justify-center text-xs uppercase">
-                  <span className="bg-background px-2 text-muted-foreground">
-                    Or continue with
-                  </span>
-                </div>
-              </div>
-
-              <Button
-                variant="outline"
-                type="button"
-                className="w-full gap-2"
-                disabled={isLoading}
-              >
-                <GoogleIcon />
-                Google
-              </Button>
             </div>
 
             <p className="mt-4 text-center text-sm text-muted-foreground">
@@ -193,6 +167,7 @@ export function LoginForm({
                 variant="link"
                 className="underline-offset-4 px-0"
                 type="button"
+                onClick={() => navigate('/signup')}
                 disabled={isLoading}
               >
                 Sign up

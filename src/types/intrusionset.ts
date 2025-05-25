@@ -7,7 +7,7 @@ export interface ExternalReference {
 }
 
 export interface KillChainPhase {
-  id?: string;
+  id: string;
   kill_chain_name: string;
   phase_name: string;
 }

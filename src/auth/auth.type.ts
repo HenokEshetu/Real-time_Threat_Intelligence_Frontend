@@ -35,3 +35,8 @@ export interface Permission {
   name: string;
   description: string;
 }
+
+export interface RefreshResponse {
+  access_token: string;
+  user: User;
+}

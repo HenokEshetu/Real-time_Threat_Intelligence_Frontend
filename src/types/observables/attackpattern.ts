@@ -56,7 +56,7 @@ export interface AttackPattern {
   object_marking_refs?: string[];
   revoked?: boolean;
   lang?: string;
-  relationship?: RelationshipCommonProperties[];
+  relationship?: RelationshipCommonProperties[] | null;
 }
 
 export interface AttackPatternSearchResult {

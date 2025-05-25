@@ -3,9 +3,16 @@ import { SEARCH_IDENTITIES, IDENTITY_QUERY } from '../graphql/identity/queries';
 import { CREATE_IDENTITY, UPDATE_IDENTITY, DELETE_IDENTITY } from '../graphql/identity/mutations';
 
 // List/search identities
-export const useIdentities = ({ filters = {}, page = 1, pageSize = 20 } = {}) => {
+export const useIdentities = ({ filters = undefined, page = 1, pageSize = 20 } = {}) => {
+  // Always send filters, but as null if not provided or empty
+  const variables: any = {
+    filters: (filters && Object.keys(filters).length > 0) ? filters : null,
+    page,
+    pageSize,
+  };
+
   const { data, loading, error, fetchMore } = useQuery(SEARCH_IDENTITIES, {
-    variables: { filters, page, pageSize },
+    variables,
     notifyOnNetworkStatusChange: true,
   });
 
