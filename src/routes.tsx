@@ -8,9 +8,7 @@ import React from 'react';
 import { IndicatorDetailPage } from './pages/Indicators/IndicatorDetailPage';
 import { IndicatorEditPage } from './pages/Indicators/IndicatorEditPage';
 import { IndicatorCreatePage } from './pages/Indicators/IndicatorCreatePage';
-import { ArtifactDetailPage } from './pages/Artifacts/ArtifactDetailPage';
 import { ArtifactEditPage } from './pages/Artifacts/edit';
-import { ArtifactCreatePage } from './pages/Artifacts/create';
 
 import { CampaignsPage } from './pages/Campaigns/CampaignsPage';
 import { CampaignsEditPage } from './pages/Campaigns/CampaignsEditPage';
@@ -23,11 +21,6 @@ import CreateThreatActor from './pages/ThreatActors/ThreatActorCreatePage';
 import ThreatActorDetail from './pages/ThreatActors/ThreatActorDetailPage';
 import EditThreatActor from './pages/ThreatActors/ThreatActorEditPage';
 import DeleteThreatActor from './pages/ThreatActors/ThreatActorDeletePage';
-
-import { IdentityListPage } from './pages/Identity';
-import { IdentityCreatePage } from './pages/Identity/create';
-import { IdentityEditPage } from './pages/Identity/edit';
-import { IdentityDetailPage } from './pages/Identity/detail';
 
 import { ObservablesPage } from './pages/Observables/ObservablesPage';
 
@@ -112,6 +105,12 @@ import RegionDetailPage from './pages/Location/RegionDetailPage';
 import LocationDetail from './pages/Location/LocationDetail';
 import LocationsList from './pages/Location/LocationsList';
 import { Signup } from './pages/Signup';
+import { IdentityListPage } from './pages/Identity/IdentityPage';
+import IdentityCreatePage from './pages/Identity/IdentityCreatePage';
+import IdentityEditPage from './pages/Identity/IdentityEditPage';
+import IdentityDetailPage from './pages/Identity/IdentityDetailPage';
+import ArtifactDetailPage from './pages/Artifacts/ArtifactDetailPage';
+import ArtifactCreatePage from './pages/Artifacts/ArtifactCreatePage';
 
 export const AppRoutes = () => {
   return (
