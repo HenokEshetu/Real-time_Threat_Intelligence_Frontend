@@ -1,8 +1,4 @@
-import { ApolloClient } from '@apollo/client/core';
-import { InMemoryCache } from '@apollo/client/cache';
-import { createHttpLink } from '@apollo/client/link/http';
-import { ApolloLink } from '@apollo/client/link/core';
-import { split } from '@apollo/client/link/core';
+import { ApolloClient, InMemoryCache, ApolloLink, split, HttpLink } from '@apollo/client';
 import { getMainDefinition } from '@apollo/client/utilities';
 import { GraphQLWsLink } from '@apollo/client/link/subscriptions';
 import { createClient } from 'graphql-ws';
@@ -14,7 +10,7 @@ export const setApolloAccessToken = (token: string | null) => {
   accessToken = token;
 };
 
-const authLink = setContext((operation, prevContext) => {
+const authLink = setContext((operation: any, prevContext: any) => {
   const isCurrentTokenQuery =
     operation.operationName === 'currentToken' ||
     (operation.query &&
@@ -36,22 +32,22 @@ const authLink = setContext((operation, prevContext) => {
   };
 });
 
-const httpLink = createHttpLink({
-  uri: 'http://localhost:4000/graphql',
+const httpLink = new HttpLink({
+  uri: 'http://10.161.173.234:4000/graphql',
   credentials: 'include',
 });
 
 const wsLink = new GraphQLWsLink(
   createClient({
-    url: 'ws://localhost:4000/graphql',
+    url: 'ws://10.161.173.234:4000/graphql',
     connectionParams: () =>
       accessToken ? { Authorization: `Bearer ${accessToken}` } : {},
   }),
 );
 
-const errorLink = onError(({ graphQLErrors, networkError }) => {
+const errorLink = onError(({ graphQLErrors, networkError }: { graphQLErrors?: any; networkError?: any }) => {
   if (graphQLErrors) {
-    graphQLErrors.forEach(({ message }) => {
+    graphQLErrors.forEach(({ message }: { message: any }) => {
       if (message === 'Unauthorized') {
         window.location.href = '/auth';
       }

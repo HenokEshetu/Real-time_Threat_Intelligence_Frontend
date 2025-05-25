@@ -111,6 +111,10 @@ import IdentityEditPage from './pages/Identity/IdentityEditPage';
 import IdentityDetailPage from './pages/Identity/IdentityDetailPage';
 import ArtifactDetailPage from './pages/Artifacts/ArtifactDetailPage';
 import ArtifactCreatePage from './pages/Artifacts/ArtifactCreatePage';
+import { ToolsCreatePage } from './pages/Tools/ToolsCreatePage';
+import { ToolsEditPage } from './pages/Tools/ToolsEditPage';
+import { ToolsDetailPage } from './pages/Tools/ToolsDetailPage';
+import ToolsPage from "@/pages/Tools/ToolsPage";
 
 export const AppRoutes = () => {
   return (
@@ -635,7 +639,23 @@ export const AppRoutes = () => {
         path="/identities/:id"
         element={<ProtectedRoute children={<IdentityDetailPage />} />}
       />
+      <Route
+        path="/tools"
+        element={<ProtectedRoute children={<ToolsPage />} />}
+      />
+      <Route
+        path="/tools/create"
+        element={<ProtectedRoute children={<ToolsCreatePage />} />}
+      />
+      <Route
+        path="/tools/:id/edit"
+        element={<ProtectedRoute children={<ToolsEditPage />} />}
+      />
 
+      <Route
+        path="/tools/:id"
+        element={<ProtectedRoute children={<ToolsDetailPage />} />}
+      />
       <Route
         path="/relationships"
         element={<ProtectedRoute children={<RelationshipsPage />} />}

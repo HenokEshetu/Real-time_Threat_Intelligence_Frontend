@@ -1,16 +1,67 @@
-import React from "react";
+import React, { useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { useIdentityDetail } from "@/hooks/useIdentity";
+import { Badge } from "@/components/ui/badge";
+import { Card, CardContent } from "@/components/ui/card";
+import { Radarchart } from "@/components/common/RadarChart";
+import type { Identity } from "@/types/identity";
 
-const mockLabels: string[] = ["org", "test"];
-const mockSectors: string[] = ["TECHNOLOGY"];
-const mockRoles: string[] = ["admin"];
-const mockMarkings: string[] = ["TLP:CLEAR"];
+// Tailwind palette for badges (same as AttackPatternDetail)
+const tailwindColors = [
+  { bg: 'bg-red-50', border: 'border-red-500', text: 'text-red-600' },
+  { bg: 'bg-orange-50', border: 'border-orange-500', text: 'text-orange-600' },
+  { bg: 'bg-yellow-50', border: 'border-yellow-500', text: 'text-yellow-600' },
+  { bg: 'bg-green-50', border: 'border-green-500', text: 'text-green-600' },
+  { bg: 'bg-teal-50', border: 'border-teal-500', text: 'text-teal-600' },
+  { bg: 'bg-blue-50', border: 'border-blue-500', text: 'text-blue-600' },
+  { bg: 'bg-indigo-50', border: 'border-indigo-500', text: 'text-indigo-600' },
+  { bg: 'bg-purple-50', border: 'border-purple-500', text: 'text-purple-600' },
+  { bg: 'bg-pink-50', border: 'border-pink-500', text: 'text-pink-600' },
+  { bg: 'bg-rose-50', border: 'border-rose-500', text: 'text-rose-600' },
+  { bg: 'bg-amber-50', border: 'border-amber-500', text: 'text-amber-600' },
+  { bg: 'bg-lime-50', border: 'border-lime-500', text: 'text-lime-600' },
+  { bg: 'bg-emerald-50', border: 'border-emerald-500', text: 'text-emerald-600' },
+  { bg: 'bg-cyan-50', border: 'border-cyan-500', text: 'text-cyan-600' },
+  { bg: 'bg-sky-50', border: 'border-sky-500', text: 'text-sky-600' },
+  { bg: 'bg-violet-50', border: 'border-violet-500', text: 'text-violet-600' },
+  { bg: 'bg-fuchsia-50', border: 'border-fuchsia-500', text: 'text-fuchsia-600' },
+  { bg: 'bg-neutral-100', border: 'border-neutral-500', text: 'text-neutral-600' },
+  { bg: 'bg-slate-100', border: 'border-slate-500', text: 'text-slate-600' },
+  { bg: 'bg-gray-100', border: 'border-gray-500', text: 'text-gray-600' },
+];
+let availableColors = [...tailwindColors];
+const getRandomTailwindColor = () => {
+  if (availableColors.length === 0) availableColors = [...tailwindColors];
+  const idx = Math.floor(Math.random() * availableColors.length);
+  const color = availableColors[idx];
+  availableColors.splice(idx, 1);
+  return color;
+};
 
-const IdentityDetail: React.FC = () => {
-  const { id } = useParams<{ id: string }>();
+const getTlpColors = (tlp: string) => {
+  switch (tlp?.toUpperCase()) {
+    case 'WHITE':
+      return 'bg-white text-black border-black';
+    case 'GREEN':
+      return 'bg-green-100 text-green-800 border-green-800';
+    case 'AMBER':
+      return 'bg-yellow-100 text-yellow-800 border-yellow-800';
+    case 'RED':
+      return 'bg-red-100 text-red-800 border-red-800';
+    default:
+      return 'bg-gray-100 text-gray-800 border-gray-800';
+  }
+};
+
+interface IdentityDetailProps {
+  identity?: Identity;
+  loading?: boolean;
+  error?: any;
+}
+
+const IdentityDetail: React.FC<IdentityDetailProps> = ({ identity, loading, error }) => {
+  const { id: paramId } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const { identity, loading, error } = useIdentityDetail(id);
+  const id = identity?.id || paramId;
 
   if (loading) {
     return (
@@ -27,211 +78,305 @@ const IdentityDetail: React.FC = () => {
     );
   }
 
-  const name = identity.name || "-";
-  const description = identity.description || "-";
-  const identityClass = identity.identity_class || "-";
-  const labels = identity.labels && identity.labels.length > 0 ? identity.labels : mockLabels;
-  const sectors = identity.sectors && identity.sectors.length > 0 ? identity.sectors : mockSectors;
-  const roles = identity.roles && identity.roles.length > 0 ? identity.roles : mockRoles;
-  const createdBy = identity.created_by_ref || "-";
-  const created = identity.created ? new Date(identity.created).toLocaleString() : "-";
-  const modified = identity.modified ? new Date(identity.modified).toLocaleString() : "-";
-  const contactInfo = identity.contact_information || "-";
-  const markings = identity.object_marking_refs && identity.object_marking_refs.length > 0 ? identity.object_marking_refs : mockMarkings;
-  const revoked = identity.revoked ? "Yes" : "No";
-  const lang = identity.lang || "-";
-  const confidence = identity.confidence ?? "-";
-  const extensions = identity.extensions || "-";
-  const relationships = identity.relationship || [];
-  const externalReferences = identity.external_references || [];
+  // Defensive fallback for nullable fields
+  const labels = Array.isArray(identity.labels) ? identity.labels.filter(Boolean) : [];
+  const uniqueLabels: string[] = Array.from(new Set(labels));
+  const sectors: string[] = Array.isArray(identity.sectors) ? identity.sectors.filter(Boolean) as string[] : [];
+  const roles: string[] = Array.isArray(identity.roles) ? identity.roles.filter(Boolean) as string[] : [];
+  const markings: string[] = Array.isArray(identity.object_marking_refs) ? identity.object_marking_refs.filter(Boolean) as string[] : [];
+  const relationships = Array.isArray(identity.relationship) ? identity.relationship : [];
+  const externalReferences = Array.isArray(identity.external_references) ? identity.external_references : [];
+
+  const labelColorMap = useRef<Map<string, (typeof tailwindColors)[0]>>(new Map());
 
   return (
-    <div className="w-full flex flex-col gap-8 px-3">
-      <div className="flex flex-row gap-6 w-full items-stretch">
-        {/* Left: Description, Sectors, Roles */}
-        <div className="flex-1 min-w-0 bg-white rounded-lg p-5 border border-gray-300 flex flex-col items-stretch">
-          <div className="flex flex-col flex-1">
-            <div className="flex flex-row gap-6 h-full">
-              <div className="flex-1 min-w-0 flex flex-col">
-                <h2 className="text-base font-semibold text-foreground mb-2">Description</h2>
-                <div className="text-md font-normal text-slate-600 mb-4">
-                  {description || <span className="text-gray-400">No description.</span>}
-                </div>
-                <div className="mb-4">
-                  <h2 className="text-base font-semibold text-foreground mb-2">Sectors</h2>
-                  <div className="flex flex-wrap gap-2">
-                    {sectors.map((sector: string) => (
-                      <span
-                        key={sector}
-                        className="bg-green-100 text-green-800 border border-green-400 rounded p-1 text-xs"
-                      >
-                        {sector}
-                      </span>
-                    ))}
-                  </div>
-                </div>
-                <div className="mb-4">
-                  <h2 className="text-base font-semibold text-foreground mb-2">Roles</h2>
-                  <div className="flex flex-wrap gap-2">
-                    {roles.map((role: string) => (
-                      <span
-                        key={role}
-                        className="bg-blue-100 text-blue-800 border border-blue-400 rounded p-1 text-xs"
-                      >
-                        {role}
-                      </span>
-                    ))}
-                  </div>
-                </div>
-                <div className="mb-4">
-                  <h2 className="text-base font-semibold text-foreground mb-2">Contact Information</h2>
-                  <div className="text-xs text-blue-900 font-mono">{contactInfo}</div>
-                </div>
+    <div className="p-4 grid grid-cols-1 md:grid-cols-2 gap-6">
+      {/* Left Details Section */}
+      <div>
+        <h1 className="uppercase text-xs font-bold text-slate-600 p-2">
+          Details
+        </h1>
+        <Card className="bg-transparent border border-gray-300 rounded-sm shadow-none !py-4">
+          <CardContent className="px-3">
+            {/* Name Section */}
+            <div className="mb-4">
+              <h2 className="font-bold text-base mb-1">Name</h2>
+              <div className="text-lg font-semibold text-slate-800">
+                {identity.name}
               </div>
             </div>
-          </div>
-        </div>
-        {/* Right: Basic Info, Labels */}
-        <div className="flex-1 min-w-0 bg-white rounded-lg p-5 border border-gray-300 flex flex-col gap-4 max-w-full items-stretch">
-          <h2 className="text-base font-semibold text-foreground mb-2">Basic Information</h2>
-          <div className="space-y-4 p-2 flex-1">
-            <div className="flex flex-row gap-4">
+            {/* Radar Chart */}
+            <div className="mb-6">
+              <Radarchart
+                title="Hybrid Analysis"
+                desc="please give your opinion"
+                footer={
+                  <div className="text-sm text-muted-foreground">
+                    <span>Last updated: </span>
+                    {identity?.modified
+                      ? new Date(identity.modified).toLocaleDateString()
+                      : ""}
+                  </div>
+                }
+                data={[
+                  { feeling: "Strongly Disagree", level: 186 },
+                  { feeling: "Disagree", level: 305 },
+                  { feeling: "Neutral", level: 237 },
+                  { feeling: "Agree", level: 273 },
+                  { feeling: "Strongly Agree", level: 209 },
+                ]}
+              />
+            </div>
+            {/* Description */}
+            {identity.description && (
+              <div className="flex justify-between py-3">
+                <div className="w-full">
+                  <h2 className="font-bold text-base mb-2">Description</h2>
+                  <p className="border border-slate-200 p-5 rounded-sm text-md text-slate-700 text-pretty">
+                    {identity.description}
+                  </p>
+                </div>
+              </div>
+            )}
+            {/* Sectors */}
+            {sectors.length > 0 && (
+              <div className="flex justify-between py-3">
+                <div className="w-full">
+                  <h2 className="font-bold text-base mb-2">Sectors</h2>
+                  <div className="flex flex-wrap gap-2">
+                    {sectors.map((sector: string) => (
+                      <Badge
+                        key={sector}
+                        variant="outline"
+                        className="text-green-600 border-green-500 bg-green-50 py-1"
+                      >
+                        {sector}
+                      </Badge>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            )}
+            {/* Roles */}
+            {roles.length > 0 && (
+              <div className="flex justify-between py-3">
+                <div className="w-full">
+                  <h2 className="font-bold text-base mb-2">Roles</h2>
+                  <div className="flex flex-wrap gap-2">
+                    {roles.map((role: string) => (
+                      <Badge
+                        key={role}
+                        variant="outline"
+                        className="text-blue-600 border-blue-500 bg-blue-50 py-1"
+                      >
+                        {role}
+                      </Badge>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            )}
+            {/* Contact Information */}
+            {identity.contact_information && (
+              <div className="flex justify-between py-3">
+                <div className="w-full">
+                  <h2 className="font-bold text-base mb-2">Contact Information</h2>
+                  <div className="text-xs text-blue-900 font-mono border border-blue-100 rounded p-2">
+                    {identity.contact_information}
+                  </div>
+                </div>
+              </div>
+            )}
+            {/* Labels */}
+            {uniqueLabels.length > 0 && (
+              <div className="flex justify-between py-3">
+                <div className="w-full">
+                  <h2 className="font-bold text-base mb-2">Labels</h2>
+                  <div className="flex flex-wrap gap-2">
+                    {uniqueLabels.map((label: string) => {
+                      if (!labelColorMap.current.has(label)) {
+                        labelColorMap.current.set(label, getRandomTailwindColor());
+                      }
+                      const color = labelColorMap.current.get(label)!;
+                      return (
+                        <Badge
+                          key={label}
+                          variant="outline"
+                          className={`${color.text} ${color.border} ${color.bg} rounded p-2`}
+                        >
+                          {label}
+                        </Badge>
+                      );
+                    })}
+                  </div>
+                </div>
+              </div>
+            )}
+            {/* Relationships */}
+            {relationships.length > 0 && (
+              <div className="mt-4">
+                <h2 className="font-bold text-base mb-2">Relationships</h2>
+                <table className="w-full text-sm">
+                  <thead>
+                    <tr className="border-b">
+                      <th className="text-left p-2">ID</th>
+                      <th className="text-left p-2">Source Ref</th>
+                      <th className="text-left p-2">Target Ref</th>
+                      <th className="text-left p-2">Type</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {relationships.map((rel: any, idx: number) => (
+                      <tr key={rel.id ?? idx} className="border-b hover:bg-slate-50">
+                        <td className="p-2">{rel.id}</td>
+                        <td className="p-2">{rel.source_ref}</td>
+                        <td className="p-2">{rel.target_ref}</td>
+                        <td className="p-2">{rel.type}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
+            {/* External References */}
+            {externalReferences.length > 0 && (
+              <div className="mt-4">
+                <h2 className="font-bold text-base mb-2">
+                  External References
+                </h2>
+                <table className="w-full text-sm text-foreground">
+                  <tbody>
+                    {externalReferences.map(
+                      (
+                        ref: {
+                          source_name: string;
+                          url?: string;
+                          description?: string;
+                          id?: string;
+                        },
+                        index: number
+                      ) => (
+                        <tr
+                          key={ref.id ?? index}
+                          className="hover:bg-slate-100 transition-colors border-b border-gray-300 cursor-pointer"
+                        >
+                          <td className="p-4 text-gray-700">
+                            <Badge
+                              variant="outline"
+                              className="text-blue-500 border-blue-500 bg-blue-50 py-1"
+                            >
+                              {ref.source_name}
+                            </Badge>
+                          </td>
+                          <td className="p-4 font-medium text-gray-900 hover:underline">
+                            {typeof ref.url === "string" && ref.url.length > 0 ? (
+                              <a href={ref.url} target="_blank" rel="noopener noreferrer">
+                                {ref.url}
+                              </a>
+                            ) : (
+                              <span className="text-gray-400">-</span>
+                            )}
+                          </td>
+                          <td className="p-4 text-gray-700">
+                            {typeof ref.description === "string" && ref.description.length > 0 ? (
+                              ref.description
+                            ) : (
+                              <span className="text-gray-400">-</span>
+                            )}
+                          </td>
+                        </tr>
+                      )
+                    )}
+                  </tbody>
+                </table>
+              </div>
+            )}
+          </CardContent>
+        </Card>
+      </div>
+      {/* Basic Information Section */}
+      <div>
+        <h1 className="uppercase text-xs font-bold text-slate-600 p-2">
+          Basic Information
+        </h1>
+        <div className="bg-transparent shadow-none border border-gray-300 rounded-sm">
+          <div className="space-y-4 p-6">
+            <div className="flex justify-between py-3">
               <div className="w-[48%]">
                 <h2 className="font-bold text-sm mb-2">Identity Class</h2>
                 <span className="bg-blue-100 text-blue-800 border border-blue-800 py-1 px-5 rounded text-sm text-center uppercase">
-                  {identityClass}
+                  {identity.identity_class}
                 </span>
               </div>
               <div className="w-[48%]">
                 <h2 className="font-bold text-sm mb-2">Marking</h2>
-                <span className="bg-gray-100 text-gray-800 border border-gray-800 py-1 px-5 rounded text-sm text-center uppercase">
-                  {markings.join(", ")}
+                <span
+                  className={`py-1 px-5 rounded text-sm text-center uppercase border ${getTlpColors(
+                    markings[0],
+                  )}`}
+                >
+                  {markings[0] || "-"}
                 </span>
               </div>
             </div>
-            <div className="flex flex-col md:flex-row gap-4">
-              <div className="flex-1">
-                <h2 className="font-semibold text-base mb-2">Labels</h2>
-                <div className="flex flex-wrap gap-2">
-                  {labels.map((label: string) => (
-                    <span
-                      key={label}
-                      className="px-2 py-1 rounded text-xs font-semibold border bg-blue-100 text-blue-600 border-blue-400"
-                    >
-                      {label}
-                    </span>
-                  ))}
+            <div className="flex justify-between py-3">
+              <div className="w-[48%]">
+                <h2 className="font-bold text-base mb-2">Revoked</h2>
+                <span className="bg-gray-100 text-gray-800 border border-gray-400 rounded py-1 px-5 text-sm text-center">
+                  {identity.revoked ? "Yes" : "No"}
+                </span>
+              </div>
+              <div className="w-[48%]">
+                <h2 className="font-bold text-base mb-2">Confidence</h2>
+                <span className="bg-gray-100 text-gray-800 border border-gray-400 rounded py-1 px-5 text-sm text-center">
+                  {identity.confidence ?? "-"}
+                </span>
+              </div>
+            </div>
+            <div className="flex justify-between py-2">
+              <div className="w-full">
+                <h2 className="font-bold text-base mb-2">Created By</h2>
+                <div className="bg-slate-200 p-2 rounded text-sm uppercase">
+                  {identity.created_by_ref || "-"}
                 </div>
               </div>
-              <div className="flex-1">
-                <h2 className="font-bold text-base mb-2">Revoked</h2>
+            </div>
+            <div className="flex justify-between py-2">
+              <div className="w-full">
+                <h2 className="font-bold text-base mb-2">Last Updated</h2>
                 <div className="bg-slate-200 p-2 rounded text-sm uppercase">
-                  {revoked}
+                  {identity.modified ? new Date(identity.modified).toLocaleDateString() : "-"}
                 </div>
               </div>
             </div>
             <div className="space-y-1 text-sm">
               <div>
-                <strong>Created By:</strong> {createdBy}
+                <strong>Created:</strong>{" "}
+                {identity.created ? new Date(identity.created).toLocaleString() : "-"}
               </div>
               <div>
-                <strong>Created:</strong> {created}
+                <strong>Modified:</strong>{" "}
+                {identity.modified ? new Date(identity.modified).toLocaleString() : "-"}
               </div>
               <div>
-                <strong>Modified:</strong> {modified}
+                <strong>Language:</strong> {identity.lang || "-"}
               </div>
               <div>
-                <strong>Language:</strong> {lang}
-              </div>
-              <div>
-                <strong>Confidence:</strong> {confidence}
-              </div>
-              <div>
-                <strong>Extensions:</strong> {typeof extensions === "string" ? extensions : JSON.stringify(extensions)}
+                <strong>Extensions:</strong>{" "}
+                {typeof identity.extensions === "string"
+                  ? identity.extensions
+                  : JSON.stringify(identity.extensions)}
               </div>
             </div>
           </div>
         </div>
       </div>
-      {/* Relationships Section */}
-      {relationships.length > 0 && (
-        <div className="mt-2 bg-white rounded-lg p-5 border border-gray-300">
-          <h2 className="text-xl font-bold mb-4">Relationships</h2>
-          <table className="w-full text-sm">
-            <thead>
-              <tr className="border-b">
-                <th className="text-left p-2">ID</th>
-                <th className="text-left p-2">Source Ref</th>
-                <th className="text-left p-2">Target Ref</th>
-                <th className="text-left p-2">Type</th>
-              </tr>
-            </thead>
-            <tbody>
-              {relationships.map((rel: any, idx: number) => (
-                <tr key={idx} className="border-b hover:bg-slate-50">
-                  <td className="p-2">{rel.id}</td>
-                  <td className="p-2">{rel.source_ref}</td>
-                  <td className="p-2">{rel.target_ref}</td>
-                  <td className="p-2">{rel.type}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      )}
-      {/* External Reference Section */}
-      {externalReferences.length > 0 && (
-        <div className="mt-2 bg-white rounded-lg p-5 border border-gray-300">
-          <h2 className="text-xl font-bold mb-4">External References</h2>
-          <table className="w-full text-sm">
-            <thead>
-              <tr className="border-b">
-                <th className="text-left p-2">Source Name</th>
-                <th className="text-left p-2">URL</th>
-                <th className="text-left p-2">Description</th>
-              </tr>
-            </thead>
-            <tbody>
-              {externalReferences.map((ref: any, idx: number) => (
-                <tr key={idx} className="border-b hover:bg-slate-50">
-                  <td className="p-2">
-                    <span className="bg-blue-50 text-blue-600 border border-blue-400 rounded px-2 py-1 text-xs font-semibold">
-                      {ref.source_name}
-                    </span>
-                  </td>
-                  <td className="p-2">
-                    {ref.url ? (
-                      <a
-                        href={ref.url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-blue-700 underline break-all"
-                      >
-                        {ref.url}
-                      </a>
-                    ) : (
-                      <span className="text-gray-400">-</span>
-                    )}
-                  </td>
-                  <td className="p-2">
-                    {ref.description ? (
-                      <span>{ref.description}</span>
-                    ) : (
-                      <span className="text-gray-400">-</span>
-                    )}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      )}
       {/* Floating Edit Button */}
       <button
         className="fixed bottom-8 right-8 z-50 bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white rounded-full shadow-lg p-4 flex items-center justify-center transition-colors group"
         title="Edit Identity"
         onClick={() => {
-          if (id) navigate(`/identity/${id}/edit`);
+          if (id) navigate(`/identities/${id}/edit`);
         }}
       >
         {/* Pencil-square icon */}

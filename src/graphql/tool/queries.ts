@@ -9,7 +9,7 @@ export const GET_TOOL = gql`
       created
       created_by_ref
       description
-      enrichment
+      
       extensions
       external_references {
         source_name
@@ -33,7 +33,7 @@ export const GET_TOOL = gql`
       }
       revoked
       spec_version
-      tool_types
+      
       tool_version
       type
     }
@@ -54,7 +54,7 @@ export const SEARCH_TOOLS = gql`
         created
         created_by_ref
         description
-        enrichment
+        
         extensions
         external_references {
           source_name
@@ -78,7 +78,6 @@ export const SEARCH_TOOLS = gql`
         }
         revoked
         spec_version
-        tool_types
         tool_version
         type
       }

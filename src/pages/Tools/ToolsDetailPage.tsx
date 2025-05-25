@@ -18,7 +18,7 @@ export const ToolsDetailPage = () => {
       'Analysis'
     ],
     components: [
-      <ToolDetail />,
+      <ToolDetail tool={tool} />,
       <div>Relationships content here</div>,
       <div>Analysis content here</div>,
       <div></div>,
@@ -32,7 +32,7 @@ export const ToolsDetailPage = () => {
   if (!tool) return <ErrorMessage message="Tool not found" />;
 
   return (
-    <div className="w-full flex flex-col">
+    <div className="w-full flex flex-col min-h-screen bg-white">
       <TopContainer className="h-13 top-29">
         <h1 className="text-2xl max-w-[40%] font-semibold truncate">
           {tool.name}

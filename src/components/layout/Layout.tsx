@@ -23,6 +23,7 @@ import {
   MapPinIcon,
   GlobeIcon,
   BellIcon,
+  Wrench,
 } from 'lucide-react';
 import { Link, useLocation } from 'react-router-dom';
 import { cn } from '@/lib/utils';
@@ -130,6 +131,11 @@ const menuItems: MenuItem[] = [
     text: 'Identity',
     icon: <UserIcon className="h-5 w-5" />,
     path: '/identities',
+  },
+  {
+    text: 'Tools',
+    icon: <Wrench className="h-5 w-5" />,
+    path: '/tools',
   },
   {
     text: 'Data',
