@@ -23,11 +23,11 @@ export function LoginCard({
       )}
       {...props}
     >
-        {/* <Label className="text-8xl font-bold">ዳጉ</Label>
+      {/* <Label className="text-8xl font-bold">ዳጉ</Label>
       <Label className="text-xl font-normal">
         Real-time Cyber Threat Intelligence Platform
       </Label> */}
-        {/* <img
+      {/* <img
           src="src/static/images/favicon.png"
           className="w-full h-full"
         /> */}

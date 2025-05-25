@@ -5,75 +5,70 @@ import {
   split,
   ApolloLink,
 } from '@apollo/client';
+import { getMainDefinition } from '@apollo/client/utilities';
 import { GraphQLWsLink } from '@apollo/client/link/subscriptions';
-import { getMainDefinition, Observable } from '@apollo/client/utilities';
 import { createClient } from 'graphql-ws';
 import { onError } from '@apollo/client/link/error';
-import { getAccessToken, refreshAuth } from './auth';
+import { setContext } from '@apollo/client/link/context';
 
-const errorLink = onError(
-  ({ graphQLErrors, networkError, operation, forward }) => {
-    if (graphQLErrors?.some((e) => e.extensions?.code === 'UNAUTHENTICATED')) {
-      return new Observable((observer) => {
-        refreshAuth()
-          .then((success) => {
-            if (success) {
-              const oldHeaders = operation.getContext().headers;
-              operation.setContext({
-                headers: {
-                  ...oldHeaders,
-                  authorization: `Bearer ${getAccessToken()}`,
-                },
-              });
-              const subscriber = {
-                next: observer.next.bind(observer),
-                error: observer.error.bind(observer),
-                complete: observer.complete.bind(observer),
-              };
-              forward(operation).subscribe(subscriber);
-            } else {
-              observer.error(new Error('Authentication failed'));
-            }
-          })
-          .catch((error) => observer.error(error));
-      });
-    }
+// Singleton for access token
+let accessToken: string | null = null;
+export const setApolloAccessToken = (token: string | null) => {
+  accessToken = token;
+};
 
-    if (networkError) console.error('Network error:', networkError);
-  },
-);
-
-const authLink = new ApolloLink((operation, forward) => {
-  operation.setContext(({ headers = {} }) => ({
+// Auth link that injects Authorization header except for currentToken query
+const authLink = setContext((operation, prevContext) => {
+  const isCurrentTokenQuery =
+    operation.operationName === 'currentToken' ||
+    (operation.query &&
+      operation.query.definitions.some(
+        (def: any) =>
+          def.kind === 'OperationDefinition' &&
+          def.selectionSet.selections.some(
+            (sel: any) => sel.name && sel.name.value === 'currentToken',
+          ),
+      ));
+  if (isCurrentTokenQuery) {
+    return { headers: { ...prevContext.headers } };
+  }
+  return {
     headers: {
-      ...headers,
-      authorization: getAccessToken() ? `Bearer ${getAccessToken()}` : '',
+      ...prevContext.headers,
+      ...(accessToken ? { Authorization: `Bearer ${accessToken}` } : {}),
     },
-  }));
-  return forward(operation);
+  };
 });
 
 const httpLink = createHttpLink({
-  uri: 'http://10.161.173.234:4000/graphql',
+  uri: 'http://localhost:4000/graphql',
   credentials: 'include',
 });
 
 const wsLink = new GraphQLWsLink(
   createClient({
-    url: 'ws://10.161.173.234:4000/graphql',
-    connectionParams: () => ({
-      authorization: getAccessToken() ? `Bearer ${getAccessToken()}` : '',
-      // credentials: 'include',
-    }),
+    url: 'ws://localhost:4000/graphql',
+    connectionParams: () =>
+      accessToken ? { Authorization: `Bearer ${accessToken}` } : {},
   }),
 );
 
+const errorLink = onError(({ graphQLErrors, networkError }) => {
+  if (graphQLErrors) {
+    graphQLErrors.forEach(({ message }) => {
+      if (message === 'Unauthorized') {
+        window.location.href = '/auth';
+      }
+    });
+  }
+  if (networkError) console.log(`[Network error]: ${networkError}`);
+});
+
 const splitLink = split(
   ({ query }) => {
-    const definition = getMainDefinition(query);
+    const def = getMainDefinition(query);
     return (
-      definition.kind === 'OperationDefinition' &&
-      definition.operation === 'subscription'
+      def.kind === 'OperationDefinition' && def.operation === 'subscription'
     );
   },
   wsLink,
@@ -86,6 +81,14 @@ export const client = new ApolloClient({
   defaultOptions: {
     watchQuery: {
       fetchPolicy: 'cache-and-network',
+      errorPolicy: 'all',
+    },
+    query: {
+      fetchPolicy: 'network-only',
+      errorPolicy: 'all',
+    },
+    mutate: {
+      errorPolicy: 'all',
     },
   },
 });

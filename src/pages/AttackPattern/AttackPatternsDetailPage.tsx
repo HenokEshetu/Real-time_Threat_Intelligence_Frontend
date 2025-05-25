@@ -13,11 +13,7 @@ export const AttackPatternsDetailPage = () => {
   const { attackPattern, loading, error } = useAttackPatternDetail(id);
 
   const tabs = {
-    titles: [
-      'Detail',
-      'Relationships',
-      'Analysis',
-    ],
+    titles: ['Detail', 'Relationships', 'Analysis'],
     components: [
       <AttackPatternDetail attackPattern={attackPattern} />,
       <div>Knowledge content here</div>,
@@ -27,7 +23,8 @@ export const AttackPatternsDetailPage = () => {
 
   if (loading) return <Loading />;
   if (error) return <ErrorMessage message={error.message} />;
-  if (!attackPattern) return <ErrorMessage message="Attack Pattern not found" />;
+  if (!attackPattern)
+    return <ErrorMessage message="Attack Pattern not found" />;
 
   return (
     <div className="w-full flex flex-col">

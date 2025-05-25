@@ -10,22 +10,20 @@ import { ThemeProvider } from './components/ui/theme-provider';
 
 function App() {
   return (
-    <ApolloProvider client={client}>
-      <BrowserRouter>
-        <AuthProvider>
-          <ThemeProvider
-            attribute="class"
-            defaultTheme="system"
-            enableSystem
-            disableTransitionOnChange
-          >
-            <Layout>
-              <AppRoutes />
-            </Layout>
-          </ThemeProvider>
-        </AuthProvider>
-      </BrowserRouter>
-    </ApolloProvider>
+    <BrowserRouter>
+      <AuthProvider>
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          enableSystem
+          disableTransitionOnChange
+        >
+          <Layout>
+            <AppRoutes />
+          </Layout>
+        </ThemeProvider>
+      </AuthProvider>
+    </BrowserRouter>
   );
 }
 

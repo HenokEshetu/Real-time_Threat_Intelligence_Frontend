@@ -208,11 +208,11 @@ export const URLObservablesPage = () => {
                     <Badge
                       variant="outline"
                       className={`max-w-28 ${getTlpColors(
-                        marking.replaceAll('tlp:', '') ||
-                          url.object_marking_refs[0],
+                        marking.replaceAll('tlp:', ''), //||
+                        // url.object_marking_refs[0],
                       )} border-2 uppercase truncate`}
                     >
-                      {marking || `TLP:${url.object_marking_refs[0]}`}
+                      {/* {marking || `TLP:${url.object_marking_refs[0]}`} */}
                     </Badge>
                   </TableCell>
                   <TableCell className="p-4 max-w-100">

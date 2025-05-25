@@ -3,12 +3,21 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { useArtifact, useUpdateArtifact } from '../../hooks/useArtifacts';
 import { EntityForm } from '../../components/common/EntityForm/EntityForm';
 import { UpdateArtifactInput } from '../../types/artifact';
+import { Loading } from '@/components/common/Loading/Loading';
 
 export const ArtifactEditPage = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const { artifact, loading: loadingArtifact, error: artifactError } = useArtifact(id || '');
-  const { updateArtifact, loading: updating, error: updateError } = useUpdateArtifact();
+  const {
+    artifact,
+    loading: loadingArtifact,
+    error: artifactError,
+  } = useArtifact(id || '');
+  const {
+    updateArtifact,
+    loading: updating,
+    error: updateError,
+  } = useUpdateArtifact();
 
   const handleSubmit = async (values: UpdateArtifactInput) => {
     try {
@@ -20,7 +29,7 @@ export const ArtifactEditPage = () => {
     }
   };
 
-  if (loadingArtifact) return <div>Loading...</div>;
+  if (loadingArtifact) return <Loading />;
   if (artifactError) return <div>Error: {artifactError.message}</div>;
   if (!artifact) return <div>Artifact not found</div>;
 

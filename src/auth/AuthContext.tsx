@@ -1,4 +1,3 @@
-// src/context/AuthContext.tsx
 import React, {
   createContext,
   useContext,
@@ -6,21 +5,12 @@ import React, {
   useEffect,
   useCallback,
   useMemo,
-  SetStateAction,
 } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useApolloClient } from '@apollo/client';
-import {
-  setAccessToken,
-  registerRefreshAuth,
-  getAccessToken,
-} from '../lib/auth';
+import { useApolloClient, gql, useLazyQuery } from '@apollo/client';
+import { useLoginMutation, useSignOutMutation } from '@/lib/auth';
+import { setApolloAccessToken } from '@/lib/apollo';
 import { LoginResponse, User } from './auth.type';
-import {
-  useLoginMutation,
-  useRefreshTokenMutation,
-  useSignOutMutation,
-} from './AuthHook';
 
 interface AuthContextType {
   user: User | null;
@@ -28,37 +18,74 @@ interface AuthContextType {
   isAuthenticated: boolean;
   login: (email: string, password: string) => Promise<void>;
   logout: () => Promise<void>;
+  accessToken: string | null;
+  setAccessToken: (token: string | null) => void;
 }
 
 const AuthContext = createContext<AuthContextType>({} as AuthContextType);
 
 export const useAuth = () => useContext(AuthContext);
 
+const CURRENT_TOKEN_QUERY = gql`
+  query {
+    currentToken {
+      access_token
+      user {
+        userId
+        email
+        firstName
+        lastName
+        role {
+          id
+          name
+          description
+          permissions {
+            id
+            name
+            description
+          }
+        }
+        isEmailVerified
+        deletionRequested
+        createdAt
+        updatedAt
+      }
+    }
+  }
+`;
+
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const apolloClient = useApolloClient();
   const navigate = useNavigate();
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
+  const [accessToken, setAccessTokenState] = useState<string | null>(null);
 
   const [loginMutation] = useLoginMutation();
-  const [refreshTokenMutation] = useRefreshTokenMutation();
   const [signOutMutation] = useSignOutMutation();
-
-  const updateAuthState = useCallback((response?: LoginResponse) => {
-    if (response) {
-      setAccessToken(response.access_token);
-      setUser({
-        userId: response.user.userId,
-        email: response.user.email,
-        firstName: response.user.firstName,
-        lastName: response.user.lastName,
-        role: response.user.role,
-      } as User);
-    } else {
-      setAccessToken(null);
+  const [fetchCurrentToken] = useLazyQuery(CURRENT_TOKEN_QUERY, {
+    fetchPolicy: 'no-cache',
+    onCompleted: (data) => {
+      console.log('currentToken response:', data);
+      if (data?.currentToken?.user) {
+        setUser(data.currentToken.user);
+        setAccessToken(data.currentToken.access_token || null);
+      } else {
+        setUser(null);
+        setAccessToken(null);
+      }
+    },
+    onError: () => {
       setUser(null);
-    }
-  }, []);
+      setAccessToken(null);
+    },
+  });
+
+  // Keep Apollo's singleton in sync
+  const setAccessToken = (token: string | null) => {
+    setAccessTokenState(token);
+    setApolloAccessToken(token);
+  };
 
   const login = useCallback(
     async (email: string, password: string) => {
@@ -68,8 +95,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         });
 
         if (data?.login) {
-          updateAuthState(data.login);
-          await new Promise((resolve) => setTimeout(resolve, 1000));
+          // After login, fetch current token to get user info
+          await fetchCurrentToken();
           navigate('/', { replace: true });
         }
       } catch (error) {
@@ -79,14 +106,16 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         );
       }
     },
-    [loginMutation, navigate, updateAuthState],
+    [loginMutation, navigate, fetchCurrentToken],
   );
 
   const logout = useCallback(async () => {
     try {
-      setAccessToken(null);
       setUser(null);
+      setAccessToken(null);
+      // Clear Apollo cache and store
       await apolloClient.clearStore();
+      await apolloClient.resetStore();
 
       try {
         await signOutMutation();
@@ -94,84 +123,35 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         console.warn('Server-side logout failed:', error);
       }
 
+      // Refetch currentToken to ensure state is cleared
+      try {
+        await fetchCurrentToken({ fetchPolicy: 'network-only' });
+      } catch (e) {
+        // ignore
+      }
+
       navigate('/auth', { replace: true });
     } catch (error) {
       console.error('Logout failed:', error);
       window.location.href = '/auth';
     }
-  }, [apolloClient, navigate, signOutMutation]);
-
-  const refreshAuth = useCallback(async (): Promise<boolean> => {
-    try {
-      const { data } = await refreshTokenMutation();
-
-      if (!data?.refreshToken) {
-        throw new Error('Invalid refresh response');
-      }
-
-      // Clear existing tokens before setting new ones
-      setAccessToken(null);
-      await apolloClient.clearStore();
-
-      // Update auth state with new tokens
-      setAccessToken(data.refreshToken.access_token);
-      setUser(data.refreshToken.user);
-
-      return true;
-    } catch (error) {
-      console.error('Token refresh failed:', error);
-
-      // Force full cleanup
-      setAccessToken(null);
-      setUser(null);
-      await apolloClient.clearStore();
-      localStorage.clear();
-      sessionStorage.clear();
-
-      // Redirect without React Router state
-      window.location.href = '/login';
-      return false;
-    }
-  }, [apolloClient, refreshTokenMutation]);
-
-  useEffect(() => {
-    const checkAuth = async () => {
-      await new Promise((resolve) => setTimeout(resolve, 500)); // Wait for cookies
-      try {
-        if (document.cookie.includes('refresh_token')) {
-          await refreshAuth();
-        }
-      } catch (error) {
-        await logout();
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    checkAuth();
-  }, [logout, refreshAuth]);
-
-  // useEffect(() => {
-  //   registerRefreshAuth(refreshAuth);
-  // }, [refreshAuth]);
+  }, [apolloClient, navigate, signOutMutation, fetchCurrentToken]);
 
   useEffect(() => {
     const initializeAuth = async () => {
+      setLoading(true);
       try {
-        if (getAccessToken()) {
-          if (document.cookie.includes('refresh_token')) {
-            await refreshAuth();
-          }
-        }
+        await fetchCurrentToken();
       } catch (error) {
-        await logout();
+        setUser(null);
       } finally {
         setLoading(false);
       }
     };
 
     initializeAuth();
-  }, [logout, refreshAuth]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const value = useMemo(
     () => ({
@@ -180,8 +160,10 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       isAuthenticated: !!user,
       login,
       logout,
+      accessToken,
+      setAccessToken,
     }),
-    [user, loading, login, logout],
+    [user, loading, login, logout, accessToken],
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

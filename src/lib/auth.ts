@@ -1,38 +1,103 @@
-type RefreshAuthCallback = () => Promise<boolean>;
+import { gql, useMutation } from '@apollo/client';
+import { jwtDecode } from 'jwt-decode';
+import { client } from './apollo';
+import {
+  AuthResponse,
+  LoginDto,
+  LoginResponse,
+  RefreshResponse,
+  User,
+} from '@/auth/auth.type';
+import { use } from 'react';
 
-let accessToken: string | null = null;
-let refreshAuthCallback: RefreshAuthCallback | null = null;
-let refreshQueue: (() => void)[] = [];
-let isRefreshing = false;
+export interface JwtAccessTokenPayload {
+  sub: string;
+  email: string;
+  role: string;
+  iat: number;
+  exp: number;
+}
 
-export const setAccessToken = (token: string | null) => {
-  accessToken = token;
-};
+export const validateAccessToken = (token: string | null): boolean => {
+  if (!token) return false;
 
-export const getAccessToken = () => accessToken;
-
-export const registerRefreshAuth = (callback: RefreshAuthCallback) => {
-  refreshAuthCallback = callback;
-};
-
-export const refreshAuth = async (): Promise<boolean> => {
-  if (!refreshAuthCallback) return false;
-
-  if (isRefreshing) {
-    return new Promise((resolve) => {
-      refreshQueue.push(() => resolve(refreshAuth()));
-    });
-  }
-
-  isRefreshing = true;
   try {
-    const success = await refreshAuthCallback();
-    if (success) {
-      refreshQueue.forEach((cb) => cb());
-      refreshQueue = [];
-    }
-    return success;
-  } finally {
-    isRefreshing = false;
+    const decoded = jwtDecode<JwtAccessTokenPayload>(token);
+    const now = Date.now() / 1000;
+    return decoded.exp > now;
+  } catch (error) {
+    console.error('Token validation failed:', error);
+    return false;
   }
+};
+
+export const getTokenExpiration = (token: string): number | null => {
+  try {
+    const decoded = jwtDecode<JwtAccessTokenPayload>(token);
+    return decoded.exp * 1000; // Convert to milliseconds
+  } catch (error) {
+    console.error('Token decoding failed:', error);
+    return null;
+  }
+};
+
+export const useRefreshAuth = () => {
+  const REFRESH_TOKEN_MUTATION = gql`
+    mutation RefreshToken {
+      refreshToken {
+        access_token
+        user {
+          userId
+          email
+        }
+      }
+    }
+  `;
+  return useMutation(REFRESH_TOKEN_MUTATION);
+};
+
+export const useLoginMutation = () => {
+  const LOGIN_MUTATION = gql`
+    mutation Login($input: LoginDto!) {
+      login(input: $input) {
+        access_token
+        refresh_token
+        user {
+          userId
+          email
+          firstName
+          lastName
+          isEmailVerified
+          deletionRequested
+          createdAt
+          updatedAt
+          role {
+            id
+            name
+            description
+            permissions {
+              id
+              name
+              description
+            }
+          }
+        }
+      }
+    }
+  `;
+  return useMutation<{ login: LoginResponse }, { input: LoginDto }>(
+    LOGIN_MUTATION,
+  );
+};
+
+export const useSignOutMutation = () => {
+  const SIGNOUT_MUTATION = gql`
+    mutation SignOut {
+      signOut {
+        success
+        message
+      }
+    }
+  `;
+  return useMutation<{ signOut: AuthResponse }>(SIGNOUT_MUTATION);
 };

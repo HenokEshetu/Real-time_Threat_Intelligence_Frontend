@@ -1,24 +1,26 @@
-import React from "react";
-import { useQuery } from "@apollo/client";
-import { useParams, useNavigate } from "react-router-dom";
-import { GET_REPORT } from "@/graphql/report/report";
-import { EntityDistributionChart } from "../HorizontalBarChart";
-import { Radarchart } from "../RadarChart";
+import React from 'react';
+import { useQuery } from '@apollo/client';
+import { useParams, useNavigate } from 'react-router-dom';
+import { GET_REPORT } from '@/graphql/report/report';
+import { EntityDistributionChart } from '../HorizontalBarChart';
+import { Radarchart } from '../RadarChart';
+import { Loading } from '../Loading/Loading';
 
 const mockEntityDistribution = [
-  { label: "Attack Pattern", value: 17 },
-  { label: "Malware", value: 6 },
+  { label: 'Attack Pattern', value: 17 },
+  { label: 'Malware', value: 6 },
 ];
 
-const mockPatternType = "STIX";
-const mockMarking = "TLP:MARKING-DEFINITION--F15985A1-8F5E-5969-B76F-25ECC8181911";
-const mockLabels = ["network activity", "misp-attribute"]; // <-- add this line
+const mockPatternType = 'STIX';
+const mockMarking =
+  'TLP:MARKING-DEFINITION--F15985A1-8F5E-5969-B76F-25ECC8181911';
+const mockLabels = ['network activity', 'misp-attribute']; // <-- add this line
 const mockRadarData = [
-  { feeling: "Strongly Disagree", level: 186 },
-  { feeling: "Disagree", level: 305 },
-  { feeling: "Neutral", level: 237 },
-  { feeling: "Agree", level: 273 },
-  { feeling: "Strongly Agree", level: 209 },
+  { feeling: 'Strongly Disagree', level: 186 },
+  { feeling: 'Disagree', level: 305 },
+  { feeling: 'Neutral', level: 237 },
+  { feeling: 'Agree', level: 273 },
+  { feeling: 'Strongly Agree', level: 209 },
 ];
 
 const ReportDetail: React.FC = () => {
@@ -27,11 +29,7 @@ const ReportDetail: React.FC = () => {
   const { data, loading, error } = useQuery(GET_REPORT, { variables: { id } });
 
   if (loading) {
-    return (
-      <div className="flex items-center justify-center min-h-[40vh]">
-        <span className="text-gray-400">Loading...</span>
-      </div>
-    );
+    return <Loading />;
   }
   if (error || !data?.report) {
     return (
@@ -46,20 +44,21 @@ const ReportDetail: React.FC = () => {
   // Use backend data if available, fallback to mock
   const patternType = report.pattern_type || mockPatternType;
   const marking =
-    (report.object_marking_refs && report.object_marking_refs.length > 0
+    report.object_marking_refs && report.object_marking_refs.length > 0
       ? report.object_marking_refs[0]
-      : mockMarking);
-  const labels = report.labels && report.labels.length > 0 ? report.labels : mockLabels;
-  const createdBy = report.created_by_ref || "-";
+      : mockMarking;
+  const labels =
+    report.labels && report.labels.length > 0 ? report.labels : mockLabels;
+  const createdBy = report.created_by_ref || '-';
   const lastUpdated = report.modified
     ? new Date(report.modified).toLocaleDateString()
     : new Date().toLocaleDateString();
   const created = report.created
     ? new Date(report.created).toLocaleString()
-    : "-";
+    : '-';
   const modified = report.modified
     ? new Date(report.modified).toLocaleString()
-    : "-";
+    : '-';
 
   return (
     <div className="w-full flex flex-col gap-8 px-3">
@@ -71,12 +70,18 @@ const ReportDetail: React.FC = () => {
             <div className="flex flex-row gap-6 h-full">
               {/* Description, Report types, Publication date */}
               <div className="flex-1 min-w-0 flex flex-col">
-                <h2 className="text-base font-semibold text-foreground mb-2">Description</h2>
+                <h2 className="text-base font-semibold text-foreground mb-2">
+                  Description
+                </h2>
                 <div className="text-md font-normal text-slate-600 mb-4">
-                  {report.description || <span className="text-gray-400">No description.</span>}
+                  {report.description || (
+                    <span className="text-gray-400">No description.</span>
+                  )}
                 </div>
                 <div className="mb-4">
-                  <h2 className="text-base font-semibold text-foreground mb-2">Report types</h2>
+                  <h2 className="text-base font-semibold text-foreground mb-2">
+                    Report types
+                  </h2>
                   <div className="flex flex-wrap gap-2">
                     {report.report_types && report.report_types.length > 0 ? (
                       report.report_types.map((type: string) => (
@@ -93,26 +98,34 @@ const ReportDetail: React.FC = () => {
                   </div>
                 </div>
                 <div>
-                  <h2 className="text-base font-semibold text-foreground mb-1">Publication date</h2>
+                  <h2 className="text-base font-semibold text-foreground mb-1">
+                    Publication date
+                  </h2>
                   <div className="text-xs text-blue-900 font-mono">
                     {report.published
                       ? new Date(report.published).toLocaleString(undefined, {
-                          year: "numeric",
-                          month: "long",
-                          day: "numeric",
-                          hour: "2-digit",
-                          minute: "2-digit",
-                          second: "2-digit",
+                          year: 'numeric',
+                          month: 'long',
+                          day: 'numeric',
+                          hour: '2-digit',
+                          minute: '2-digit',
+                          second: '2-digit',
                         })
-                      : "-"}
+                      : '-'}
                   </div>
                 </div>
               </div>
               {/* Entity Distribution Chart */}
               <div className="flex-1 flex flex-col">
-                <h2 className="text-base font-semibold text-foreground mb-2">Entities Distribution</h2> 
+                <h2 className="text-base font-semibold text-foreground mb-2">
+                  Entities Distribution
+                </h2>
                 <div className="flex-1 flex items-center">
-                  <EntityDistributionChart data={mockEntityDistribution} height={180} title="" />
+                  <EntityDistributionChart
+                    data={mockEntityDistribution}
+                    height={180}
+                    title=""
+                  />
                 </div>
               </div>
             </div>
@@ -120,18 +133,18 @@ const ReportDetail: React.FC = () => {
         </div>
         {/* Right container: Basic Information with radar chart and labels */}
         <div className="flex-1 min-w-0 bg-white rounded-lg p-5 border border-gray-300 flex flex-col gap-4 max-w-full items-stretch">
-            <h2 className="text-base font-semibold text-foreground mb-2">Basic Information</h2>
+          <h2 className="text-base font-semibold text-foreground mb-2">
+            Basic Information
+          </h2>
           <div className="space-y-4 p-2 flex-1">
             <div className="flex flex-row gap-4">
               {/* Pattern Type column (like IndicatorDetail) */}
               <div className="w-[48%]">
                 <h2 className="font-bold text-sm mb-2">Pattern Type</h2>
                 <span className="bg-blue-100 text-blue-800 border border-blue-800 py-1 px-5 rounded text-sm text-center uppercase">
-                  {
-                    Array.isArray(patternType)
-                      ? patternType.join(', ')
-                      : patternType || '-'
-                  }
+                  {Array.isArray(patternType)
+                    ? patternType.join(', ')
+                    : patternType || '-'}
                 </span>
               </div>
               <div className="w-[48%]">
@@ -161,9 +174,9 @@ const ReportDetail: React.FC = () => {
                     <span
                       key={label}
                       className={`px-2 py-1 rounded text-xs font-semibold border ${
-                        label === "network activity"
-                          ? "bg-pink-100 text-pink-600 border-pink-400"
-                          : "bg-blue-100 text-blue-600 border-blue-400"
+                        label === 'network activity'
+                          ? 'bg-pink-100 text-pink-600 border-pink-400'
+                          : 'bg-blue-100 text-blue-600 border-blue-400'
                       }`}
                     >
                       {label}
@@ -188,12 +201,10 @@ const ReportDetail: React.FC = () => {
             </div>
             <div className="space-y-1 text-sm">
               <div>
-                <strong>Created:</strong>{" "}
-                {created}
+                <strong>Created:</strong> {created}
               </div>
               <div>
-                <strong>Modified:</strong>{" "}
-                {modified}
+                <strong>Modified:</strong> {modified}
               </div>
             </div>
           </div>

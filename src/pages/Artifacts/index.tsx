@@ -5,6 +5,7 @@ import { SearchBar } from '../../components/filters/SearchBar/SearchBar';
 import { EntityCard } from '@/components/common/EntityCard/EntityCard';
 import { ContentViewer } from '../../components/common/ContentViewer/ContentViewer';
 import { Artifact } from '../../types/artifact';
+import { Loading } from '@/components/common/Loading/Loading';
 
 export const ArtifactsPage = () => {
   const navigate = useNavigate(); // Initialize navigate
@@ -23,7 +24,7 @@ export const ArtifactsPage = () => {
     navigate(`/artifact/${id}`); // Navigate to artifact detail page
   };
 
-  if (loading && !artifacts.length) return <div>Loading artifacts...</div>;
+  if (loading && !artifacts.length) return <Loading />;
   if (error) return <div>Error loading artifacts: {error.message}</div>;
 
   return (

@@ -31,12 +31,14 @@ import {
   AlertTriangle,
   FileText,
 } from 'lucide-react';
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { MapContainer, TileLayer, useMap, GeoJSON } from 'react-leaflet';
 import L from 'leaflet';
 
 // countries.json is imported and visualized in the map below
 import countries from './Location/countries.json';
+import { gql, useQuery } from '@apollo/client';
+import { Loading } from '@/components/common/Loading/Loading';
 
 // delete L.Icon.Default.prototype._getIconUrl;
 L.Icon.Default.mergeOptions({
@@ -175,6 +177,64 @@ export const Dashboard = () => {
   const position: [number, number] = [0, 0];
   const zoom = 1;
 
+  const totalThreatActorQuery = gql`
+    query GetThreatActorCount {
+      searchThreatActors(page: 1, pageSize: 1) {
+        total
+      }
+    }
+  `;
+
+  const threatActorIn24hQuery = gql`
+    query ThreatActorsLast24Hours($timestamp: String!) {
+      searchThreatActors(
+        filters: {
+          created: $timestamp # Replace with a dynamic 24h-old timestamp
+        }
+        page: 1
+        pageSize: 1
+      ) {
+        total # Number of threat actors created in the last 24 hours
+      }
+    }
+  `;
+
+  const totalIntrusionSetQuery = gql`
+    query GetIntrusionSetCount {
+      searchIntrusionSets(page: 1, pageSize: 1) {
+        total
+      }
+    }
+  `;
+
+  const [twentyFourHoursAgo, setTwentyFourHoursAgo] = useState('');
+
+  useEffect(() => {
+    // Calculate 24 hours ago timestamp
+    const date = new Date();
+    date.setHours(date.getHours() - 24);
+    setTwentyFourHoursAgo(date.toISOString());
+  }, []);
+
+  const {
+    data: totalData,
+    loading: totalLoading,
+    error: totalError,
+  } = useQuery(totalThreatActorQuery);
+
+  // Fetch 24h threat actors
+  const {
+    data: last24hData,
+    loading: last24hLoading,
+    error: last24hError,
+  } = useQuery(threatActorIn24hQuery, {
+    variables: { timestamp: twentyFourHoursAgo },
+  });
+
+  if (totalLoading || last24hLoading) return <Loading />;
+  if (totalError) return <div>Error: {totalError.message}</div>;
+  if (last24hError) return <div>Error: {last24hError.message}</div>;
+
   return (
     <div className="w-full p-6 space-y-6 mx-auto">
       {/* Summary Cards Grid */}
@@ -184,11 +244,13 @@ export const Dashboard = () => {
             <CardHeader className="flex flex-row items-center justify-between">
               {item.icon}
               <Badge variant="outline" className="text-green-600">
-                +{item.daily}
+                +{last24hData?.searchThreatActors?.total || 0}
               </Badge>
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">{item.total}</div>
+              <div className="text-2xl font-bold">
+                {totalData?.searchThreatActors?.total || 0}
+              </div>
               <p className="text-xs text-muted-foreground">{item.title}</p>
             </CardContent>
           </Card>

@@ -11,8 +11,8 @@ export const SearchBar = ({ className = '' }: { className: string }) => {
     <div className={`relative ${className}`}>
       <SearchIcon className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
       <Input
-        placeholder="Search indicators..."
-        className="h-10 w-130 pl-9 bg-white border text-gray-800 focus:ring-2 focus:ring-gray-300"
+        placeholder="Search ..."
+        className="h-10 w-130 pl-9 bg-white border text-forground focus:ring-2 focus:ring-gray-300"
         value={searchTerm}
         onChange={(e) => handleSearch(e.target.value)}
       />

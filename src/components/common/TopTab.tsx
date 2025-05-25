@@ -18,7 +18,7 @@ export const TopTab = ({
   rootPath,
 }: {
   tabs?: TabsType;
-  
+
   triggerStyle?: string;
   listStyle?: string;
   containerStyle?: string;

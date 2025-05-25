@@ -1,17 +1,18 @@
-import React from "react";
-import { useQuery } from "@apollo/client";
-import { useParams, useNavigate } from "react-router-dom";
-import { GET_TOOL } from "@/graphql/tool/queries";
-import { WrenchIcon } from "lucide-react";
+import React from 'react';
+import { useQuery } from '@apollo/client';
+import { useParams, useNavigate } from 'react-router-dom';
+import { GET_TOOL } from '@/graphql/tool/queries';
+import { WrenchIcon } from 'lucide-react';
+import { Loading } from '../Loading/Loading';
 
 // Mock/fallbacks for missing fields
-const mockLabels = ["malware", "reconnaissance"];
+const mockLabels = ['malware', 'reconnaissance'];
 const mockRadarData = [
-  { feeling: "Strongly Disagree", level: 186 },
-  { feeling: "Disagree", level: 305 },
-  { feeling: "Neutral", level: 237 },
-  { feeling: "Agree", level: 273 },
-  { feeling: "Strongly Agree", level: 209 },
+  { feeling: 'Strongly Disagree', level: 186 },
+  { feeling: 'Disagree', level: 305 },
+  { feeling: 'Neutral', level: 237 },
+  { feeling: 'Agree', level: 273 },
+  { feeling: 'Strongly Agree', level: 209 },
 ];
 
 const ToolDetail: React.FC = () => {
@@ -20,11 +21,7 @@ const ToolDetail: React.FC = () => {
   const { data, loading, error } = useQuery(GET_TOOL, { variables: { id } });
 
   if (loading) {
-    return (
-      <div className="flex items-center justify-center min-h-[40vh]">
-        <span className="text-gray-400">Loading...</span>
-      </div>
-    );
+    return <Loading />;
   }
   if (error || !data?.tool) {
     return (
@@ -36,24 +33,24 @@ const ToolDetail: React.FC = () => {
 
   const tool = data.tool;
 
-  const labels = tool.labels && tool.labels.length > 0 ? tool.labels : mockLabels;
-  const createdBy = tool.created_by_ref || "-";
+  const labels =
+    tool.labels && tool.labels.length > 0 ? tool.labels : mockLabels;
+  const createdBy = tool.created_by_ref || '-';
   const lastUpdated = tool.modified
     ? new Date(tool.modified).toLocaleDateString()
     : new Date().toLocaleDateString();
-  const created = tool.created
-    ? new Date(tool.created).toLocaleString()
-    : "-";
+  const created = tool.created ? new Date(tool.created).toLocaleString() : '-';
   const modified = tool.modified
     ? new Date(tool.modified).toLocaleString()
-    : "-";
+    : '-';
   const aliases = tool.aliases && tool.aliases.length > 0 ? tool.aliases : [];
-  const toolTypes = tool.tool_types && tool.tool_types.length > 0 ? tool.tool_types : [];
-  const toolVersion = tool.tool_version || "-";
-  const confidence = tool.confidence !== undefined ? tool.confidence : "-";
-  const revoked = tool.revoked ? "Yes" : "No";
-  const specVersion = tool.spec_version || "-";
-  const lang = tool.lang || "-";
+  const toolTypes =
+    tool.tool_types && tool.tool_types.length > 0 ? tool.tool_types : [];
+  const toolVersion = tool.tool_version || '-';
+  const confidence = tool.confidence !== undefined ? tool.confidence : '-';
+  const revoked = tool.revoked ? 'Yes' : 'No';
+  const specVersion = tool.spec_version || '-';
+  const lang = tool.lang || '-';
 
   return (
     <div className="w-full flex flex-col gap-8 px-3">
@@ -65,12 +62,18 @@ const ToolDetail: React.FC = () => {
             <div className="flex flex-row gap-6 h-full">
               {/* Description, Aliases, Tool Types, Version */}
               <div className="flex-1 min-w-0 flex flex-col">
-                <h2 className="text-base font-semibold text-foreground mb-2">Description</h2>
+                <h2 className="text-base font-semibold text-foreground mb-2">
+                  Description
+                </h2>
                 <div className="text-md font-normal text-slate-600 mb-4">
-                  {tool.description || <span className="text-gray-400">No description.</span>}
+                  {tool.description || (
+                    <span className="text-gray-400">No description.</span>
+                  )}
                 </div>
                 <div className="mb-4">
-                  <h2 className="text-base font-semibold text-foreground mb-2">Aliases</h2>
+                  <h2 className="text-base font-semibold text-foreground mb-2">
+                    Aliases
+                  </h2>
                   <div className="flex flex-wrap gap-2">
                     {aliases.length > 0 ? (
                       aliases.map((alias: string) => (
@@ -87,7 +90,9 @@ const ToolDetail: React.FC = () => {
                   </div>
                 </div>
                 <div className="mb-4">
-                  <h2 className="text-base font-semibold text-foreground mb-2">Tool Types</h2>
+                  <h2 className="text-base font-semibold text-foreground mb-2">
+                    Tool Types
+                  </h2>
                   <div className="flex flex-wrap gap-2">
                     {toolTypes.length > 0 ? (
                       toolTypes.map((type: string) => (
@@ -104,7 +109,9 @@ const ToolDetail: React.FC = () => {
                   </div>
                 </div>
                 <div className="mb-4">
-                  <h2 className="text-base font-semibold text-foreground mb-2">Tool Version</h2>
+                  <h2 className="text-base font-semibold text-foreground mb-2">
+                    Tool Version
+                  </h2>
                   <div className="text-sm text-blue-900 font-mono">
                     {toolVersion}
                   </div>
@@ -116,7 +123,9 @@ const ToolDetail: React.FC = () => {
         </div>
         {/* Right container: Basic Information */}
         <div className="flex-1 min-w-0 bg-white rounded-lg p-5 border border-gray-300 flex flex-col gap-4 max-w-full items-stretch">
-          <h2 className="text-base font-semibold text-foreground mb-2">Basic Information</h2>
+          <h2 className="text-base font-semibold text-foreground mb-2">
+            Basic Information
+          </h2>
           <div className="space-y-4 p-2 flex-1">
             <div className="flex flex-row gap-4">
               <div className="w-[48%]">
@@ -149,9 +158,9 @@ const ToolDetail: React.FC = () => {
                     <span
                       key={label}
                       className={`px-2 py-1 rounded text-xs font-semibold border ${
-                        label === "malware"
-                          ? "bg-pink-100 text-pink-600 border-pink-400"
-                          : "bg-blue-100 text-blue-600 border-blue-400"
+                        label === 'malware'
+                          ? 'bg-pink-100 text-pink-600 border-pink-400'
+                          : 'bg-blue-100 text-blue-600 border-blue-400'
                       }`}
                     >
                       {label}
@@ -176,16 +185,13 @@ const ToolDetail: React.FC = () => {
             </div>
             <div className="space-y-1 text-sm">
               <div>
-                <strong>Created:</strong>{" "}
-                {created}
+                <strong>Created:</strong> {created}
               </div>
               <div>
-                <strong>Modified:</strong>{" "}
-                {modified}
+                <strong>Modified:</strong> {modified}
               </div>
               <div>
-                <strong>Language:</strong>{" "}
-                {lang}
+                <strong>Language:</strong> {lang}
               </div>
             </div>
           </div>

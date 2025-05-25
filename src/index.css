@@ -150,6 +150,11 @@
   z-index: 50 !important;
 }
 
+[data-radix-toast-viewport],
+[data-radix-alert-dialog-content] {
+  z-index: 2000 !important;
+}
+
 @layer base {
   * {
     border-color: var(--border);

@@ -1,27 +1,24 @@
-import React from "react";
-import { useParams, useNavigate } from "react-router-dom";
-import { useThreatActorDetail } from "@/hooks/useThreatActors";
-import { Radarchart } from "../RadarChart";
+import React from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
+import { useThreatActorDetail } from '@/hooks/useThreatActors';
+import { Radarchart } from '../RadarChart';
+import { Loading } from '../Loading/Loading';
 
 const mockRadarData = [
-  { feeling: "Strongly Disagree", level: 186 },
-  { feeling: "Disagree", level: 305 },
-  { feeling: "Neutral", level: 237 },
-  { feeling: "Agree", level: 273 },
-  { feeling: "Strongly Agree", level: 209 },
+  { feeling: 'Strongly Disagree', level: 186 },
+  { feeling: 'Disagree', level: 305 },
+  { feeling: 'Neutral', level: 237 },
+  { feeling: 'Agree', level: 273 },
+  { feeling: 'Strongly Agree', level: 209 },
 ];
 
 const ThreatActorDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const { threatActor, loading, error } = useThreatActorDetail(id || "");
+  const { threatActor, loading, error } = useThreatActorDetail(id || '');
 
   if (loading) {
-    return (
-      <div className="flex items-center justify-center min-h-[40vh]">
-        <span className="text-gray-400">Loading...</span>
-      </div>
-    );
+    return <Loading />;
   }
   if (error || !threatActor) {
     return (
@@ -34,35 +31,42 @@ const ThreatActorDetail: React.FC = () => {
   const actor = threatActor;
 
   const marking =
-    (actor.object_marking_refs && actor.object_marking_refs.length > 0
+    actor.object_marking_refs && actor.object_marking_refs.length > 0
       ? actor.object_marking_refs[0]
-      : "-");
+      : '-';
   const labels = actor.labels && actor.labels.length > 0 ? actor.labels : [];
-  const createdBy = actor.created_by_ref || "-";
+  const createdBy = actor.created_by_ref || '-';
   const lastUpdated = actor.modified
     ? new Date(actor.modified).toLocaleDateString()
     : new Date().toLocaleDateString();
   const created = actor.created
     ? new Date(actor.created).toLocaleString()
-    : "-";
+    : '-';
   const modified = actor.modified
     ? new Date(actor.modified).toLocaleString()
-    : "-";
+    : '-';
   const firstSeen = actor.first_seen
     ? new Date(actor.first_seen).toLocaleString()
-    : "-";
+    : '-';
   const lastSeen = actor.last_seen
     ? new Date(actor.last_seen).toLocaleString()
-    : "-";
-  const aliases = actor.aliases && actor.aliases.length > 0 ? actor.aliases : [];
+    : '-';
+  const aliases =
+    actor.aliases && actor.aliases.length > 0 ? actor.aliases : [];
   const roles = actor.roles && actor.roles.length > 0 ? actor.roles : [];
   const goals = actor.goals && actor.goals.length > 0 ? actor.goals : [];
-  const threatActorTypes = actor.threat_actor_types && actor.threat_actor_types.length > 0 ? actor.threat_actor_types : [];
-  const sophistication = actor.sophistication || "-";
-  const resourceLevel = actor.resource_level || "-";
-  const primaryMotivation = actor.primary_motivation || "-";
-  const secondaryMotivations = actor.secondary_motivations && actor.secondary_motivations.length > 0 ? actor.secondary_motivations : [];
-  const personalMotivations = actor.personal_motivations || "-";
+  const threatActorTypes =
+    actor.threat_actor_types && actor.threat_actor_types.length > 0
+      ? actor.threat_actor_types
+      : [];
+  const sophistication = actor.sophistication || '-';
+  const resourceLevel = actor.resource_level || '-';
+  const primaryMotivation = actor.primary_motivation || '-';
+  const secondaryMotivations =
+    actor.secondary_motivations && actor.secondary_motivations.length > 0
+      ? actor.secondary_motivations
+      : [];
+  const personalMotivations = actor.personal_motivations || '-';
 
   return (
     <div className="w-full flex flex-col gap-8 px-3">
@@ -74,12 +78,18 @@ const ThreatActorDetail: React.FC = () => {
             <div className="flex flex-row gap-6 h-full">
               {/* Description, Aliases, Goals, First/Last Seen */}
               <div className="flex-1 min-w-0 flex flex-col">
-                <h2 className="text-base font-semibold text-foreground mb-2">Description</h2>
+                <h2 className="text-base font-semibold text-foreground mb-2">
+                  Description
+                </h2>
                 <div className="text-md font-normal text-slate-600 mb-4">
-                  {actor.description || <span className="text-gray-400">No description.</span>}
+                  {actor.description || (
+                    <span className="text-gray-400">No description.</span>
+                  )}
                 </div>
                 <div className="mb-4">
-                  <h2 className="text-base font-semibold text-foreground mb-2">Aliases</h2>
+                  <h2 className="text-base font-semibold text-foreground mb-2">
+                    Aliases
+                  </h2>
                   <div className="flex flex-wrap gap-2">
                     {aliases.length > 0 ? (
                       aliases.map((alias: string) => (
@@ -96,7 +106,9 @@ const ThreatActorDetail: React.FC = () => {
                   </div>
                 </div>
                 <div className="mb-4">
-                  <h2 className="text-base font-semibold text-foreground mb-2">Goals</h2>
+                  <h2 className="text-base font-semibold text-foreground mb-2">
+                    Goals
+                  </h2>
                   <div className="flex flex-wrap gap-2">
                     {goals.length > 0 ? (
                       goals.map((goal: string, idx: number) => (
@@ -114,12 +126,20 @@ const ThreatActorDetail: React.FC = () => {
                 </div>
                 <div className="flex flex-row gap-4">
                   <div>
-                    <h2 className="text-base font-semibold text-foreground mb-1">First Seen</h2>
-                    <div className="text-xs text-blue-900 font-mono">{firstSeen}</div>
+                    <h2 className="text-base font-semibold text-foreground mb-1">
+                      First Seen
+                    </h2>
+                    <div className="text-xs text-blue-900 font-mono">
+                      {firstSeen}
+                    </div>
                   </div>
                   <div>
-                    <h2 className="text-base font-semibold text-foreground mb-1">Last Seen</h2>
-                    <div className="text-xs text-blue-900 font-mono">{lastSeen}</div>
+                    <h2 className="text-base font-semibold text-foreground mb-1">
+                      Last Seen
+                    </h2>
+                    <div className="text-xs text-blue-900 font-mono">
+                      {lastSeen}
+                    </div>
                   </div>
                 </div>
               </div>
@@ -129,13 +149,17 @@ const ThreatActorDetail: React.FC = () => {
         </div>
         {/* Right container: Basic Information */}
         <div className="flex-1 min-w-0 bg-white rounded-lg p-5 border border-gray-300 flex flex-col gap-4 max-w-full items-stretch">
-          <h2 className="text-base font-semibold text-foreground mb-2">Basic Information</h2>
+          <h2 className="text-base font-semibold text-foreground mb-2">
+            Basic Information
+          </h2>
           <div className="space-y-4 p-2 flex-1">
             <div className="flex flex-row gap-4">
               <div className="w-[48%]">
                 <h2 className="font-bold text-sm mb-2">Threat Actor Types</h2>
                 <span className="bg-indigo-100 text-indigo-800 border border-indigo-800 py-1 px-5 rounded text-sm text-center uppercase">
-                  {threatActorTypes.length > 0 ? threatActorTypes.join(', ') : '-'}
+                  {threatActorTypes.length > 0
+                    ? threatActorTypes.join(', ')
+                    : '-'}
                 </span>
               </div>
               <div className="w-[48%]">
@@ -188,36 +212,32 @@ const ThreatActorDetail: React.FC = () => {
             </div>
             <div className="space-y-1 text-sm">
               <div>
-                <strong>Created:</strong>{" "}
-                {created}
+                <strong>Created:</strong> {created}
               </div>
               <div>
-                <strong>Modified:</strong>{" "}
-                {modified}
+                <strong>Modified:</strong> {modified}
               </div>
               <div>
-                <strong>Roles:</strong>{" "}
-                {roles.length > 0 ? roles.join(', ') : "-"}
+                <strong>Roles:</strong>{' '}
+                {roles.length > 0 ? roles.join(', ') : '-'}
               </div>
               <div>
-                <strong>Sophistication:</strong>{" "}
-                {sophistication}
+                <strong>Sophistication:</strong> {sophistication}
               </div>
               <div>
-                <strong>Resource Level:</strong>{" "}
-                {resourceLevel}
+                <strong>Resource Level:</strong> {resourceLevel}
               </div>
               <div>
-                <strong>Primary Motivation:</strong>{" "}
-                {primaryMotivation}
+                <strong>Primary Motivation:</strong> {primaryMotivation}
               </div>
               <div>
-                <strong>Secondary Motivations:</strong>{" "}
-                {secondaryMotivations.length > 0 ? secondaryMotivations.join(', ') : "-"}
+                <strong>Secondary Motivations:</strong>{' '}
+                {secondaryMotivations.length > 0
+                  ? secondaryMotivations.join(', ')
+                  : '-'}
               </div>
               <div>
-                <strong>Personal Motivations:</strong>{" "}
-                {personalMotivations}
+                <strong>Personal Motivations:</strong> {personalMotivations}
               </div>
             </div>
           </div>

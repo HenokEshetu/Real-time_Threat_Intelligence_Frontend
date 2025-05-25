@@ -22,6 +22,7 @@ import {
   TargetIcon,
   MapPinIcon,
   GlobeIcon,
+  BellIcon,
 } from 'lucide-react';
 import { Link, useLocation } from 'react-router-dom';
 import { cn } from '@/lib/utils';
@@ -64,6 +65,8 @@ import {
   AlertDialogDescription,
   AlertDialogFooter,
   AlertDialogHeader,
+  AlertDialogOverlay,
+  AlertDialogPortal,
   AlertDialogTitle,
   AlertDialogTrigger,
 } from '../ui/alert-dialog';
@@ -171,6 +174,7 @@ export const Layout = ({ children }: { children: React.ReactNode }) => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [toogleDropdown, setToggleDropdown] = useState(true);
   const [isDashboard, setIsDashboard] = useState(false);
+  // const {}
 
   useEffect(() => {
     setIsDashboard(location.pathname === '/');
@@ -210,14 +214,45 @@ export const Layout = ({ children }: { children: React.ReactNode }) => {
               <div className="flex items-center w-180">
                 <img src={logo} className="w-13 h-13 rounded-full" />
                 <h1 className="text-5xl font-semibold hidden md:block ml-2">
-                         ዳጉ
+                  ዳጉ
                 </h1>
                 <SearchBar className="ml-18" />
               </div>
               <Breadcrumb className="hidden md:flex ml-4" />
             </div>
             <div className="flex items-center gap-2">
-              {/* Theme toggle */}
+              <DropdownMenu>
+                <DropdownMenuTrigger>
+                  <BellIcon />
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end">
+                  <DropdownMenuItem>
+                    <div className="flex flex-col">
+                      <span className="text-sm font-medium">Notifications</span>
+                      <span className="text-xs text-muted-foreground">
+                        No new notifications
+                      </span>
+                    </div>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem>
+                    <Link to="/notifications" className="w-full">
+                      View All Notifications
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem>
+                    <Link to="/settings" className="w-full">
+                      Settings
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem>
+                    <Link to="/help" className="w-full">
+                      Help
+                    </Link>
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
               <DropdownMenu>
                 <DropdownMenuTrigger>
                   <Button variant="outline" size="icon">
@@ -297,21 +332,24 @@ export const Layout = ({ children }: { children: React.ReactNode }) => {
                         </DropdownMenuItem>
                       </AlertDialogTrigger>
 
-                      <AlertDialogContent>
-                        <AlertDialogHeader>
-                          <AlertDialogTitle>Confirm Logout</AlertDialogTitle>
-                          <AlertDialogDescription>
-                            Are you sure you want to log out? You'll need to
-                            sign in again to access your account.
-                          </AlertDialogDescription>
-                        </AlertDialogHeader>
-                        <AlertDialogFooter>
-                          <AlertDialogCancel>Cancel</AlertDialogCancel>
-                          <AlertDialogAction onClick={() => logout()}>
-                            Yes, log me out
-                          </AlertDialogAction>
-                        </AlertDialogFooter>
-                      </AlertDialogContent>
+                      <AlertDialogPortal>
+                        <AlertDialogOverlay className="z-[9999] bg-black/50" />
+                        <AlertDialogContent className="z-[10000]">
+                          <AlertDialogHeader>
+                            <AlertDialogTitle>Confirm Logout</AlertDialogTitle>
+                            <AlertDialogDescription>
+                              Are you sure you want to log out? You'll need to
+                              sign in again to access your account.
+                            </AlertDialogDescription>
+                          </AlertDialogHeader>
+                          <AlertDialogFooter>
+                            <AlertDialogCancel>Cancel</AlertDialogCancel>
+                            <AlertDialogAction onClick={() => logout()}>
+                              Yes, log me out
+                            </AlertDialogAction>
+                          </AlertDialogFooter>
+                        </AlertDialogContent>
+                      </AlertDialogPortal>
                     </AlertDialog>
                   )}
                 </DropdownMenuContent>

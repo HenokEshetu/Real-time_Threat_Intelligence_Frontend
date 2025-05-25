@@ -10,5 +10,5 @@ export const Login = () => {
         <LoginCard />
       </div>
     </div>
-  )
+  );
 };
