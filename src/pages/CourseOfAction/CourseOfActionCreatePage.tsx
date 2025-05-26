@@ -36,7 +36,7 @@ const initialState: Partial<CourseOfAction> = {
   relationship: [],
 };
 
-const CourseOfActionCreatePage: React.FC = () => {
+export const CourseOfActionCreatePage: React.FC = () => {
   const [form, setForm] = useState<Partial<CourseOfAction>>(initialState);
   const [labelInput, setLabelInput] = useState("");
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
@@ -236,5 +236,3 @@ const CourseOfActionCreatePage: React.FC = () => {
     </div>
   );
 };
-
-export default CourseOfActionCreatePage;

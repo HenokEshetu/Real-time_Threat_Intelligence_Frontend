@@ -111,10 +111,21 @@ import IdentityEditPage from './pages/Identity/IdentityEditPage';
 import IdentityDetailPage from './pages/Identity/IdentityDetailPage';
 import ArtifactDetailPage from './pages/Artifacts/ArtifactDetailPage';
 import ArtifactCreatePage from './pages/Artifacts/ArtifactCreatePage';
+
 import { ToolsCreatePage } from './pages/Tools/ToolsCreatePage';
 import { ToolsEditPage } from './pages/Tools/ToolsEditPage';
 import { ToolsDetailPage } from './pages/Tools/ToolsDetailPage';
 import ToolsPage from "@/pages/Tools/ToolsPage";
+
+import VulnerabilityCreatePage from './pages/Vulnerability/VulnerabilityCreatePage';
+import VulnerabilityEditPage from './pages/Vulnerability/VulnerabilityEditPage';
+import VulnerabilityDetailPage from './pages/Vulnerability/VulnerabilityDetailPage';
+import VulnerabilityPage from '@/pages/Vulnerability/VulnerabilityPage';
+
+import { CourseOfActionCreatePage } from './pages/CourseOfAction/CourseOfActionCreatePage';
+import { CourseOfActionEditPage } from './pages/CourseOfAction/CourseOfActionEditPage';
+import { CourseOfActionDetailPage } from './pages/CourseOfAction/CourseOfActionDetailPage';
+import CourseOfActionPage from "@/pages/CourseOfAction/CourseOfActionPage";
 
 export const AppRoutes = () => {
   return (
@@ -652,9 +663,40 @@ export const AppRoutes = () => {
         element={<ProtectedRoute children={<ToolsEditPage />} />}
       />
 
+      {/* Course of Action routes */}
       <Route
-        path="/tools/:id"
-        element={<ProtectedRoute children={<ToolsDetailPage />} />}
+        path="/courseofaction"
+        element={<ProtectedRoute children={<CourseOfActionPage />} />}
+      />
+      <Route
+        path="/courseofaction/create"
+        element={<ProtectedRoute children={<CourseOfActionCreatePage />} />}
+      />
+      <Route
+        path="/courseofaction/:id/edit"
+        element={<ProtectedRoute children={<CourseOfActionEditPage />} />}
+      />
+      <Route
+        path="/courseofaction/:id"
+        element={<ProtectedRoute children={<CourseOfActionDetailPage />} />}
+      />
+
+      <Route
+        path="/vulnerabilities"
+        element={<ProtectedRoute children={<VulnerabilityPage />} />}
+      />
+      <Route
+        path="/vulnerabilities/create"
+        element={<ProtectedRoute children={<VulnerabilityCreatePage />} />}
+      />
+      <Route
+        path="/vulnerabilities/:id/edit"
+        element={<ProtectedRoute children={<VulnerabilityEditPage />} />}
+      />
+
+      <Route
+        path="/vulnerabilities/:id"
+        element={<ProtectedRoute children={<VulnerabilityDetailPage />} />}
       />
       <Route
         path="/relationships"
