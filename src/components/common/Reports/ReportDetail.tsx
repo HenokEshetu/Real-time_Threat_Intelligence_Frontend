@@ -5,6 +5,7 @@ import { EntityDistributionChart } from '../HorizontalBarChart';
 import { Radarchart } from '../RadarChart';
 import { Loading } from '../Loading/Loading';
 import { GET_REPORT } from '@/graphql/report/queries';
+import { Trash2 } from 'lucide-react';
 
 const mockEntityDistribution = [
   { label: 'Attack Pattern', value: 17 },
@@ -14,7 +15,7 @@ const mockEntityDistribution = [
 const mockPatternType = 'STIX';
 const mockMarking =
   'TLP:MARKING-DEFINITION--F15985A1-8F5E-5969-B76F-25ECC8181911';
-const mockLabels = ['network activity', 'misp-attribute']; // <-- add this line
+const mockLabels = ['network activity', 'misp-attribute'];
 const mockRadarData = [
   { feeling: 'Strongly Disagree', level: 186 },
   { feeling: 'Disagree', level: 305 },
@@ -266,7 +267,6 @@ const ReportDetail: React.FC = () => {
           if (id) navigate(`/reports/${id}/edit`);
         }}
       >
-        {/* Modern interactive pencil-square icon (Heroicons style) */}
         <svg
           xmlns="http://www.w3.org/2000/svg"
           className="w-7 h-7 transition-transform duration-150 group-hover:scale-110 group-active:scale-95"

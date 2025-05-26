@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useMutation } from '@apollo/client';
+import { CREATE_REPORT } from '@/graphql/report/mutations';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Select, SelectTrigger, SelectContent, SelectItem, SelectValue } from '@/components/ui/select';
@@ -33,9 +35,20 @@ const MARKING_LABELS = [
   'TLP:RED',
 ];
 
+type FormState = {
+  name: string;
+  published: string;
+  report_types: string;
+  reliability: string;
+  confidence: number;
+  confidenceLevel: string;
+  description: string;
+  markingLabels: string;
+};
+
 export const ReportsCreatePage = () => {
   const navigate = useNavigate();
-  const [values, setValues] = useState({
+  const [values, setValues] = useState<FormState>({
     name: '',
     published: '',
     report_types: '',
@@ -46,8 +59,10 @@ export const ReportsCreatePage = () => {
     markingLabels: '',
   });
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
+  const [success, setSuccess] = useState(false);
+  const [createReport, { loading, error }] = useMutation(CREATE_REPORT);
 
-  const handleChange = (field: string, value: any) => {
+  const handleChange = (field: keyof FormState, value: any) => {
     setValues((prev) => ({ ...prev, [field]: value }));
     setErrors((prev) => ({ ...prev, [field]: '' }));
   };
@@ -60,12 +75,6 @@ export const ReportsCreatePage = () => {
     if (!values.reliability) newErrors.reliability = 'This field is required';
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
-  };
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!validate()) return;
-    // submit logic here
   };
 
   const getConfidenceLabel = (val: number) => {
@@ -105,6 +114,42 @@ export const ReportsCreatePage = () => {
         confidenceLevel: value as string,
         confidence: getConfidenceValue(value as string),
       }));
+    }
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setSuccess(false);
+    if (!validate()) return;
+
+    // Convert published to ISO string
+    let publishedISO = values.published;
+    if (values.published && !values.published.endsWith('Z')) {
+      publishedISO = new Date(values.published).toISOString();
+    }
+
+    try {
+      await createReport({
+        variables: {
+          input: {
+            name: values.name,
+            published: publishedISO,
+            report_types: [values.report_types],
+            description: values.description,
+            confidence: values.confidence,
+            labels: values.markingLabels ? [values.markingLabels] : [],
+            // Add other fields as needed
+            object_refs: [],
+            authors: [],
+          },
+        },
+      });
+      setSuccess(true);
+      setTimeout(() => {
+        navigate('/reports');
+      }, 1200);
+    } catch (err) {
+      // Error handled by Apollo
     }
   };
 
@@ -306,7 +351,11 @@ export const ReportsCreatePage = () => {
         </div>
         {/* Submit */}
         <div className="pt-2">
-          <Button type="submit" variant="default" className="w-full">Create</Button>
+          <Button type="submit" variant="default" className="w-full" disabled={loading}>
+            {loading ? 'Creating...' : 'Create'}
+          </Button>
+          {success && <div className="text-green-600 mt-2">Report created successfully!</div>}
+          {error && <div className="text-destructive mt-2">{error.message}</div>}
         </div>
       </form>
     </div>

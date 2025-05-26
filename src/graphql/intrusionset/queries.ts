@@ -35,7 +35,7 @@ export const INTRUSIONSET_QUERY = gql`
       object_marking_refs
       revoked
       lang
-      enrichment
+      
       extensions
       relationship {
         id
@@ -55,7 +55,7 @@ export const INTRUSIONSET_QUERY = gql`
           url
           external_id
         }
-        enrichment
+        
         labels
         revoked
         created_by_ref
@@ -109,7 +109,7 @@ export const SEARCH_INTRUSIONSETS = gql`
         object_marking_refs
         revoked
         lang
-        enrichment
+        
         extensions
         relationship {
           id
@@ -129,7 +129,7 @@ export const SEARCH_INTRUSIONSETS = gql`
             url
             external_id
           }
-          enrichment
+          
           labels
           revoked
           created_by_ref

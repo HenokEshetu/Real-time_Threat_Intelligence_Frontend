@@ -16,7 +16,7 @@ import { CampaignsEditPage } from './pages/Campaigns/CampaignsEditPage';
 import { ReportsPage } from './pages/Reports/ReportsPage';
 import { ReportDetailPage } from './pages/Reports/ReportDetailPage';
 import { ReportsEditPage } from './pages/Reports/ReportsEditPage';
-import { ReportsCreatePage } from './pages/Reports/ReportsCreatePage';
+import { ReportsCreatePage } from './pages/Reports/ReportCreatePage';
 import CreateThreatActor from './pages/ThreatActors/ThreatActorCreatePage';
 import ThreatActorDetail from './pages/ThreatActors/ThreatActorDetailPage';
 import EditThreatActor from './pages/ThreatActors/ThreatActorEditPage';
@@ -126,6 +126,11 @@ import { CourseOfActionCreatePage } from './pages/CourseOfAction/CourseOfActionC
 import { CourseOfActionEditPage } from './pages/CourseOfAction/CourseOfActionEditPage';
 import { CourseOfActionDetailPage } from './pages/CourseOfAction/CourseOfActionDetailPage';
 import CourseOfActionPage from "@/pages/CourseOfAction/CourseOfActionPage";
+
+import IntrusionSetPage from './pages/IntrusionSet/IntrusionSetPage';
+import IntrusionSetCreatePage from './pages/IntrusionSet/IntrusionSetCreatePage';
+import IntrusionSetEditPage from './pages/IntrusionSet/IntrusionSetEditPage';
+import IntrusionSetDetailPage from './pages/IntrusionSet/IntrusionSetDetailPage';
 
 export const AppRoutes = () => {
   return (
@@ -661,6 +666,26 @@ export const AppRoutes = () => {
       <Route
         path="/tools/:id/edit"
         element={<ProtectedRoute children={<ToolsEditPage />} />}
+      />
+      <Route
+        path="/tools/:id"
+        element={<ProtectedRoute children={<ToolsDetailPage />} />}
+      />
+      <Route
+        path="/intrusionsets"
+        element={<ProtectedRoute children={<IntrusionSetPage />} />}
+      />
+      <Route
+        path="/intrusionsets/create"
+        element={<ProtectedRoute children={<IntrusionSetCreatePage />} />}
+      />
+      <Route
+        path="/intrusionsets/:id/edit"
+        element={<ProtectedRoute children={<IntrusionSetEditPage />} />}
+      />
+      <Route
+        path="/intrusionsets/:id"
+        element={<ProtectedRoute children={<IntrusionSetDetailPage />} />}
       />
 
       {/* Course of Action routes */}

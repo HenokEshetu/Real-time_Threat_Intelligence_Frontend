@@ -26,6 +26,7 @@ import {
   Wrench,
   TriangleAlert,
   TrendingUp,
+  SwordIcon,
 } from 'lucide-react';
 import { Link, useLocation } from 'react-router-dom';
 import { cn } from '@/lib/utils';
@@ -140,6 +141,11 @@ const menuItems: MenuItem[] = [
     path: '/courseofaction',
   },
   {
+    text: 'Intrusion Sets',
+    icon: <SwordIcon className="h-5 w-5" />,
+    path: '/intrusionsets',
+  },
+  {
     text: 'Identity',
     icon: <UserIcon className="h-5 w-5" />,
     path: '/identities',
@@ -237,7 +243,7 @@ export const Layout = ({ children }: { children: React.ReactNode }) => {
                   className="w-13 h-13 rounded-full"
                 />
                 <h1 className="text-5xl font-semibold hidden md:block ml-2">
-                  ዳጉ
+                   ዳጉ
                 </h1>
                 <SearchBar className="ml-18" />
               </div>
