@@ -92,9 +92,9 @@ import { AuthProvider } from './auth/AuthContext';
 import { ProtectedRoute } from './auth/ProtectedRoute';
 import { CampaignDetailPage } from './pages/Campaigns/CampaignsDetailPage';
 
-import MalwaresPage from '@/pages/Malware/MalwaresPage';
+import { MalwaresPage } from '@/pages/Malware/MalwaresPage';
 import { MalwaresCreatePage } from '@/pages/Malware/MalwaresCreatePage';
-import MalwaresDetailPage from '@/pages/Malware/MalwaresDetailPage';
+import { MalwaresDetailPage } from '@/pages/Malware/MalwaresDetailPage';
 import { AttackPatternsPage } from './pages/AttackPattern/AttackPatternsPage';
 import { AttackPatternsDetailPage } from './pages/AttackPattern/AttackPatternsDetailPage';
 

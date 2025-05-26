@@ -36,6 +36,23 @@ const authLink = setContext((operation, prevContext) => {
   };
 });
 
+const errorLink = onError(({ graphQLErrors, networkError, operation }) => {
+  if (graphQLErrors) {
+    graphQLErrors.forEach(({ message }) => {
+      if (message === 'Unauthorized') {
+        window.location.href = '/auth';
+      }
+    });
+  }
+
+  if (networkError) {
+    console.error(`[Network error]: ${networkError}`);
+    if ('statusCode' in networkError && networkError.statusCode === 401) {
+      window.location.href = '/auth';
+    }
+  }
+});
+
 const httpLink = createHttpLink({
   uri: 'http://localhost:4000/graphql',
   credentials: 'include',
@@ -44,21 +61,11 @@ const httpLink = createHttpLink({
 const wsLink = new GraphQLWsLink(
   createClient({
     url: 'ws://localhost:4000/graphql',
-    connectionParams: () =>
-      accessToken ? { Authorization: `Bearer ${accessToken}` } : {},
+    connectionParams: () => ({
+      ...(accessToken ? { Authorization: `Bearer ${accessToken}` } : {}),
+    }),
   }),
 );
-
-const errorLink = onError(({ graphQLErrors, networkError }) => {
-  if (graphQLErrors) {
-    graphQLErrors.forEach(({ message }) => {
-      if (message === 'Unauthorized') {
-        window.location.href = '/auth';
-      }
-    });
-  }
-  if (networkError) console.log(`[Network error]: ${networkError}`);
-});
 
 const splitLink = split(
   ({ query }: { query: any }) => {
@@ -75,16 +82,8 @@ export const client = new ApolloClient({
   link: splitLink,
   cache: new InMemoryCache(),
   defaultOptions: {
-    watchQuery: {
-      fetchPolicy: 'cache-and-network',
-      errorPolicy: 'all',
-    },
-    query: {
-      fetchPolicy: 'network-only',
-      errorPolicy: 'all',
-    },
-    mutate: {
-      errorPolicy: 'all',
-    },
+    watchQuery: { fetchPolicy: 'cache-and-network', errorPolicy: 'all' },
+    query: { fetchPolicy: 'network-only', errorPolicy: 'all' },
+    mutate: { errorPolicy: 'all' },
   },
 });

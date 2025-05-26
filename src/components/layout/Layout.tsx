@@ -70,6 +70,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from '../ui/alert-dialog';
+import { Toaster } from 'sonner';
 
 interface MenuItem {
   text: string;
@@ -202,6 +203,7 @@ export const Layout = ({ children }: { children: React.ReactNode }) => {
       {isAuthenticated && (
         <>
           <header className="sticky top-0 z-40 w-full h-17 border-b bg-background px-4 py-2 flex items-center justify-between">
+            <Toaster position="top-right" richColors expand={true} />
             <div className="flex items-center gap-2">
               <Button
                 variant="ghost"
