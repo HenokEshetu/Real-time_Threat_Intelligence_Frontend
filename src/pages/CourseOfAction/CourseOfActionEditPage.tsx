@@ -3,7 +3,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import { useCourseOfActionDetail, useUpdateCourseOfAction } from "@/hooks/useCourseOfAction";
 import type { CourseOfAction } from "@/types/courseofaction";
 
-const CourseOfActionEditPage: React.FC = () => {
+export const CourseOfActionEditPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const { courseOfAction, loading: loadingDetail } = useCourseOfActionDetail(id);
   const { updateCourseOfAction, loading } = useUpdateCourseOfAction();

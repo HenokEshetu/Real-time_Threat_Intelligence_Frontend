@@ -5,6 +5,13 @@ import { useCourseOfActionDetail } from "@/hooks/useCourseOfAction";
 const mockLabels: string[] = ["mitigation", "patch"];
 const mockMarkings: string[] = ["TLP:CLEAR"];
 
+const LargeDash = () => (
+  <span className="text-2xl text-gray-300 font-bold">—</span>
+);
+
+const renderValue = (value: any) =>
+  value !== undefined && value !== null && value !== "" ? value : <LargeDash />;
+
 const CourseOfActionDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
@@ -27,21 +34,23 @@ const CourseOfActionDetail: React.FC = () => {
 
   const coa = courseOfAction;
 
-  const name = coa.name || "-";
-  const description = coa.description || "-";
-  const action = coa.action || "-";
-  const actionType = coa.action_type || "-";
-  const actionReference = coa.action_reference || "-";
-  const actionBin = coa.action_bin || "-";
-  const confidence = coa.confidence ?? "-";
-  const createdBy = coa.created_by_ref || "-";
-  const created = coa.created ? new Date(coa.created).toLocaleString() : "-";
-  const modified = coa.modified ? new Date(coa.modified).toLocaleString() : "-";
-  const labels = coa.labels && coa.labels.length > 0 ? coa.labels : mockLabels;
-  const markings = coa.object_marking_refs && coa.object_marking_refs.length > 0 ? coa.object_marking_refs : mockMarkings;
-  const revoked = coa.revoked ? "Yes" : "No";
-  const lang = coa.lang || "-";
-  const extensions = coa.extensions || "-";
+  const name = renderValue(coa.name);
+  const description = renderValue(coa.description);
+  const action = renderValue(coa.action);
+  const actionType = renderValue(coa.action_type);
+  const actionReference = renderValue(coa.action_reference);
+  const actionBin = renderValue(coa.action_bin);
+  const confidence = coa.confidence !== undefined && coa.confidence !== null ? coa.confidence : <LargeDash />;
+  const createdBy = renderValue(coa.created_by_ref);
+  const created = coa.created ? new Date(coa.created).toLocaleString() : <LargeDash />;
+  const modified = coa.modified ? new Date(coa.modified).toLocaleString() : <LargeDash />;
+  const labels = coa.labels && coa.labels.length > 0 ? coa.labels : [<LargeDash key="label-dash" />];
+  const markings = coa.object_marking_refs && coa.object_marking_refs.length > 0 ? coa.object_marking_refs : [<LargeDash key="marking-dash" />];
+  const revoked = coa.revoked !== undefined && coa.revoked !== null ? (coa.revoked ? "Yes" : "No") : <LargeDash />;
+  const lang = renderValue(coa.lang);
+  const extensions = coa.extensions !== undefined && coa.extensions !== null
+    ? (typeof coa.extensions === "string" ? coa.extensions : JSON.stringify(coa.extensions))
+    : <LargeDash />;
   const relationships = coa.relationship || [];
   const externalReferences = coa.external_references || [];
 
@@ -54,7 +63,7 @@ const CourseOfActionDetail: React.FC = () => {
               <div className="flex-1 min-w-0 flex flex-col">
                 <h2 className="text-base font-semibold text-foreground mb-2">Description</h2>
                 <div className="text-md font-normal text-slate-600 mb-4">
-                  {description || <span className="text-gray-400">No description.</span>}
+                  {description}
                 </div>
                 <div className="mb-4">
                   <h2 className="text-base font-semibold text-foreground mb-2">Action</h2>
@@ -84,7 +93,7 @@ const CourseOfActionDetail: React.FC = () => {
               <div className="w-[48%]">
                 <h2 className="font-bold text-sm mb-2">Marking</h2>
                 <span className="bg-gray-100 text-gray-800 border border-gray-800 py-1 px-5 rounded text-sm text-center uppercase">
-                  {markings.join(", ")}
+                  {Array.isArray(markings) ? markings.join(", ") : markings}
                 </span>
               </div>
               <div className="w-[48%]">
@@ -97,14 +106,20 @@ const CourseOfActionDetail: React.FC = () => {
             <div className="flex flex-col gap-2">
               <h2 className="font-semibold text-base mb-2">Labels</h2>
               <div className="flex flex-wrap gap-2">
-                {labels.map((label: string) => (
-                  <span
-                    key={label}
-                    className="px-2 py-1 rounded text-xs font-semibold border bg-blue-100 text-blue-600 border-blue-400"
-                  >
-                    {label}
-                  </span>
-                ))}
+                {Array.isArray(labels)
+                  ? labels.map((label: any, idx: number) =>
+                      typeof label === "string" ? (
+                        <span
+                          key={label}
+                          className="px-2 py-1 rounded text-xs font-semibold border bg-blue-100 text-blue-600 border-blue-400"
+                        >
+                          {label}
+                        </span>
+                      ) : (
+                        <span key={idx}>{label}</span>
+                      )
+                    )
+                  : labels}
               </div>
             </div>
             <div className="space-y-1 text-sm">
@@ -121,11 +136,10 @@ const CourseOfActionDetail: React.FC = () => {
                 <strong>Language:</strong> {lang}
               </div>
               <div>
-                <strong>Confidence:</strong> {confidence}
+                <strong>Confidence:</strong> {confidence !== undefined && confidence !== null && confidence !== "" ? confidence : <LargeDash />}
               </div>
               <div>
-                <strong>Extensions:</strong>{" "}
-                {typeof extensions === "string" ? extensions : JSON.stringify(extensions)}
+                <strong>Extensions:</strong> {extensions}
               </div>
             </div>
           </div>
@@ -147,10 +161,10 @@ const CourseOfActionDetail: React.FC = () => {
             <tbody>
               {relationships.map((rel: any, idx: number) => (
                 <tr key={idx} className="border-b hover:bg-slate-50">
-                  <td className="p-2">{rel.id}</td>
-                  <td className="p-2">{rel.source_ref}</td>
-                  <td className="p-2">{rel.target_ref}</td>
-                  <td className="p-2">{rel.type}</td>
+                  <td className="p-2">{renderValue(rel.id)}</td>
+                  <td className="p-2">{renderValue(rel.source_ref)}</td>
+                  <td className="p-2">{renderValue(rel.target_ref)}</td>
+                  <td className="p-2">{renderValue(rel.type)}</td>
                 </tr>
               ))}
             </tbody>
@@ -173,9 +187,13 @@ const CourseOfActionDetail: React.FC = () => {
               {externalReferences.map((ref: any, idx: number) => (
                 <tr key={idx} className="border-b hover:bg-slate-50">
                   <td className="p-2">
-                    <span className="bg-blue-50 text-blue-600 border border-blue-400 rounded px-2 py-1 text-xs font-semibold">
-                      {ref.source_name}
-                    </span>
+                    {ref.source_name
+                      ? (
+                        <span className="bg-blue-50 text-blue-600 border border-blue-400 rounded px-2 py-1 text-xs font-semibold">
+                          {ref.source_name}
+                        </span>
+                      )
+                      : <LargeDash />}
                   </td>
                   <td className="p-2">
                     {ref.url ? (
@@ -188,15 +206,11 @@ const CourseOfActionDetail: React.FC = () => {
                         {ref.url}
                       </a>
                     ) : (
-                      <span className="text-gray-400">-</span>
+                      <LargeDash />
                     )}
                   </td>
                   <td className="p-2">
-                    {ref.description ? (
-                      <span>{ref.description}</span>
-                    ) : (
-                      <span className="text-gray-400">-</span>
-                    )}
+                    {renderValue(ref.description)}
                   </td>
                 </tr>
               ))}

@@ -3,12 +3,16 @@ import { SEARCH_IDENTITIES, IDENTITY_QUERY } from '../graphql/identity/queries';
 import { CREATE_IDENTITY, UPDATE_IDENTITY, DELETE_IDENTITY } from '../graphql/identity/mutations';
 
 // List/search identities
-export const useIdentities = ({ filters = undefined, page = 1, pageSize = 20 } = {}) => {
-  // Always send filters, but as null if not provided or empty
+export const useIdentities = ({
+  filters = undefined,
+  page = 1,
+  pageSize = 20,
+} = {}) => {
+  // Only include 'filters' in variables if it's defined and not empty
   const variables: any = {
-    filters: (filters && Object.keys(filters).length > 0) ? filters : null,
     page,
     pageSize,
+    ...(filters && Object.keys(filters).length > 0 ? { filters } : {}),
   };
 
   const { data, loading, error, fetchMore } = useQuery(SEARCH_IDENTITIES, {
@@ -20,15 +24,17 @@ export const useIdentities = ({ filters = undefined, page = 1, pageSize = 20 } =
   const identities = data?.searchIdentities
     ? {
         ...data.searchIdentities,
-        results: data.searchIdentities.results.map((i: any) => ({
-          ...i,
-          sectors: i.sectors ?? [],
-          roles: i.roles ?? [],
-          labels: i.labels ?? [],
-          external_references: i.external_references ?? [],
-          object_marking_refs: i.object_marking_refs ?? [],
-          relationship: i.relationship ?? [],
-        })),
+        results: Array.isArray(data.searchIdentities.results)
+          ? data.searchIdentities.results.map((i: any) => ({
+              ...i,
+              sectors: i.sectors ?? [],
+              roles: i.roles ?? [],
+              labels: i.labels ?? [],
+              external_references: i.external_references ?? [],
+              object_marking_refs: i.object_marking_refs ?? [],
+              relationship: i.relationship ?? [],
+            }))
+          : [],
       }
     : undefined;
 

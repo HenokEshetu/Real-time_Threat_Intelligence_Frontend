@@ -23,6 +23,9 @@ import {
   MapPinIcon,
   GlobeIcon,
   BellIcon,
+  Wrench,
+  TriangleAlert,
+  TrendingUp,
 } from 'lucide-react';
 import { Link, useLocation } from 'react-router-dom';
 import { cn } from '@/lib/utils';
@@ -41,7 +44,6 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { SearchBar } from '@/components/common/SearchBar';
 import { Breadcrumb } from '@/components/ui/breadcrumb';
 import { TopContainer } from '@/components/common/TopContainer';
-import logo from '@/static/images/favicon.png';
 import {
   SidebarMenu,
   SidebarMenuButton,
@@ -107,6 +109,11 @@ const menuItems: MenuItem[] = [
     ],
   },
   {
+    text: 'Vulnerabilities',
+    icon: <TriangleAlert className="h-5 w-5" />,
+    path: '/vulnerabilities',
+  },
+  {
     text: 'Attack Patterns',
     icon: <TargetIcon className="h-5 w-5" />,
     path: '/attack-patterns',
@@ -128,9 +135,19 @@ const menuItems: MenuItem[] = [
     path: '/campaigns',
   },
   {
+    text: 'Courses of Action',
+    icon: <TrendingUp className="h-5 w-5" />,
+    path: '/courseofaction',
+  },
+  {
     text: 'Identity',
     icon: <UserIcon className="h-5 w-5" />,
     path: '/identities',
+  },
+  {
+    text: 'Tools',
+    icon: <Wrench className="h-5 w-5" />,
+    path: '/tools',
   },
   {
     text: 'Data',
@@ -214,7 +231,11 @@ export const Layout = ({ children }: { children: React.ReactNode }) => {
                 <MenuIcon className="h-5 w-5" />
               </Button>
               <div className="flex items-center w-180">
-                <img src={logo} className="w-13 h-13 rounded-full" />
+                <img
+                  src="/src/static/images/favicon.png"
+                  alt=""
+                  className="w-13 h-13 rounded-full"
+                />
                 <h1 className="text-5xl font-semibold hidden md:block ml-2">
                   ዳጉ
                 </h1>
@@ -285,9 +306,9 @@ export const Layout = ({ children }: { children: React.ReactNode }) => {
                     className="p-0 rounded-full focus-visible:ring-offset-0"
                   >
                     <Avatar className="h-8 w-8">
-                      <AvatarImage src={user?.avatarUrl} alt={user?.email} />
+                      <AvatarImage alt={user?.email} />
                       <AvatarFallback>
-                        {user?.email?.[0].toUpperCase() || 'U'}
+                        {user?.email?.[0]?.toUpperCase() || 'U'}
                       </AvatarFallback>
                     </Avatar>
                   </Button>

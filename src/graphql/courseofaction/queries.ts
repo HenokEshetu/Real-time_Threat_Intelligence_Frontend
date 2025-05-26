@@ -27,7 +27,7 @@ export const COURSE_OF_ACTION_QUERY = gql`
       lang
       object_marking_refs
       revoked
-      enrichment
+      
       extensions
       relationship {
         id
@@ -52,7 +52,7 @@ export const COURSE_OF_ACTION_QUERY = gql`
         created_by_ref
         start_time
         stop_time
-        enrichment
+        
       }
     }
   }
@@ -90,7 +90,7 @@ export const SEARCH_COURSES_OF_ACTION = gql`
         lang
         object_marking_refs
         revoked
-        enrichment
+        
         extensions
         relationship {
           id
@@ -115,7 +115,7 @@ export const SEARCH_COURSES_OF_ACTION = gql`
           created_by_ref
           start_time
           stop_time
-          enrichment
+          
         }
       }
     }

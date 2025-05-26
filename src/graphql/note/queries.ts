@@ -10,20 +10,7 @@ export const GET_NOTE = gql`
       content_type
       created
       created_by_ref
-      enrichment {
-        abuseipdb
-        asn
-        dns
-        geo
-        hybrid
-        misp
-        shodan
-        ssl
-        threatcrowd
-        threatfox
-        virustotal
-        whois
-      }
+
       extensions
       external_references {
         description
@@ -43,20 +30,7 @@ export const GET_NOTE = gql`
         created
         created_by_ref
         description
-        enrichment {
-          abuseipdb
-          asn
-          dns
-          geo
-          hybrid
-          misp
-          shodan
-          ssl
-          threatcrowd
-          threatfox
-          virustotal
-          whois
-        }
+
         extensions
         external_references {
           description
@@ -101,20 +75,7 @@ export const SEARCH_NOTES = gql`
         content_type
         created
         created_by_ref
-        enrichment {
-          abuseipdb
-          asn
-          dns
-          geo
-          hybrid
-          misp
-          shodan
-          ssl
-          threatcrowd
-          threatfox
-          virustotal
-          whois
-        }
+ 
         extensions
         external_references {
           description
@@ -134,20 +95,7 @@ export const SEARCH_NOTES = gql`
           created
           created_by_ref
           description
-          enrichment {
-            abuseipdb
-            asn
-            dns
-            geo
-            hybrid
-            misp
-            shodan
-            ssl
-            threatcrowd
-            threatfox
-            virustotal
-            whois
-          }
+
           extensions
           external_references {
             description

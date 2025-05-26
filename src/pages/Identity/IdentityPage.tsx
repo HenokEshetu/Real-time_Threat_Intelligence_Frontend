@@ -1,196 +1,256 @@
 import React, { useState } from "react";
-import { useIdentities } from "@/hooks/useIdentity";
-import { Card, CardContent, CardTitle, CardDescription } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { UserCircle2 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { useIdentities } from "@/hooks/useIdentity";
+import { Badge } from "@/components/ui/badge";
+import { Skeleton } from "@/components/ui/skeleton";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { Button } from "@/components/ui/button";
+import { ChevronsLeft, ChevronsRight, UserCircle2 } from "lucide-react";
 import type { Identity } from "@/types/identity";
 
-const borderColors = [
-  "border-l-8 border-blue-400",
-  "border-l-8 border-green-400",
-  "border-l-8 border-purple-400",
-  "border-l-8 border-pink-400",
-  "border-l-8 border-yellow-400",
-  "border-l-8 border-cyan-400",
-  "border-l-8 border-rose-400",
-  "border-l-8 border-indigo-400",
-];
-
-const sectorColors = [
-  "bg-blue-100 text-blue-700",
-  "bg-green-100 text-green-700",
-  "bg-purple-100 text-purple-700",
-  "bg-pink-100 text-pink-700",
-  "bg-yellow-100 text-yellow-700",
-  "bg-cyan-100 text-cyan-700",
-  "bg-rose-100 text-rose-700",
-  "bg-indigo-100 text-indigo-700",
-];
-
-const labelColors = [
-  "bg-blue-50 text-blue-600 border-blue-400",
-  "bg-green-50 text-green-600 border-green-400",
-  "bg-yellow-50 text-yellow-600 border-yellow-400",
-  "bg-purple-50 text-purple-600 border-purple-400",
-  "bg-pink-50 text-pink-600 border-pink-400",
-  "bg-gray-100 text-gray-600 border-gray-400",
-];
-
-let availableLabelColors = [...labelColors];
-const getRandomLabelColor = () => {
-  if (availableLabelColors.length === 0) availableLabelColors = [...labelColors];
-  const idx = Math.floor(Math.random() * availableLabelColors.length);
-  const color = availableLabelColors[idx];
-  availableLabelColors.splice(idx, 1);
-  return color;
+// Helper for TLP/marking color
+const getTlpColors = (tlp: string) => {
+  switch (tlp?.toUpperCase()) {
+    case 'WHITE':
+      return 'bg-white text-black border-black';
+    case 'GREEN':
+      return 'bg-green-200 text-green-800 border-green-800';
+    case 'AMBER':
+      return 'bg-yellow-200 text-yellow-800 border-yellow-800';
+    case 'RED':
+      return 'bg-red-200 text-red-800 border-red-800';
+    default:
+      return 'bg-gray-200 text-gray-800 border-gray-800';
+  }
 };
 
-export const IdentityListPage: React.FC = () => {
-  const { identities, loading, error } = useIdentities({});
-  const [hoveredCard, setHoveredCard] = useState<string | null>(null);
+export const IdentityPage = () => {
   const navigate = useNavigate();
-  const labelColorMap = React.useRef<Map<string, string>>(new Map());
+  const [currentPage, setCurrentPage] = useState(1);
+  const pageSize = 20;
 
-  if (loading) return (
-    <div className="flex items-center justify-center h-screen">
-      <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-900"></div>
-    </div>
-  );
+  const { identities, loading, error } = useIdentities({
+    filters: undefined,
+    page: currentPage,
+    pageSize,
+  });
 
-  if (error) return (
-    <div className="bg-red-50 p-4 rounded-lg text-red-600 flex flex-col items-center justify-center">
-      <div>Error loading identities. Please try again later.</div>
-      <div className="text-xs mt-2 text-red-400">
-        {error.message}
-      </div>
-    </div>
-  );
+  const total = identities?.total || 0;
+  const totalPages = Math.max(1, Math.ceil(total / pageSize));
 
-  const results = identities?.results || [];
+  const handleViewIdentity = (id: string) => navigate(`/identities/${id}`);
 
-  if (!loading && results.length === 0) {
+  const handlePageChange = (newPage: number) => {
+    setCurrentPage(Math.max(1, Math.min(newPage, totalPages)));
+  };
+
+  if (loading && (!identities || !identities.results)) {
     return (
-      <div className="flex items-center justify-center h-96 text-gray-500">
-        No identities found.
+      <div className="w-full px-4 py-6 space-y-4">
+        <Skeleton className="h-8 w-48" />
+        <Skeleton className="h-10 w-full" />
+        <div className="space-y-4">
+          {[...Array(10)].map((_, i) => (
+            <Skeleton key={i} className="h-12 w-full rounded-md" />
+          ))}
+        </div>
       </div>
     );
   }
 
-  return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 p-6 min-h-screen bg-gradient-to-br from-gray-50 via-blue-50 to-white">
-      {results.map((identity: Identity, idx: number) => {
-        const isHovered = hoveredCard === identity.id;
-        const borderColor = borderColors[idx % borderColors.length];
-        // Defensive: ensure arrays are always arrays
-        const sectors = Array.isArray(identity.sectors) ? identity.sectors : [];
-        const labels = Array.isArray(identity.labels) ? identity.labels : [];
-        const relationships = Array.isArray(identity.relationship) ? identity.relationship : [];
-        const displayLabels = Array.from(new Set(labels)).slice(0, 3);
-        const extraLabelCount = labels.length - displayLabels.length;
-        const displaySectors = Array.from(new Set(sectors)).slice(0, 3);
-        const extraSectorCount = sectors.length - displaySectors.length;
-        const relCount = relationships.length;
+  if (error) {
+    return (
+      <div className="container py-6">
+        <Alert variant="destructive">
+          <AlertDescription>
+            Error loading identities: {error.message || "Unknown error"}
+          </AlertDescription>
+        </Alert>
+      </div>
+    );
+  }
 
-        return (
-          <Card
-            key={identity.id}
-            className={`relative overflow-visible shadow-md transition-all duration-300 cursor-pointer bg-white/90 hover:shadow-xl hover:scale-[1.015] ${borderColor} ${isHovered ? "ring-2 ring-blue-300" : ""}`}
-            onMouseEnter={() => setHoveredCard(identity.id)}
-            onMouseLeave={() => setHoveredCard(null)}
-            onClick={() => navigate(`/identity/${identity.id}`)}
-          >
-            {/* Floating avatar */}
-            <div className="absolute -left-8 -top-8 z-20">
-              <div className="rounded-full bg-gradient-to-br from-blue-200 to-blue-400 shadow-lg w-16 h-16 flex items-center justify-center border-4 border-white">
-                {identity.name ? (
-                  <span className="text-2xl font-bold text-white">{identity.name[0].toUpperCase()}</span>
-                ) : (
-                  <UserCircle2 className="w-10 h-10 text-white" />
-                )}
-              </div>
-            </div>
-            <CardContent className="pt-10 pl-10 pr-6 pb-6 flex flex-col h-full">
-              <div className="flex justify-between items-center mb-2">
-                <CardTitle className="text-lg font-semibold truncate">
-                  {identity.name || <span className="text-gray-400">Unnamed</span>}
-                </CardTitle>
-                <Badge
-                  variant="outline"
-                  className="px-3 py-1 text-xs font-semibold uppercase border-2 border-blue-400 bg-blue-50 text-blue-700 tracking-wide shadow-sm"
+  const results: Identity[] = Array.isArray(identities?.results) ? identities.results : [];
+
+  return (
+    <div className="w-full flex flex-col space-y-4">
+      <div className="overflow-x-auto overflow-y-auto h-[85vh] bg-white rounded-md">
+        <Table className="w-full text-sm text-foreground h-full">
+          <TableHeader>
+            <TableRow className="bg-muted">
+              <TableHead className="font-bold p-4 w-12"></TableHead>
+              <TableHead className="font-bold p-4">Name</TableHead>
+              <TableHead className="font-bold p-4">Identity Class</TableHead>
+              <TableHead className="font-bold p-4">Markings</TableHead>
+              <TableHead className="font-bold p-4">Labels</TableHead>
+              <TableHead className="font-bold p-4">Sectors</TableHead>
+              <TableHead className="font-bold p-4">Created</TableHead>
+              <TableHead className="font-bold p-4">Modified</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {results.map((identity: Identity, idx: number) => {
+              const labels = Array.isArray(identity.labels) ? identity.labels.filter(Boolean) : [];
+              const sectors = Array.isArray(identity.sectors) ? identity.sectors.filter(Boolean) : [];
+              const markings = Array.isArray(identity.object_marking_refs) ? identity.object_marking_refs.filter(Boolean) : [];
+              // Marking logic: prefer TLP label if present, else first marking ref
+              let marking = '';
+              labels.forEach((lbl) => {
+                if (typeof lbl === "string" && lbl.toLowerCase().startsWith('tlp:')) {
+                  marking = lbl;
+                }
+              });
+              if (!marking && markings.length > 0 && typeof markings[0] === "string") {
+                marking = markings[0];
+              }
+              return (
+                <TableRow
+                  key={identity.id || idx}
+                  onClick={() => identity.id && handleViewIdentity(identity.id)}
+                  className="hover:bg-muted bg-background transition-colors border-b border-border cursor-pointer"
                 >
-                  {identity.identity_class}
-                </Badge>
-              </div>
-              <CardDescription className="mb-3 text-gray-700 min-h-[2.5rem]">
-                <div className="line-clamp-2 overflow-hidden text-ellipsis" style={{ display: '-webkit-box', WebkitBoxOrient: 'vertical', WebkitLineClamp: 2 }}>
-                  {identity.description || <span className="text-gray-400">No description.</span>}
-                </div>
-              </CardDescription>
-              {/* Sectors */}
-              <div className="flex flex-wrap gap-1 mb-2">
-                {displaySectors.map((sector, i) => (
-                  <span
-                    key={sector}
-                    className={`rounded-full px-2 py-0.5 text-xs font-medium border border-gray-200 ${sectorColors[i % sectorColors.length]}`}
-                  >
-                    {sector}
-                  </span>
-                ))}
-                {extraSectorCount > 0 && (
-                  <span className="rounded-full px-2 py-0.5 text-xs font-medium bg-gray-100 text-gray-500 border border-gray-200">
-                    +{extraSectorCount}
-                  </span>
-                )}
-              </div>
-              {/* Labels */}
-              <div className="flex flex-wrap gap-1 mb-2">
-                {displayLabels.map((label) => {
-                  if (!labelColorMap.current.has(label)) {
-                    labelColorMap.current.set(label, getRandomLabelColor());
-                  }
-                  const color = labelColorMap.current.get(label)!;
-                  return (
+                  <TableCell className="p-4">
+                    <div className="rounded-full bg-gradient-to-br from-blue-200 to-blue-400 shadow w-8 h-8 flex items-center justify-center border-2 border-white">
+                      {identity.name && typeof identity.name === "string" && identity.name.length > 0 ? (
+                        <span className="text-base font-bold text-white">{identity.name[0].toUpperCase()}</span>
+                      ) : (
+                        <UserCircle2 className="w-6 h-6 text-white" />
+                      )}
+                    </div>
+                  </TableCell>
+                  <TableCell className="p-4 font-medium hover:underline max-w-100 truncate">
+                    {identity.name && typeof identity.name === "string" && identity.name.length > 0
+                      ? identity.name
+                      : <span className="text-gray-400">Unnamed</span>}
+                  </TableCell>
+                  <TableCell className="p-4">
                     <Badge
-                      key={label}
                       variant="outline"
-                      className={`border ${color} text-xs font-medium`}
+                      className="px-3 py-1 text-xs font-semibold uppercase border-2 border-blue-400 bg-blue-50 text-blue-700 tracking-wide shadow-sm"
                     >
-                      {label}
+                      {identity.identity_class && typeof identity.identity_class === "string"
+                        ? identity.identity_class
+                        : "—"}
                     </Badge>
-                  );
-                })}
-                {extraLabelCount > 0 && (
-                  <Badge
-                    variant="outline"
-                    className="text-gray-500 border-gray-400 bg-gray-50 text-xs"
-                  >
-                    +{extraLabelCount}
-                  </Badge>
-                )}
-              </div>
-              {/* Relationship count */}
-              <div className="flex items-center gap-2 mb-2">
-                <span className="text-xs text-gray-500">Relationships:</span>
-                <Badge className="bg-purple-100 text-purple-700 px-2 py-0.5 text-xs font-semibold">
-                  {relCount}
-                </Badge>
-              </div>
-              {/* Dates */}
-              <div className="flex gap-4 text-xs text-gray-400 mt-auto">
-                <div>
-                  <span className="font-medium text-gray-500">Created:</span>{" "}
-                  {identity.created ? new Date(identity.created).toLocaleDateString() : "-"}
-                </div>
-                <div>
-                  <span className="font-medium text-gray-500">Modified:</span>{" "}
-                  {identity.modified ? new Date(identity.modified).toLocaleDateString() : "-"}
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        );
-      })}
+                  </TableCell>
+                  <TableCell className="p-4">
+                    <Badge
+                      variant="outline"
+                      className={`max-w-28 ${
+                        marking && typeof marking === 'string'
+                          ? getTlpColors(marking.replace(/^tlp:/i, '').replace(/^marking-definition--/i, ''))
+                          : getTlpColors('clear')
+                      } border-2 uppercase truncate`}
+                    >
+                      {marking && typeof marking === "string"
+                        ? marking.toUpperCase()
+                        : '—'}
+                    </Badge>
+                  </TableCell>
+                  <TableCell className="p-4 max-w-100">
+                    <div className="flex flex-wrap gap-1">
+                      {labels.length > 0 ? labels.slice(0, 3).map((label) => (
+                        <Badge key={label} variant="outline" className="border-blue-400 bg-blue-50 text-blue-700">
+                          {label}
+                        </Badge>
+                      )) : <span className="text-muted-foreground">—</span>}
+                      {labels.length > 3 && (
+                        <Badge variant="outline" className="text-muted-foreground border-border bg-muted">
+                          +{labels.length - 3}
+                        </Badge>
+                      )}
+                    </div>
+                  </TableCell>
+                  <TableCell className="p-4 max-w-100">
+                    <div className="flex flex-wrap gap-1">
+                      {sectors.length > 0 ? sectors.slice(0, 3).map((sector) => (
+                        <Badge key={sector} variant="outline" className="border-green-400 bg-green-50 text-green-700">
+                          {sector}
+                        </Badge>
+                      )) : <span className="text-muted-foreground">—</span>}
+                      {sectors.length > 3 && (
+                        <Badge variant="outline" className="text-muted-foreground border-border bg-muted">
+                          +{sectors.length - 3}
+                        </Badge>
+                      )}
+                    </div>
+                  </TableCell>
+                  <TableCell className="p-4">
+                    {identity.created
+                      ? (() => { try { return new Date(identity.created).toLocaleDateString(); } catch { return "—"; } })()
+                      : "—"}
+                  </TableCell>
+                  <TableCell className="p-4">
+                    {identity.modified
+                      ? (() => { try { return new Date(identity.modified).toLocaleDateString(); } catch { return "—"; } })()
+                      : "—"}
+                  </TableCell>
+                </TableRow>
+              );
+            })}
+            {results.length === 0 && (
+              <TableRow>
+                <TableCell colSpan={8} className="text-center text-muted-foreground py-8">
+                  No identities found.
+                </TableCell>
+              </TableRow>
+            )}
+          </TableBody>
+        </Table>
+      </div>
+      <div className="flex items-center justify-between px-4 py-2 border-t">
+        <div className="text-sm text-muted-foreground">
+          Showing {(currentPage - 1) * pageSize + 1} to{" "}
+          {Math.min(currentPage * pageSize, total)} of {total} identities
+        </div>
+        <div className="flex items-center space-x-2">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => handlePageChange(1)}
+            disabled={currentPage === 1 || loading}
+          >
+            <ChevronsLeft className="h-4 w-4" />
+          </Button>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => handlePageChange(currentPage - 1)}
+            disabled={currentPage === 1 || loading}
+          >
+            <ChevronsLeft className="h-4 w-4" />
+          </Button>
+          <span className="px-2 text-sm font-medium">
+            Page {currentPage} of {totalPages}
+          </span>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => handlePageChange(currentPage + 1)}
+            disabled={currentPage === totalPages || loading}
+          >
+            <ChevronsRight className="h-4 w-4" />
+          </Button>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => handlePageChange(totalPages)}
+            disabled={currentPage === totalPages || loading}
+          >
+            <ChevronsRight className="h-4 w-4" />
+          </Button>
+        </div>
+      </div>
     </div>
   );
 };
+
+export { IdentityPage as IdentityListPage };

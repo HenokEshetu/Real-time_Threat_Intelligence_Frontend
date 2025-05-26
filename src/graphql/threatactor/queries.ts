@@ -97,7 +97,6 @@ export const SEARCH_THREAT_ACTORS = gql`
         object_marking_refs
         revoked
         lang
-        enrichment
         extensions
         relationship {
           id

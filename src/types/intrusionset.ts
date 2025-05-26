@@ -1,3 +1,6 @@
+export type Enrichment = any;
+export type JSONObject = Record<string, any>;
+
 export interface ExternalReference {
   id?: string;
   source_name: string;
@@ -24,14 +27,14 @@ export interface RelationshipCommonProperties {
   confidence?: number;
   description?: string;
   external_references?: ExternalReference[];
-  enrichment?: any;
+  enrichment?: Enrichment;
   labels?: string[];
   revoked?: boolean;
   created_by_ref?: string;
   start_time?: string;
   stop_time?: string;
   lang?: string;
-  extensions?: any;
+  extensions?: JSONObject;
   object_marking_refs?: string[];
 }
 
@@ -58,7 +61,7 @@ export interface IntrusionSet {
   object_marking_refs?: string[];
   revoked?: boolean;
   lang?: string;
-  enrichment?: any;
-  extensions?: any;
+  enrichment?: Enrichment;
+  extensions?: JSONObject;
   relationship?: RelationshipCommonProperties[];
 }
