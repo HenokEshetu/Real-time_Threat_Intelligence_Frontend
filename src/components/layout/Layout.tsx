@@ -225,36 +225,36 @@ export const Layout = ({ children }: { children: React.ReactNode }) => {
     <div className="min-h-screen flex flex-col">
       {isAuthenticated && (
         <>
-          <header className="sticky top-0 z-40 w-full h-17 border-b bg-background px-4 py-2 flex items-center justify-between">
+          <header className="sticky top-0 z-1000 w-full h-17 border-b bg-background px-4 py-2 flex items-center justify-between">
             <Toaster position="top-right" richColors expand={true} />
-            <div className="flex items-center gap-2">
-              <Button
-                variant="ghost"
-                size="icon"
-                className="md:hidden"
-                onClick={() => setMobileMenuOpen(true)}
-              >
-                <MenuIcon className="h-5 w-5" />
-              </Button>
-              <div className="flex items-center w-180">
-                <img
-                  src="/src/static/images/favicon.png"
-                  alt=""
-                  className="w-13 h-13 rounded-full"
-                />
-                <h1 className="text-5xl font-semibold hidden md:block ml-2">
-                   ዳጉ
-                </h1>
-                <SearchBar className="ml-18" />
-              </div>
-              <Breadcrumb className="hidden md:flex ml-4" />
+            <Button
+              variant="ghost"
+              size="icon"
+              className="md:hidden"
+              onClick={() => setMobileMenuOpen(true)}
+            >
+              <MenuIcon className="h-5 w-5" />
+            </Button>
+            <div className="flex items-center w-[33.3%]">
+              {/* <div className="flex"> */}
+              <img
+                src="/src/static/images/favicon.png"
+                alt=""
+                className="w-13 h-13 rounded-full"
+              />
+              <h1 className="text-5xl font-semibold hidden md:block ml-2">
+                ዳጉ
+              </h1>
             </div>
-            <div className="flex items-center gap-2">
+            <div className="flex justify-center items-center w-[33.3%]">
+              <SearchBar className="ml-18" />
+            </div>
+            <div className="flex justify-end items-center gap-2 w-[33.3%]">
               <DropdownMenu>
                 <DropdownMenuTrigger>
                   <BellIcon />
                 </DropdownMenuTrigger>
-                <DropdownMenuContent align="end">
+                <DropdownMenuContent align="end" className="!z-2000">
                   <DropdownMenuItem>
                     <div className="flex flex-col">
                       <span className="text-sm font-medium">Notifications</span>
@@ -321,7 +321,7 @@ export const Layout = ({ children }: { children: React.ReactNode }) => {
                 </DropdownMenuTrigger>
 
                 <DropdownMenuContent
-                  className="w-56 z-[100]"
+                  className="w-56 z-2000"
                   align="end"
                   onCloseAutoFocus={(e) => e.preventDefault()}
                 >
@@ -387,7 +387,7 @@ export const Layout = ({ children }: { children: React.ReactNode }) => {
           </header>
 
           {!isDashboard && (
-            <TopContainer className="h-12 justify-between w-[90.5%]">
+            <TopContainer className="h-8">
               <TopBreadcrumb />
             </TopContainer>
           )}
@@ -397,7 +397,7 @@ export const Layout = ({ children }: { children: React.ReactNode }) => {
       <div className="flex flex-1">
         {/* Desktop Sidebar */}
         {isAuthenticated && (
-          <aside className="hidden md:flex md:flex-col md:w-50 h-full fixed top-17 border-r bg-background pt-4">
+          <aside className="hidden md:flex md:flex-col md:w-[var(--sidebar-width)] h-full fixed top-17 border-r bg-background pt-4">
             <SidebarProvider>
               <SidebarMenu>
                 {menuItems.map((item) =>
@@ -521,7 +521,7 @@ export const Layout = ({ children }: { children: React.ReactNode }) => {
         {/* Page Content */}
         <main
           className={`flex justify-center w-full h-full ${
-            isAuthenticated ? 'md:pl-50' : ''
+            isAuthenticated ? 'md:pl-[var(--sidebar-width)]' : ''
           }`}
         >
           {children}

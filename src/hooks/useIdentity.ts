@@ -1,6 +1,17 @@
 import { useQuery, useMutation } from '@apollo/client';
-import { SEARCH_IDENTITIES, IDENTITY_QUERY } from '../graphql/identity/queries';
-import { CREATE_IDENTITY, UPDATE_IDENTITY, DELETE_IDENTITY } from '../graphql/identity/mutations';
+import {
+  SEARCH_IDENTITIES,
+  IDENTITY_QUERY,
+  IDENTITY_CREATED_SUBSCRIPTION,
+  IDENTITY_UPDATED_SUBSCRIPTION,
+  IDENTITY_DELETED_SUBSCRIPTION,
+} from '../graphql/identity/queries';
+import {
+  CREATE_IDENTITY,
+  UPDATE_IDENTITY,
+  DELETE_IDENTITY,
+} from '../graphql/identity/mutations';
+import { useEffect } from 'react';
 
 // List/search identities
 export const useIdentities = ({
@@ -15,10 +26,80 @@ export const useIdentities = ({
     ...(filters && Object.keys(filters).length > 0 ? { filters } : {}),
   };
 
-  const { data, loading, error, fetchMore } = useQuery(SEARCH_IDENTITIES, {
-    variables,
-    notifyOnNetworkStatusChange: true,
-  });
+  const { data, loading, error, fetchMore, subscribeToMore } = useQuery(
+    SEARCH_IDENTITIES,
+    {
+      variables,
+      notifyOnNetworkStatusChange: true,
+    },
+  );
+
+  useEffect(() => {
+    const unsubCreate = subscribeToMore({
+      document: IDENTITY_CREATED_SUBSCRIPTION,
+      updateQuery: (prev, { subscriptionData }) => {
+        const newItem = subscriptionData.data?.identityCreated;
+        if (!newItem) return prev;
+        if (
+          prev.searchIdentities.results.some((i: any) => i.id === newItem.id)
+        ) {
+          return prev;
+        }
+        return {
+          ...prev,
+          searchIdentities: {
+            ...prev.searchIdentities,
+            results: [newItem, ...prev.searchIdentities.results].slice(
+              0,
+              pageSize,
+            ),
+            total: prev.searchIdentities.total + 1,
+          },
+        };
+      },
+    });
+
+    const unsubUpdate = subscribeToMore({
+      document: IDENTITY_UPDATED_SUBSCRIPTION,
+      updateQuery: (prev, { subscriptionData }) => {
+        const updated = subscriptionData.data?.identityUpdated;
+        if (!updated) return prev;
+        return {
+          ...prev,
+          searchIdentities: {
+            ...prev.searchIdentities,
+            results: prev.searchIdentities.results.map((i: any) =>
+              i.id === updated.id ? { ...i, ...updated } : i,
+            ),
+          },
+        };
+      },
+    });
+
+    const unsubDelete = subscribeToMore({
+      document: IDENTITY_DELETED_SUBSCRIPTION,
+      updateQuery: (prev, { subscriptionData }) => {
+        const deletedId = subscriptionData.data?.identityDeleted;
+        if (!deletedId) return prev;
+        return {
+          ...prev,
+          searchIdentities: {
+            ...prev.searchIdentities,
+            results: prev.searchIdentities.results.filter(
+              (i: any) => i.id !== deletedId,
+            ),
+            total: prev.searchIdentities.total - 1,
+          },
+        };
+      },
+    });
+
+    return () => {
+      unsubCreate();
+      unsubUpdate();
+      unsubDelete();
+    };
+  }, [subscribeToMore, pageSize]);
 
   // Defensive: ensure arrays are always arrays
   const identities = data?.searchIdentities

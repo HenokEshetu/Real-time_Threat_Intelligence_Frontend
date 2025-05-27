@@ -16,7 +16,6 @@ export const SEARCH_IPv4_OBSERVABLES = gql`
         created
         created_by_ref
         defanged
-
         extensions
         external_references {
           description
@@ -46,7 +45,6 @@ export const GET_IPv4_OBSERVABLE = gql`
       created
       created_by_ref
       defanged
-
       extensions
       external_references {
         description
@@ -65,5 +63,67 @@ export const GET_IPv4_OBSERVABLE = gql`
       type
       value
     }
+  }
+`;
+
+export const IPV4_CREATED_SUBSCRIPTION = gql`
+  subscription IPv4AddressCreated {
+    ipv4AddressCreated {
+      id
+      confidence
+      created
+      created_by_ref
+      defanged
+      extensions
+      external_references {
+        description
+        external_id
+        id
+        source_name
+        url
+      }
+      labels
+      lang
+      modified
+      object_marking_refs
+      revoked
+      spec_version
+      type
+      value
+    }
+  }
+`;
+
+export const IPV4_UPDATED_SUBSCRIPTION = gql`
+  subscription IPv4AddressUpdated {
+    ipv4AddressUpdated {
+      id
+      confidence
+      created
+      created_by_ref
+      defanged
+      extensions
+      external_references {
+        description
+        external_id
+        id
+        source_name
+        url
+      }
+      labels
+      lang
+      modified
+      object_marking_refs
+      revoked
+      spec_version
+      type
+      value
+    }
+  }
+`;
+
+export const IPV4_DELETED_SUBSCRIPTION = gql`
+  subscription IPv4AddressDeleted {
+    ipv4AddressDeleted
   }
 `;

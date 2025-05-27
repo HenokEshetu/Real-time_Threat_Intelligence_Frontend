@@ -163,3 +163,141 @@ export const GET_INDICATOR = gql`
     }
   }
 `;
+
+export const INDICATOR_CREATED_SUBSCRIPTION = gql`
+  subscription IndicatorCreated {
+    indicatorCreated {
+      confidence
+      created
+      created_by_ref
+      description
+      extensions
+      external_references {
+        description
+        external_id
+        id
+        source_name
+        url
+      }
+      id
+      indicator_types
+      kill_chain_phases {
+        id
+        kill_chain_name
+        phase_name
+      }
+      labels
+      lang
+      modified
+      name
+      object_marking_refs
+      pattern
+      pattern_type
+      pattern_version
+      relationship {
+        confidence
+        created
+        created_by_ref
+        description
+        extensions
+        external_references {
+          description
+          external_id
+          id
+          source_name
+          url
+        }
+        id
+        labels
+        lang
+        modified
+        object_marking_refs
+        relationship_type
+        revoked
+        source_ref
+        spec_version
+        start_time
+        stop_time
+        target_ref
+        type
+      }
+      revoked
+      spec_version
+      type
+      valid_from
+      valid_until
+    }
+  }
+`;
+
+export const INDICATOR_UPDATED_SUBSCRIPTION = gql`
+  subscription IndicatorUpdated {
+    indicatorUpdated {
+      confidence
+      created
+      created_by_ref
+      description
+      extensions
+      external_references {
+        description
+        external_id
+        id
+        source_name
+        url
+      }
+      id
+      indicator_types
+      kill_chain_phases {
+        id
+        kill_chain_name
+        phase_name
+      }
+      labels
+      lang
+      modified
+      name
+      object_marking_refs
+      pattern
+      pattern_type
+      pattern_version
+      relationship {
+        confidence
+        created
+        created_by_ref
+        description
+        extensions
+        external_references {
+          description
+          external_id
+          id
+          source_name
+          url
+        }
+        id
+        labels
+        lang
+        modified
+        object_marking_refs
+        relationship_type
+        revoked
+        source_ref
+        spec_version
+        start_time
+        stop_time
+        target_ref
+        type
+      }
+      revoked
+      spec_version
+      type
+      valid_from
+      valid_until
+    }
+  }
+`;
+
+export const INDICATOR_DELETED_SUBSCRIPTION = gql`
+  subscription IndicatorDeleted {
+    indicatorDeleted
+  }
+`;

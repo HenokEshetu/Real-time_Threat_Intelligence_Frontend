@@ -15,7 +15,7 @@ export const ATTACK_PATTERN_QUERY = gql`
       created
       modified
       created_by_ref
-      
+
       extensions
       external_references {
         id
@@ -57,7 +57,11 @@ export const ATTACK_PATTERN_QUERY = gql`
 `;
 
 export const SEARCH_ATTACK_PATTERNS = gql`
-  query SearchAttackPatterns($filters: SearchAttackPatternInput, $page: Int, $pageSize: Int) {
+  query SearchAttackPatterns(
+    $filters: SearchAttackPatternInput
+    $page: Int
+    $pageSize: Int
+  ) {
     searchAttackPatterns(filters: $filters, page: $page, pageSize: $pageSize) {
       page
       pageSize
@@ -76,7 +80,7 @@ export const SEARCH_ATTACK_PATTERNS = gql`
         created
         modified
         created_by_ref
-        
+
         extensions
         external_references {
           id
@@ -85,7 +89,7 @@ export const SEARCH_ATTACK_PATTERNS = gql`
           url
           external_id
         }
- 
+
         object_marking_refs
         revoked
         lang
@@ -115,5 +119,119 @@ export const SEARCH_ATTACK_PATTERNS = gql`
         }
       }
     }
+  }
+`;
+
+export const ATTACK_PATTERN_CREATED_SUBSCRIPTION = gql`
+  subscription AttackPatternCreated {
+    attackPatternCreated {
+      id
+      type
+      spec_version
+      version
+      name
+      description
+      aliases
+      labels
+      confidence
+      created
+      modified
+      created_by_ref
+      extensions
+      external_references {
+        id
+        source_name
+        description
+        url
+        external_id
+      }
+      object_marking_refs
+      revoked
+      lang
+      relationship {
+        id
+        type
+        spec_version
+        created
+        modified
+        relationship_type
+        source_ref
+        target_ref
+        confidence
+        description
+        external_references {
+          id
+          source_name
+          description
+          url
+          external_id
+        }
+        labels
+        revoked
+        created_by_ref
+        start_time
+        stop_time
+      }
+    }
+  }
+`;
+
+export const ATTACK_PATTERN_UPDATED_SUBSCRIPTION = gql`
+  subscription AttackPatternUpdated {
+    attackPatternUpdated {
+      id
+      type
+      spec_version
+      version
+      name
+      description
+      aliases
+      labels
+      confidence
+      created
+      modified
+      created_by_ref
+      extensions
+      external_references {
+        id
+        source_name
+        description
+        url
+        external_id
+      }
+      object_marking_refs
+      revoked
+      lang
+      relationship {
+        id
+        type
+        spec_version
+        created
+        modified
+        relationship_type
+        source_ref
+        target_ref
+        confidence
+        description
+        external_references {
+          id
+          source_name
+          description
+          url
+          external_id
+        }
+        labels
+        revoked
+        created_by_ref
+        start_time
+        stop_time
+      }
+    }
+  }
+`;
+
+export const ATTACK_PATTERN_DELETED_SUBSCRIPTION = gql`
+  subscription AttackPatternDeleted {
+    attackPatternDeleted
   }
 `;

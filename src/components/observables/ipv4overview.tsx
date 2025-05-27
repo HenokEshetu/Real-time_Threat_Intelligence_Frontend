@@ -5,7 +5,11 @@ import { IPv4Address } from '@/types/observables/ipv4';
 
 const tailwindColors = [
   { bg: 'bg-red-50', border: 'border-red-500', text: 'text-red-600' },
-  { bg: 'bg-orange-50', border: 'border-orange-500', text: 'text-orange-600' },
+  {
+    bg: 'bg-orange-50',
+    border: 'border-orange-500',
+    text: 'text-orange-600',
+  },
   { bg: 'bg-yellow-50', border: 'border-yellow-500', text: 'text-yellow-600' },
   { bg: 'bg-green-50', border: 'border-green-500', text: 'text-green-600' },
   { bg: 'bg-teal-50', border: 'border-teal-500', text: 'text-teal-600' },
@@ -16,12 +20,24 @@ const tailwindColors = [
   { bg: 'bg-rose-50', border: 'border-rose-500', text: 'text-rose-600' },
   { bg: 'bg-amber-50', border: 'border-amber-500', text: 'text-amber-600' },
   { bg: 'bg-lime-50', border: 'border-lime-500', text: 'text-lime-600' },
-  { bg: 'bg-emerald-50', border: 'border-emerald-500', text: 'text-emerald-600' },
+  {
+    bg: 'bg-emerald-50',
+    border: 'border-emerald-500',
+    text: 'text-emerald-600',
+  },
   { bg: 'bg-cyan-50', border: 'border-cyan-500', text: 'text-cyan-600' },
   { bg: 'bg-sky-50', border: 'border-sky-500', text: 'text-sky-600' },
   { bg: 'bg-violet-50', border: 'border-violet-500', text: 'text-violet-600' },
-  { bg: 'bg-fuchsia-50', border: 'border-fuchsia-500', text: 'text-fuchsia-600' },
-  { bg: 'bg-neutral-100', border: 'border-neutral-500', text: 'text-neutral-600' },
+  {
+    bg: 'bg-fuchsia-50',
+    border: 'border-fuchsia-500',
+    text: 'text-fuchsia-600',
+  },
+  {
+    bg: 'bg-neutral-100',
+    border: 'border-neutral-500',
+    text: 'text-neutral-600',
+  },
   { bg: 'bg-slate-100', border: 'border-slate-500', text: 'text-slate-600' },
   { bg: 'bg-gray-100', border: 'border-gray-500', text: 'text-gray-600' },
 ];
@@ -60,21 +76,30 @@ const getTlpColors = (tlp: string) => {
 export const IPv4Overview = ({ ipv4 }: { ipv4: IPv4Address }) => {
   const labels: string[] = ipv4.labels || [];
   const uniqueLabels = Array.from(new Set(labels));
-  const labelColorMap = useRef<Map<string, (typeof tailwindColors)[0]>>(new Map());
+  const labelColorMap = useRef<Map<string, (typeof tailwindColors)[0]>>(
+    new Map(),
+  );
 
   // Marking (TLP) from labels or object_marking_refs
   let marking = '';
   uniqueLabels.forEach((lbl) => {
     if (lbl.includes('tlp:')) marking = lbl.replace('tlp:', '').toUpperCase();
   });
-  if (!marking && ipv4.object_marking_refs && ipv4.object_marking_refs.length > 0) {
-    marking = ipv4.object_marking_refs[0];
+  // Use object_marking_refs as fallback if no TLP label found
+  if (
+    !marking &&
+    ipv4.object_marking_refs &&
+    ipv4.object_marking_refs.length > 0
+  ) {
+    marking = ipv4.object_marking_refs[0].toUpperCase();
   }
 
   return (
     <div className="p-4 grid grid-cols-1 md:grid-cols-2 gap-6">
       <div>
-        <h1 className="uppercase text-xs font-bold text-slate-600 p-2">Details</h1>
+        <h1 className="uppercase text-xs font-bold text-slate-600 p-2">
+          Details
+        </h1>
         <Card className="bg-transparent border border-gray-300 rounded-sm shadow-none !py-4">
           <CardContent className="px-3">
             <div className="pb-3 w-full">
@@ -100,13 +125,23 @@ export const IPv4Overview = ({ ipv4 }: { ipv4: IPv4Address }) => {
             <div className="flex justify-between py-3">
               <div className="w-[31%]">
                 <h2 className="font-bold text-base mb-2">Confidence</h2>
-                <span className={`${getConfidenceColor(ipv4.confidence || 0)} py-1 px-6 rounded text-sm text-center uppercase`}>
+                <span
+                  className={`${getConfidenceColor(
+                    ipv4.confidence || 0,
+                  )} py-1 px-6 rounded text-sm text-center uppercase`}
+                >
                   {ipv4.confidence || 0}%
                 </span>
               </div>
               <div className="w-[31%]">
                 <h2 className="font-bold text-base mb-2">Defanged</h2>
-                <span className={`py-1 px-7 rounded text-sm text-center uppercase ${ipv4.defanged ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>
+                <span
+                  className={`py-1 px-7 rounded text-sm text-center uppercase ${
+                    ipv4.defanged
+                      ? 'bg-green-100 text-green-800'
+                      : 'bg-red-100 text-red-800'
+                  }`}
+                >
                   {ipv4.defanged ? 'Yes' : 'No'}
                 </span>
               </div>
@@ -121,18 +156,30 @@ export const IPv4Overview = ({ ipv4 }: { ipv4: IPv4Address }) => {
             <div className="flex justify-between py-5">
               {ipv4.external_references && (
                 <div className="w-full">
-                  <h2 className="font-bold text-base mb-2">External References</h2>
+                  <h2 className="font-bold text-base mb-2">
+                    External References
+                  </h2>
                   <table className="w-full text-sm text-foreground">
                     <tbody>
                       {ipv4.external_references.map((ref, index) => (
-                        <tr key={index} className="hover:bg-slate-100 transition-colors border-b border-gray-300 cursor-pointer">
+                        <tr
+                          key={index}
+                          className="hover:bg-slate-100 transition-colors border-b border-gray-300 cursor-pointer"
+                        >
                           <td className="p-4 text-gray-700">
-                            <Badge variant="outline" className="text-blue-500 border-blue-500 bg-blue-50 py-1">
+                            <Badge
+                              variant="outline"
+                              className="text-blue-500 border-blue-500 bg-blue-50 py-1"
+                            >
                               {ref.source_name}
                             </Badge>
                           </td>
                           <td className="p-4 font-medium text-gray-900 hover:underline">
-                            {ref.url ? <a href={ref.url}>{ref.url}</a> : <span>-</span>}
+                            {ref.url ? (
+                              <a href={ref.url}>{ref.url}</a>
+                            ) : (
+                              <span>-</span>
+                            )}
                           </td>
                         </tr>
                       ))}
@@ -148,11 +195,16 @@ export const IPv4Overview = ({ ipv4 }: { ipv4: IPv4Address }) => {
                 <div className="grid gap-2">
                   {Object.entries(ipv4.enrichment).map(([key, value]) =>
                     value ? (
-                      <div key={key} className="bg-white/5 border border-white/10 rounded p-3 text-sm">
+                      <div
+                        key={key}
+                        className="bg-white/5 border border-white/10 rounded p-3 text-sm"
+                      >
                         <strong>{key}</strong>
-                        <pre className="whitespace-pre-wrap break-all text-xs mt-1">{JSON.stringify(value, null, 2)}</pre>
+                        <pre className="whitespace-pre-wrap break-all text-xs mt-1">
+                          {JSON.stringify(value, null, 2)}
+                        </pre>
                       </div>
-                    ) : null
+                    ) : null,
                   )}
                 </div>
               </div>
@@ -161,13 +213,19 @@ export const IPv4Overview = ({ ipv4 }: { ipv4: IPv4Address }) => {
         </Card>
       </div>
       <div>
-        <h1 className="uppercase text-xs font-bold text-slate-600 p-2">Basic Information</h1>
+        <h1 className="uppercase text-xs font-bold text-slate-600 p-2">
+          Basic Information
+        </h1>
         <Card className="bg-transparent shadow-none border border-gray-300 rounded-sm">
           <CardContent className="space-y-4 p-6">
             <div className="flex justify-between py-3">
               <div className="w-[48%]">
                 <h2 className="font-bold text-sm mb-2">Marking</h2>
-                <span className={`py-1 px-5 rounded text-sm text-center uppercase border ${getTlpColors(marking || 'clear')}`}>
+                <span
+                  className={`py-1 px-5 rounded text-sm text-center uppercase border ${getTlpColors(
+                    marking || 'clear',
+                  )}`}
+                >
                   TLP:{marking || 'clear'}
                 </span>
               </div>
@@ -178,11 +236,18 @@ export const IPv4Overview = ({ ipv4 }: { ipv4: IPv4Address }) => {
                     .filter((label) => !label.toLowerCase().startsWith('tlp:'))
                     .map((label) => {
                       if (!labelColorMap.current.has(label)) {
-                        labelColorMap.current.set(label, getRandomTailwindColor());
+                        labelColorMap.current.set(
+                          label,
+                          getRandomTailwindColor(),
+                        );
                       }
                       const color = labelColorMap.current.get(label)!;
                       return (
-                        <Badge key={label} variant="outline" className={`${color.text} ${color.border} ${color.bg} rounded p-2`}>
+                        <Badge
+                          key={label}
+                          variant="outline"
+                          className={`${color.text} ${color.border} ${color.bg} rounded p-2`}
+                        >
                           {label}
                         </Badge>
                       );
@@ -202,7 +267,9 @@ export const IPv4Overview = ({ ipv4 }: { ipv4: IPv4Address }) => {
               <div className="w-full">
                 <h2 className="font-bold text-base mb-2">Last Updated</h2>
                 <div className="bg-slate-200 p-2 rounded text-sm uppercase">
-                  {ipv4.modified ? new Date(ipv4.modified).toLocaleDateString() : '-'}
+                  {ipv4.modified
+                    ? new Date(ipv4.modified).toLocaleDateString()
+                    : '-'}
                 </div>
               </div>
             </div>

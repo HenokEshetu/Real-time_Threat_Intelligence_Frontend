@@ -39,14 +39,16 @@ export const FileObservablesDetailPage = () => {
     <div className="w-full flex flex-col">
       <TopContainer className="h-13 top-29">
         <h1 className="text-2xl max-w-[40%] font-semibold truncate">
-          {file.name ||
-            file.hashes.SHA_512 ||
-            file.hashes.SHA_256 ||
-            file.hashes.SHA_1 ||
-            file.hashes.MD5 ||
-            file.created_by_ref
-              .replaceAll('identity--', '')
-              .replaceAll('-', '')}
+          {
+            file.name ||
+              file.hashes.SHA_512 ||
+              file.hashes.SHA_256 ||
+              file.hashes.SHA_1 ||
+              file.hashes.MD5 // ||
+            // file.created_by_ref
+            //   .replaceAll('identity--', '')
+            //   .replaceAll('-', '')}
+          }
         </h1>
       </TopContainer>
 

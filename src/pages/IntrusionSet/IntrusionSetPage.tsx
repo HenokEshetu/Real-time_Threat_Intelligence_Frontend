@@ -1,9 +1,23 @@
-import React, { useState, useRef, useMemo } from "react";
-import { useIntrusionSets } from "@/hooks/useintrusionSet";
-import { Badge } from "@/components/ui/badge";
-import { KeyRound, ShieldMinusIcon, SwordIcon } from "lucide-react";
-import { useNavigate } from "react-router-dom";
-import type { IntrusionSet } from "@/types/intrusionset";
+import React, { useState, useEffect } from 'react';
+import { useIntrusionSets } from '@/hooks/useintrusionSet';
+import {
+  Card,
+  CardContent,
+  CardTitle,
+  CardDescription,
+} from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import {
+  ChevronLeft,
+  ChevronRight,
+  ChevronsLeft,
+  ChevronsRight,
+  SwordIcon,
+} from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { Button } from '@/components/ui/button';
+import { Skeleton } from '@/components/ui/skeleton';
+import { toast } from 'sonner';
 
 // Tailwind color palette for label badges
 const tailwindColors = [
@@ -19,166 +33,322 @@ const tailwindColors = [
   { bg: 'bg-rose-50', border: 'border-rose-500', text: 'text-rose-600' },
   { bg: 'bg-amber-50', border: 'border-amber-500', text: 'text-amber-600' },
   { bg: 'bg-lime-50', border: 'border-lime-500', text: 'text-lime-600' },
-  { bg: 'bg-emerald-50', border: 'border-emerald-500', text: 'text-emerald-600' },
+  {
+    bg: 'bg-emerald-50',
+    border: 'border-emerald-500',
+    text: 'text-emerald-600',
+  },
   { bg: 'bg-cyan-50', border: 'border-cyan-500', text: 'text-cyan-600' },
   { bg: 'bg-sky-50', border: 'border-sky-500', text: 'text-sky-600' },
   { bg: 'bg-violet-50', border: 'border-violet-500', text: 'text-violet-600' },
-  { bg: 'bg-fuchsia-50', border: 'border-fuchsia-500', text: 'text-fuchsia-600' },
-  { bg: 'bg-neutral-100', border: 'border-neutral-500', text: 'text-neutral-600' },
+  {
+    bg: 'bg-fuchsia-50',
+    border: 'border-fuchsia-500',
+    text: 'text-fuchsia-600',
+  },
+  {
+    bg: 'bg-neutral-100',
+    border: 'border-neutral-500',
+    text: 'text-neutral-600',
+  },
   { bg: 'bg-slate-100', border: 'border-slate-500', text: 'text-slate-600' },
   { bg: 'bg-gray-100', border: 'border-gray-500', text: 'text-gray-600' },
 ];
-let availableColors = [...tailwindColors];
-const getRandomTailwindColor = () => {
-  if (availableColors.length === 0) availableColors = [...tailwindColors];
-  const idx = Math.floor(Math.random() * availableColors.length);
-  const color = availableColors[idx];
-  availableColors.splice(idx, 1);
-  return color;
+
+const getColorForLabel = (label: string) => {
+  const hash = Array.from(label).reduce(
+    (acc, char) => char.charCodeAt(0) + acc,
+    0,
+  );
+  return tailwindColors[hash % tailwindColors.length];
+};
+
+const glowEffects = [
+  { shadow: 'shadow-red-300', border: 'border-red-500', text: 'text-red-600' },
+  {
+    shadow: 'shadow-orange-300',
+    border: 'border-orange-500',
+    text: 'text-orange-600',
+  },
+  {
+    shadow: 'shadow-yellow-300',
+    border: 'border-yellow-500',
+    text: 'text-yellow-600',
+  },
+  {
+    shadow: 'shadow-green-300',
+    border: 'border-green-500',
+    text: 'text-green-600',
+  },
+  {
+    shadow: 'shadow-teal-300',
+    border: 'border-teal-500',
+    text: 'text-teal-600',
+  },
+  {
+    shadow: 'shadow-blue-300',
+    border: 'border-blue-500',
+    text: 'text-blue-600',
+  },
+  {
+    shadow: 'shadow-indigo-300',
+    border: 'border-indigo-500',
+    text: 'text-indigo-600',
+  },
+  {
+    shadow: 'shadow-purple-300',
+    border: 'border-purple-500',
+    text: 'text-purple-600',
+  },
+  {
+    shadow: 'shadow-pink-300',
+    border: 'border-pink-500',
+    text: 'text-pink-600',
+  },
+  {
+    shadow: 'shadow-rose-300',
+    border: 'border-rose-500',
+    text: 'text-rose-600',
+  },
+  {
+    shadow: 'shadow-amber-300',
+    border: 'border-amber-500',
+    text: 'text-amber-600',
+  },
+  {
+    shadow: 'shadow-lime-300',
+    border: 'border-lime-500',
+    text: 'text-lime-600',
+  },
+  {
+    shadow: 'shadow-emerald-300',
+    border: 'border-emerald-500',
+    text: 'text-emerald-600',
+  },
+  {
+    shadow: 'shadow-cyan-300',
+    border: 'border-cyan-500',
+    text: 'text-cyan-600',
+  },
+  { shadow: 'shadow-sky-300', border: 'border-sky-500', text: 'text-sky-600' },
+  {
+    shadow: 'shadow-violet-300',
+    border: 'border-violet-500',
+    text: 'text-violet-600',
+  },
+  {
+    shadow: 'shadow-fuchsia-300',
+    border: 'border-fuchsia-500',
+    text: 'text-fuchsia-600',
+  },
+  {
+    shadow: 'shadow-neutral-400',
+    border: 'border-neutral-500',
+    text: 'text-neutral-600',
+  },
+  {
+    shadow: 'shadow-slate-400',
+    border: 'border-slate-500',
+    text: 'text-slate-600',
+  },
+  {
+    shadow: 'shadow-gray-400',
+    border: 'border-gray-500',
+    text: 'text-gray-600',
+  },
+];
+const getRandomGlowEffect = () => {
+  return glowEffects[Math.floor(Math.random() * glowEffects.length)];
 };
 
 export const IntrusionSetPage: React.FC = () => {
-  const { intrusionSets, loading, error } = useIntrusionSets({});
-  const [hoveredCard, setHoveredCard] = useState<string | null>(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const pageSize = 20;
+  const { results, total, loading, error } = useIntrusionSets({
+    page: currentPage,
+    pageSize,
+  });
   const navigate = useNavigate();
+  const [hoveredCard, setHoveredCard] = useState<string | null>(null);
 
-  const labelColorMap = useRef<Map<string, (typeof tailwindColors)[0]>>(new Map());
-  const sets = intrusionSets?.results || [];
-
-  useMemo(() => {
-    sets.forEach((set: IntrusionSet) => {
-      (set.labels || []).forEach((label) => {
-        if (!labelColorMap.current.has(label)) {
-          labelColorMap.current.set(label, getRandomTailwindColor());
-        }
+  useEffect(() => {
+    if (error) {
+      toast.error('Realtime Update Error', {
+        description:
+          'Connection to real-time updates failed. Displaying static data.',
       });
-    });
-  }, [sets]);
+    }
+  }, [error]);
 
-  const formatDate = (dateString?: string) => {
-    if (!dateString) return "Unknown";
-    const date = new Date(dateString);
-    return date.toLocaleDateString();
+  const totalPages = Math.ceil((total || 0) / pageSize);
+
+  const handlePageChange = (newPage: number) => {
+    setCurrentPage(Math.max(1, Math.min(newPage, totalPages)));
   };
 
-  if (loading)
-    return (
-      <div className="flex items-center justify-center h-screen">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-900"></div>
-      </div>
-    );
+  const formatDate = (dateString?: string) => {
+    return dateString ? new Date(dateString).toLocaleDateString() : 'Unknown';
+  };
 
-  if (error)
+  if (error) {
     return (
-      <div className="bg-red-50 p-4 rounded-lg text-red-600 flex items-center justify-center">
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          className="h-6 w-6 mr-2"
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke="currentColor"
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth={2}
-            d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
-          />
-        </svg>
-        Error loading intrusion sets. Please try again later.
+      <div className="p-4 bg-red-100 text-red-700 rounded-lg mx-auto max-w-2xl mt-8 text-center">
+        Error loading intrusion set data: {error.message}
       </div>
     );
+  }
 
   return (
-    <div className="grid grid-cols-4 gap-6 p-4 relative min-h-screen">
-      {sets.map((set) => {
-        const isHovered = hoveredCard === set.id;
-        // No random glow effect for now, but can be added if desired
-        return (
-          <div
-            key={set.id}
-            className="contents"
-            onClick={() => navigate(`/intrusionsets/${set.id}`)}
-          >
-            <div
-              className={`h-80 rounded-xl border shadow-sm overflow-hidden relative transition-all duration-300 cursor-pointer hover:shadow-lg hover:scale-[1.02] mb-6 bg-white`}
-              onMouseEnter={() => setHoveredCard(set.id)}
-              onMouseLeave={() => setHoveredCard(null)}
-            >
-              {/* Shield icon at bottom right */}
-              <div
-                className="absolute bottom-2 right-2 z-10"
-                style={{ pointerEvents: 'none' }}
+    <div className="w-full relative min-h-[90vh] pb-12">
+      {error && (
+        <div className="mb-4 p-4 bg-yellow-100 text-yellow-700 rounded-lg">
+          Warning: Real-time updates disabled. {error.message}
+        </div>
+      )}
+
+      <div className="w-full p-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+        {loading ? (
+          Array.from({ length: pageSize }).map((_, i) => (
+            <Skeleton key={i} className="h-80 rounded-xl" />
+          ))
+        ) : results.length > 0 ? (
+          results.map((intrusionSet: any) => {
+            const labels = Array.from(new Set(intrusionSet.labels || [])).slice(
+              0,
+              3,
+            );
+            const extraLabels =
+              (intrusionSet.labels || []).length - labels.length;
+            const isHovered = hoveredCard === intrusionSet.id;
+            const glowEffect = isHovered ? getRandomGlowEffect() : null;
+
+            return (
+              <Card
+                key={intrusionSet.id}
+                className={`relative h-80 flex flex-col cursor-pointer hover:shadow-lg transition-shadow
+                  ${
+                    glowEffect
+                      ? `${glowEffect.border} ${glowEffect.shadow}`
+                      : ''
+                  }`}
+                onClick={() => navigate(`/intrusionsets/${intrusionSet.id}`)}
+                onMouseEnter={() => setHoveredCard(intrusionSet.id)}
+                onMouseLeave={() => setHoveredCard(null)}
               >
-                <KeyRound className="h-10 w-6" />
-              </div>
-
-              <div className="p-5 flex flex-col h-full relative z-10">
-                <div className="flex justify-between items-start mb-2">
-                  <div className="text-base truncate font-semibold text-foreground">
-                    Name: {set.name}
-                  </div>
-                  <Badge
-                    variant="outline"
-                    className="px-4 py-1 text-xs font-semibold uppercase border-2 border-blue-500 bg-blue-100 text-blue-600 tracking-wide shadow-sm"
-                  >
-                    INTRUSION SET
-                  </Badge>
+                {/* Sword icon at bottom right */}
+                <div
+                  className="absolute bottom-2 right-2 z-10"
+                  style={{ pointerEvents: 'none' }}
+                >
+                  <SwordIcon className="h-10 w-10" />
                 </div>
-
-                <div className="text-primary mb-3 flex-1 overflow-hidden">
-                  <div
-                    className="line-clamp-4 overflow-hidden text-ellipsis"
-                    style={{
-                      display: '-webkit-box',
-                      WebkitBoxOrient: 'vertical',
-                      WebkitLineClamp: 4,
-                    }}
-                  >
-                    {set.description}
-                  </div>
-                </div>
-
-                <div className="flex flex-col gap-1 mb-2">
-                  <div className="text-xs text-muted-foreground">
-                    <span className="font-medium">first_seen:</span>{" "}
-                    {formatDate(set.first_seen)}
-                  </div>
-                  <div className="text-xs text-muted-foreground">
-                    <span className="font-medium">last_seen:</span>{" "}
-                    {formatDate(set.last_seen)}
-                  </div>
-                </div>
-                <div className="flex flex-wrap gap-1 mt-auto">
-                  {(set.labels || []).slice(0, 3).map((label) => {
-                    if (!labelColorMap.current.has(label)) {
-                      labelColorMap.current.set(label, getRandomTailwindColor());
-                    }
-                    const color = labelColorMap.current.get(label)!;
-                    return (
-                      <Badge
-                        key={label}
-                        variant="outline"
-                        className={`${color.text} ${color.border} ${color.bg}`}
-                      >
-                        {label}
-                      </Badge>
-                    );
-                  })}
-                  {(set.labels && set.labels.length > 3) && (
+                <CardContent className="flex-1 flex flex-col p-4">
+                  <div className="flex justify-between items-start mb-2">
+                    <CardTitle
+                      className={`text-lg truncate transition-colors duration-300 ${
+                        glowEffect ? glowEffect.text : ''
+                      }`}
+                    >
+                      {intrusionSet.name}
+                    </CardTitle>
                     <Badge
                       variant="outline"
-                      className="text-muted-foreground border-border bg-muted"
+                      className="px-4 py-1 text-xs font-semibold uppercase border-2 border-amber-500 bg-amber-100 text-amber-600 tracking-wide shadow-sm"
                     >
-                      +{set.labels.length - 3}
+                      INTRUSION SET
                     </Badge>
-                  )}
-                </div>
-              </div>
+                  </div>
+
+                  <CardDescription className="flex-1 mb-4 line-clamp-4 text-primary">
+                    {intrusionSet.description || 'No description available'}
+                  </CardDescription>
+
+                  <div className="flex flex-wrap gap-2 mb-2">
+                    {labels.map((label) => {
+                      const color = getColorForLabel(label);
+                      return (
+                        <Badge
+                          key={label}
+                          className={`${color.bg} ${color.border} ${color.text}`}
+                        >
+                          {label}
+                        </Badge>
+                      );
+                    })}
+                    {extraLabels > 0 && (
+                      <Badge variant="outline">+{extraLabels}</Badge>
+                    )}
+                  </div>
+
+                  <div className="text-sm space-y-1 text-muted-foreground">
+                    <div>
+                      <span className="font-medium">First Seen:</span>{' '}
+                      {formatDate(intrusionSet.first_seen)}
+                    </div>
+                    <div>
+                      <span className="font-medium">Last Seen:</span>{' '}
+                      {formatDate(intrusionSet.last_seen)}
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            );
+          })
+        ) : (
+          <div className="col-span-full text-center py-12 text-gray-500">
+            No intrusion sets found
+          </div>
+        )}
+      </div>
+
+      {totalPages > 1 && (
+        <div className="fixed bottom-0 left-[var(--sidebar-width)] w-[calc(100%-var(--sidebar-width))] bg-background/80 backdrop-blur z-20 border-t">
+          <div className="flex items-center justify-between px-4 py-2 mx-auto">
+            <div className="text-sm text-muted-foreground">
+              Showing {(currentPage - 1) * pageSize + 1} to{' '}
+              {Math.min(currentPage * pageSize, total || 0)} of {total || 0}{' '}
+              intrusion sets
+            </div>
+            <div className="flex items-center space-x-2">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => handlePageChange(1)}
+                disabled={currentPage === 1 || loading}
+              >
+                <ChevronsLeft className="h-4 w-4" />
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => handlePageChange(currentPage - 1)}
+                disabled={currentPage === 1 || loading}
+              >
+                <ChevronLeft className="h-4 w-4" />
+              </Button>
+              <span className="px-2 text-sm font-medium">
+                Page {currentPage} of {totalPages}
+              </span>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => handlePageChange(currentPage + 1)}
+                disabled={currentPage === totalPages || loading}
+              >
+                <ChevronRight className="h-4 w-4" />
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => handlePageChange(totalPages)}
+                disabled={currentPage === totalPages || loading}
+              >
+                <ChevronsRight className="h-4 w-4" />
+              </Button>
             </div>
           </div>
-        );
-      })}
+        </div>
+      )}
     </div>
   );
 };

@@ -115,7 +115,7 @@ import ArtifactCreatePage from './pages/Artifacts/ArtifactCreatePage';
 import { ToolsCreatePage } from './pages/Tools/ToolsCreatePage';
 import { ToolsEditPage } from './pages/Tools/ToolsEditPage';
 import { ToolsDetailPage } from './pages/Tools/ToolsDetailPage';
-import ToolsPage from "@/pages/Tools/ToolsPage";
+import ToolsPage from '@/pages/Tools/ToolsPage';
 
 import VulnerabilityCreatePage from './pages/Vulnerability/VulnerabilityCreatePage';
 import VulnerabilityEditPage from './pages/Vulnerability/VulnerabilityEditPage';
@@ -125,7 +125,12 @@ import VulnerabilityPage from '@/pages/Vulnerability/VulnerabilityPage';
 import { CourseOfActionCreatePage } from './pages/CourseOfAction/CourseOfActionCreatePage';
 import { CourseOfActionEditPage } from './pages/CourseOfAction/CourseOfActionEditPage';
 import { CourseOfActionDetailPage } from './pages/CourseOfAction/CourseOfActionDetailPage';
-import CourseOfActionPage from "@/pages/CourseOfAction/CourseOfActionPage";
+import CourseOfActionPage from '@/pages/CourseOfAction/CourseOfActionPage';
+
+import IntrusionSetPage from './pages/IntrusionSet/IntrusionSetPage';
+import IntrusionSetCreatePage from './pages/IntrusionSet/IntrusionSetCreatePage';
+import IntrusionSetEditPage from './pages/IntrusionSet/IntrusionSetEditPage';
+import IntrusionSetDetailPage from './pages/IntrusionSet/IntrusionSetDetailPage';
 
 import IntrusionSetPage from './pages/IntrusionSet/IntrusionSetPage';
 import IntrusionSetCreatePage from './pages/IntrusionSet/IntrusionSetCreatePage';
@@ -667,6 +672,27 @@ export const AppRoutes = () => {
         path="/tools/:id/edit"
         element={<ProtectedRoute children={<ToolsEditPage />} />}
       />
+      <Route
+        path="/tools/:id"
+        element={<ProtectedRoute children={<ToolsDetailPage />} />}
+      />
+      <Route
+        path="/intrusionsets"
+        element={<ProtectedRoute children={<IntrusionSetPage />} />}
+      />
+      <Route
+        path="/intrusionsets/create"
+        element={<ProtectedRoute children={<IntrusionSetCreatePage />} />}
+      />
+      <Route
+        path="/intrusionsets/:id/edit"
+        element={<ProtectedRoute children={<IntrusionSetEditPage />} />}
+      />
+      <Route
+        path="/intrusionsets/:id"
+        element={<ProtectedRoute children={<IntrusionSetDetailPage />} />}
+      />
+
       <Route
         path="/tools/:id"
         element={<ProtectedRoute children={<ToolsDetailPage />} />}

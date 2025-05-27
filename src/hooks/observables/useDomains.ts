@@ -6,8 +6,15 @@ import {
   CREATE_DOMAIN_NAME,
   UPDATE_DOMAIN_NAME,
   DELETE_DOMAIN_NAME,
+  DOMAIN_NAME_CREATED_SUBSCRIPTION,
+  DOMAIN_NAME_UPDATED_SUBSCRIPTION,
+  DOMAIN_NAME_DELETED_SUBSCRIPTION,
 } from '../../graphql/observables/domain';
-import { DomainName, DomainNameSearchResult } from '../../types/observables/domain';
+import {
+  DomainName,
+  DomainNameSearchResult,
+} from '../../types/observables/domain';
+import { useEffect } from 'react';
 
 export const useDomains = ({
   filter,
@@ -18,17 +25,85 @@ export const useDomains = ({
   page?: number;
   pageSize?: number;
 }) => {
-  const { data, loading, error, fetchMore } = useQuery<{ searchDomainNames: DomainNameSearchResult }>(
-    SEARCH_DOMAIN_OBSERVABLES,
-    {
-      variables: {
-        filter: filter,
-        page: page,
-        pageSize: pageSize,
-      },
-      notifyOnNetworkStatusChange: true,
+  const { data, loading, error, fetchMore, subscribeToMore } = useQuery<{
+    searchDomainNames: DomainNameSearchResult;
+  }>(SEARCH_DOMAIN_OBSERVABLES, {
+    variables: {
+      filter: filter,
+      page: page,
+      pageSize: pageSize,
     },
-  );
+    notifyOnNetworkStatusChange: true,
+  });
+
+  useEffect(() => {
+    const unsubCreate = subscribeToMore({
+      document: DOMAIN_NAME_CREATED_SUBSCRIPTION,
+      updateQuery: (prev, { subscriptionData }) => {
+        const newItem = subscriptionData.data?.domainNameCreated;
+        if (!newItem) return prev;
+        if (
+          prev.searchDomainNames.results.some(
+            (d: DomainName) => d.id === newItem.id,
+          )
+        ) {
+          return prev;
+        }
+        return {
+          ...prev,
+          searchDomainNames: {
+            ...prev.searchDomainNames,
+            results: [newItem, ...prev.searchDomainNames.results].slice(
+              0,
+              pageSize,
+            ),
+            total: prev.searchDomainNames.total + 1,
+          },
+        };
+      },
+    });
+
+    const unsubUpdate = subscribeToMore({
+      document: DOMAIN_NAME_UPDATED_SUBSCRIPTION,
+      updateQuery: (prev, { subscriptionData }) => {
+        const updated = subscriptionData.data?.domainNameUpdated;
+        if (!updated) return prev;
+        return {
+          ...prev,
+          searchDomainNames: {
+            ...prev.searchDomainNames,
+            results: prev.searchDomainNames.results.map((d: DomainName) =>
+              d.id === updated.id ? { ...d, ...updated } : d,
+            ),
+          },
+        };
+      },
+    });
+
+    const unsubDelete = subscribeToMore({
+      document: DOMAIN_NAME_DELETED_SUBSCRIPTION,
+      updateQuery: (prev, { subscriptionData }) => {
+        const deletedId = subscriptionData.data?.domainNameDeleted;
+        if (!deletedId) return prev;
+        return {
+          ...prev,
+          searchDomainNames: {
+            ...prev.searchDomainNames,
+            results: prev.searchDomainNames.results.filter(
+              (d: DomainName) => d.id !== deletedId,
+            ),
+            total: prev.searchDomainNames.total - 1,
+          },
+        };
+      },
+    });
+
+    return () => {
+      unsubCreate();
+      unsubUpdate();
+      unsubDelete();
+    };
+  }, [subscribeToMore, pageSize]);
 
   const domains = data?.searchDomainNames?.results || [];
   const total = data?.searchDomainNames?.total || 0;
@@ -93,7 +168,8 @@ export const useDomainNamesByValue = (value: string) => {
 };
 
 export const useCreateDomainName = () => {
-  const [createDomainName, { data, loading, error }] = useMutation(CREATE_DOMAIN_NAME);
+  const [createDomainName, { data, loading, error }] =
+    useMutation(CREATE_DOMAIN_NAME);
   return {
     createDomainName,
     createdDomainName: data?.createDomainName,
@@ -103,7 +179,8 @@ export const useCreateDomainName = () => {
 };
 
 export const useUpdateDomainName = () => {
-  const [updateDomainName, { data, loading, error }] = useMutation(UPDATE_DOMAIN_NAME);
+  const [updateDomainName, { data, loading, error }] =
+    useMutation(UPDATE_DOMAIN_NAME);
   return {
     updateDomainName,
     updatedDomainName: data?.updateDomainName,
@@ -113,7 +190,8 @@ export const useUpdateDomainName = () => {
 };
 
 export const useDeleteDomainName = () => {
-  const [deleteDomainName, { data, loading, error }] = useMutation(DELETE_DOMAIN_NAME);
+  const [deleteDomainName, { data, loading, error }] =
+    useMutation(DELETE_DOMAIN_NAME);
   return {
     deleteDomainName,
     deleted: data?.deleteDomainName,

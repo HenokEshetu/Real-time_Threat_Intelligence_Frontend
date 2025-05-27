@@ -1,41 +1,40 @@
 import gql from 'graphql-tag';
 
-
-export const GET_CAMPAIGN =gql`
-query GetCampaign($id: String!) {
-  campaign(id: $id) {
-    id
-    created
-    modified
-    type
-    name
-    description
-    aliases
-    first_seen
-    last_seen
-    objective
-    relationship {
+export const GET_CAMPAIGN = gql`
+  query GetCampaign($id: String!) {
+    campaign(id: $id) {
       id
-      source_ref
-      target_ref
+      created
+      modified
       type
-    }
-    external_references {
-      source_name
-      url
+      name
       description
+      aliases
+      first_seen
+      last_seen
+      objective
+      relationship {
+        id
+        source_ref
+        target_ref
+        type
+      }
+      external_references {
+        source_name
+        url
+        description
+      }
+      x_mitre_domains
     }
   }
-}
 `;
 
-
-
-
-
 export const SEARCH_COMPAIGNS = gql`
-
-query SearchCampaigns($filters: SearchCampaignInput, $page: Int, $pageSize: Int) {
+  query SearchCampaigns(
+    $filters: SearchCampaignInput
+    $page: Int
+    $pageSize: Int
+  ) {
     searchCampaigns(filters: $filters, page: $page, pageSize: $pageSize) {
       page
       pageSize
@@ -58,6 +57,7 @@ query SearchCampaigns($filters: SearchCampaignInput, $page: Int, $pageSize: Int)
           target_ref
           type
         }
+        x_mitre_domains
       }
     }
   }

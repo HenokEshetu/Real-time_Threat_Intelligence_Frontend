@@ -66,7 +66,11 @@ export const THREAT_ACTOR_QUERY = gql`
 `;
 
 export const SEARCH_THREAT_ACTORS = gql`
-  query SearchThreatActors($filters: SearchThreatActorInput, $page: Int, $pageSize: Int) {
+  query SearchThreatActors(
+    $filters: SearchThreatActorInput
+    $page: Int
+    $pageSize: Int
+  ) {
     searchThreatActors(filters: $filters, page: $page, pageSize: $pageSize) {
       page
       pageSize
@@ -116,7 +120,6 @@ export const SEARCH_THREAT_ACTORS = gql`
             url
             external_id
           }
-          enrichment
           labels
           revoked
           created_by_ref

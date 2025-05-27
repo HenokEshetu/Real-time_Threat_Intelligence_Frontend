@@ -12,7 +12,6 @@ export const SEARCH_URL_OBSERVABLES = gql`
         created
         created_by_ref
         defanged
-  
         extensions
         external_references {
           description
@@ -29,7 +28,7 @@ export const SEARCH_URL_OBSERVABLES = gql`
         revoked
         spec_version
         type
-        # value
+        value
       }
     }
   }
@@ -71,7 +70,7 @@ export const CREATE_URL = gql`
       created
       created_by_ref
       defanged
- 
+
       extensions
       external_references {
         description
@@ -100,7 +99,7 @@ export const UPDATE_URL = gql`
       created
       created_by_ref
       defanged
- 
+
       extensions
       external_references {
         description
@@ -125,5 +124,67 @@ export const UPDATE_URL = gql`
 export const DELETE_URL = gql`
   mutation DeleteUrl($id: String!) {
     deleteUrl(id: $id)
+  }
+`;
+
+export const URL_CREATED_SUBSCRIPTION = gql`
+  subscription UrlCreated {
+    urlCreated {
+      confidence
+      created
+      created_by_ref
+      defanged
+      extensions
+      external_references {
+        description
+        external_id
+        id
+        source_name
+        url
+      }
+      id
+      labels
+      lang
+      modified
+      object_marking_refs
+      revoked
+      spec_version
+      type
+      value
+    }
+  }
+`;
+
+export const URL_UPDATED_SUBSCRIPTION = gql`
+  subscription UrlUpdated {
+    urlUpdated {
+      confidence
+      created
+      created_by_ref
+      defanged
+      extensions
+      external_references {
+        description
+        external_id
+        id
+        source_name
+        url
+      }
+      id
+      labels
+      lang
+      modified
+      object_marking_refs
+      revoked
+      spec_version
+      type
+      value
+    }
+  }
+`;
+
+export const URL_DELETED_SUBSCRIPTION = gql`
+  subscription UrlDeleted {
+    urlDeleted
   }
 `;

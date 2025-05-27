@@ -9,7 +9,10 @@ export const TopContainer = ({
 }) => {
   return (
     <div
-      className={`flex items-center bg-background sticky top-17 z-1 w-490 left-50 p-5 ${className}`}
+      className={`flex items-center bg-background sticky top-17 z-10 
+        left-[var(--sidebar-width)] 
+        w-[calc(100%-var(--sidebar-width))] 
+        p-3 md:p-5 ${className}`}
     >
       {children}
     </div>

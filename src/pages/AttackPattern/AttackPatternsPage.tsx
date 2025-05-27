@@ -161,7 +161,7 @@ export const AttackPatternsPage = () => {
                   className="hover:bg-gray-50 transition-colors border-b border-gray-300 cursor-pointer"
                   role="button"
                   tabIndex={0}
-                  onKeyPress={e => {
+                  onKeyDown={e => {
                     if (e.key === 'Enter' || e.key === ' ') handleViewAttackPattern(pattern.id);
                   }}
                 >

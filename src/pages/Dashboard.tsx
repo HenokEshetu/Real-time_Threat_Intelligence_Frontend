@@ -3,6 +3,7 @@ import {
   AreaChartGradient,
   BarChartCustomLabel,
   BarChartHorizontal,
+  barchartInteractive,
   BarChartInteractive,
   PieChartInteractive,
   // PieChart,
@@ -39,6 +40,15 @@ import L from 'leaflet';
 import countries from './Location/countries.json';
 import { gql, useQuery } from '@apollo/client';
 import { Loading } from '@/components/common/Loading/Loading';
+import { useReports } from '@/hooks/useReports';
+import { useIntrusionSets } from '@/hooks/useintrusionSet';
+import { useCampaigns } from '@/hooks/useCampaigns';
+import { useMalware } from '@/hooks/useMalware';
+import { useIndicators } from '@/hooks/useIndicators';
+import { useObservables } from '@/hooks/observables/useObservables';
+import { useAttackPatterns } from '@/hooks/observables/useAttackPattern';
+import { useCoursesOfAction } from '@/hooks/useCourseOfAction';
+import { useTools } from '@/hooks/useTools';
 
 // delete L.Icon.Default.prototype._getIconUrl;
 L.Icon.Default.mergeOptions({
@@ -59,50 +69,159 @@ function ResizeHandler() {
 }
 
 export const Dashboard = () => {
-  const summaryData = [
-    {
-      id: 1,
-      title: 'Threat Actors',
-      total: 245,
-      daily: 12,
-      icon: <ShieldAlert className="h-6 w-6" />,
+  const { total: reportTotal } = useReports({
+    page: 1,
+    pageSize: 1,
+  });
+  const { total: intrusionTotal } = useIntrusionSets({
+    page: 1,
+    pageSize: 1,
+  });
+  const { total: campaignTotal } = useCampaigns({
+    page: 1,
+    pageSize: 1,
+  });
+  const { total: malwareTotal } = useMalware({
+    page: 1,
+    pageSize: 1,
+  });
+  const { total: indicatorTotal } = useIndicators({
+    page: 1,
+    pageSize: 1,
+  });
+  const { total: observableTotal } = useObservables({
+    page: 1,
+    pageSize: 1,
+  });
+
+  const { total: campaignEnterpriseTotal } = useCampaigns({
+    filters: {
+      x_mitre_domains: ['enterprise-attack'],
     },
-    {
-      id: 2,
-      title: 'Intrusion Sets',
-      total: 143,
-      daily: 8,
-      icon: <Network className="h-6 w-6" />,
+    page: 1,
+    pageSize: 1,
+  });
+  const { total: malwareEnterpriseTotal } = useMalware({
+    filters: {
+      x_mitre_domains: ['enterprise-attack'],
     },
-    {
-      id: 3,
-      title: 'Campaigns',
-      total: 89,
-      daily: 5,
-      icon: <Activity className="h-6 w-6" />,
+    page: 1,
+    pageSize: 1,
+  });
+  const { total: intrusionEnterpriseTotal } = useIntrusionSets({
+    filters: {
+      x_mitre_domains: ['enterprise-attack'],
     },
-    {
-      id: 4,
-      title: 'Malwares',
-      total: 367,
-      daily: 23,
-      icon: <Bug className="h-6 w-6" />,
+    page: 1,
+    pageSize: 1,
+  });
+  const { total: attackPatternEnterpriseTotal } = useAttackPatterns({
+    filters: {
+      x_mitre_domains: ['enterprise-attack'],
     },
-    {
-      id: 5,
-      title: 'Indicators',
-      total: 1567,
-      daily: 145,
-      icon: <List className="h-6 w-6" />,
+    page: 1,
+    pageSize: 1,
+  });
+  const { total: courseOfActionEnterpriseTotal } = useCoursesOfAction({
+    filters: {
+      x_mitre_domains: ['enterprise-attack'],
     },
-    {
-      id: 6,
-      title: 'Observables',
-      total: 4789,
-      daily: 389,
-      icon: <Globe className="h-6 w-6" />,
+    page: 1,
+    pageSize: 1,
+  });
+  const { total: toolEnterpriseTotal } = useTools({
+    filters: {
+      x_mitre_domains: ['enterprise-attack'],
     },
-  ];
+    page: 1,
+    pageSize: 1,
+  });
+
+  const { total: campaignMobileTotal } = useCampaigns({
+    filters: {
+      x_mitre_domains: ['mobile-attack'],
+    },
+    page: 1,
+    pageSize: 1,
+  });
+  const { total: malwareMobileTotal } = useMalware({
+    filters: {
+      x_mitre_domains: ['mobile-attack'],
+    },
+    page: 1,
+    pageSize: 1,
+  });
+  const { total: intrusionMobileTotal } = useIntrusionSets({
+    filters: {
+      x_mitre_domains: ['mobile-attack'],
+    },
+    page: 1,
+    pageSize: 1,
+  });
+  const { total: attackPatternMobileTotal } = useAttackPatterns({
+    filters: {
+      x_mitre_domains: ['mobile-attack'],
+    },
+    page: 1,
+    pageSize: 1,
+  });
+  const { total: courseOfActionMobileTotal } = useCoursesOfAction({
+    filters: {
+      x_mitre_domains: ['mobile-attack'],
+    },
+    page: 1,
+    pageSize: 1,
+  });
+  const { total: toolMobileTotal } = useTools({
+    filters: {
+      x_mitre_domains: ['mobile-attack'],
+    },
+    page: 1,
+    pageSize: 1,
+  });
+
+  const { total: campaignICSTotal } = useCampaigns({
+    filters: {
+      x_mitre_domains: ['ics-attack'],
+    },
+    page: 1,
+    pageSize: 1,
+  });
+  const { total: malwareICSTotal } = useMalware({
+    filters: {
+      x_mitre_domains: ['ics-attack'],
+    },
+    page: 1,
+    pageSize: 1,
+  });
+  const { total: intrusionICSTotal } = useIntrusionSets({
+    filters: {
+      x_mitre_domains: ['ics-attack'],
+    },
+    page: 1,
+    pageSize: 1,
+  });
+  const { total: attackPatternICSTotal } = useAttackPatterns({
+    filters: {
+      x_mitre_domains: ['ics-attack'],
+    },
+    page: 1,
+    pageSize: 1,
+  });
+  const { total: courseOfActionICSTotal } = useCoursesOfAction({
+    filters: {
+      x_mitre_domains: ['ics-attack'],
+    },
+    page: 1,
+    pageSize: 1,
+  });
+  const { total: toolICSTotal } = useTools({
+    filters: {
+      x_mitre_domains: ['ics-attack'],
+    },
+    page: 1,
+    pageSize: 1,
+  });
 
   // Chart Data
   const targetedRegions = [
@@ -239,22 +358,78 @@ export const Dashboard = () => {
     <div className="w-full p-6 space-y-6 mx-auto">
       {/* Summary Cards Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4">
-        {summaryData.map((item) => (
-          <Card key={item.id} className="!shadow-none">
-            <CardHeader className="flex flex-row items-center justify-between">
-              {item.icon}
-              <Badge variant="outline" className="text-green-600">
-                +{last24hData?.searchThreatActors?.total || 0}
-              </Badge>
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">
-                {totalData?.searchThreatActors?.total || 0}
-              </div>
-              <p className="text-xs text-muted-foreground">{item.title}</p>
-            </CardContent>
-          </Card>
-        ))}
+        <Card className="!shadow-none">
+          <CardHeader className="flex flex-row items-center justify-between">
+            <FileText className="h-6 w-6" />
+            <Badge variant="outline" className="text-green-600">
+              +{}
+            </Badge>
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{reportTotal}</div>
+            <p className="text-xs text-muted-foreground">Reports</p>
+          </CardContent>
+        </Card>
+        <Card className="!shadow-none">
+          <CardHeader className="flex flex-row items-center justify-between">
+            <Network className="h-6 w-6" />
+            <Badge variant="outline" className="text-green-600">
+              +{}
+            </Badge>
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{intrusionTotal}</div>
+            <p className="text-xs text-muted-foreground">Intrusion Sets</p>
+          </CardContent>
+        </Card>
+        <Card className="!shadow-none">
+          <CardHeader className="flex flex-row items-center justify-between">
+            <Activity className="h-6 w-6" />
+            <Badge variant="outline" className="text-green-600">
+              +{}
+            </Badge>
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{campaignTotal}</div>
+            <p className="text-xs text-muted-foreground">Campaigns</p>
+          </CardContent>
+        </Card>
+        <Card className="!shadow-none">
+          <CardHeader className="flex flex-row items-center justify-between">
+            <Bug className="h-6 w-6" />
+            <Badge variant="outline" className="text-green-600">
+              +{}
+            </Badge>
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{malwareTotal}</div>
+            <p className="text-xs text-muted-foreground">Malware</p>
+          </CardContent>
+        </Card>
+        <Card className="!shadow-none">
+          <CardHeader className="flex flex-row items-center justify-between">
+            <List className="h-6 w-6" />
+            <Badge variant="outline" className="text-green-600">
+              +{}
+            </Badge>
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{indicatorTotal}</div>
+            <p className="text-xs text-muted-foreground">Indicators</p>
+          </CardContent>
+        </Card>
+        <Card className="!shadow-none">
+          <CardHeader className="flex flex-row items-center justify-between">
+            <Globe className="h-6 w-6" />
+            <Badge variant="outline" className="text-green-600">
+              +{}
+            </Badge>
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{observableTotal}</div>
+            <p className="text-xs text-muted-foreground">Observables</p>
+          </CardContent>
+        </Card>
       </div>
 
       {/* Threat Landscape Section */}
@@ -338,6 +513,56 @@ export const Dashboard = () => {
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-4 gap-4 h-auto">
+            <BarChartInteractive
+              title="Industry Targeted Threats"
+              titleDescription="Industry areas which are targeted by different threats"
+              chartData={
+                [
+                  {
+                    object: 'Campaign',
+                    enterprise: campaignEnterpriseTotal || 0,
+                    ics: campaignICSTotal || 0,
+                    mobile: campaignMobileTotal || 0,
+                  },
+                  {
+                    object: 'Malware',
+                    enterprise: malwareEnterpriseTotal || 0,
+                    ics: malwareICSTotal || 0,
+                    mobile: malwareMobileTotal || 0,
+                  },
+                  {
+                    object: 'Intrusion Set',
+                    enterprise: intrusionEnterpriseTotal || 0,
+                    ics: intrusionICSTotal || 0,
+                    mobile: intrusionMobileTotal || 0,
+                  },
+                  {
+                    object: 'Attack Pattern',
+                    enterprise: attackPatternEnterpriseTotal || 0,
+                    ics: attackPatternICSTotal || 0,
+                    mobile: attackPatternMobileTotal || 0,
+                  },
+                  {
+                    object: 'Course of Action',
+                    enterprise: courseOfActionEnterpriseTotal || 0,
+                    ics: courseOfActionICSTotal || 0,
+                    mobile: courseOfActionMobileTotal || 0,
+                  },
+                  {
+                    object: 'Tool',
+                    enterprise: toolEnterpriseTotal || 0,
+                    ics: toolICSTotal || 0,
+                    mobile: toolMobileTotal || 0,
+                  },
+                ] as (typeof barchartInteractive)[]
+              }
+              className="lg:col-span-2"
+            />
+            <RadialChart />
+            <BarChartCustomLabel />
+          </div>
+
+          <div className="grid grid-cols-1 lg:grid-cols-4 gap-4 h-auto">
             {/* Targeted Regions */}
             <BarChartHorizontal />
             <BarChartHorizontal />
@@ -385,12 +610,6 @@ export const Dashboard = () => {
             </Card>
           </div>
         </div>
-      </div>
-
-      <div className="grid grid-cols-1 lg:grid-cols-4 gap-4 h-auto">
-        <RadialChart />
-        <BarChartInteractive className="lg:col-span-2" />
-        <BarChartCustomLabel />
       </div>
 
       {/* Vulnerability & Activity Section */}

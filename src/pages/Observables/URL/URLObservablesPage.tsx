@@ -77,7 +77,7 @@ export const URLObservablesPage = () => {
   const { loading, error, total, urls } = useURLs({
     filters: {},
     page: currentPage,
-    pageSize: pageSize,
+    pageSize,
   });
 
   const labelColorMap = React.useRef<Map<string, (typeof tailwindColors)[0]>>(
@@ -229,10 +229,8 @@ export const URLObservablesPage = () => {
                   <TableCell className="p-4 font-medium text-gray-900 hover:underline max-w-100 truncate">
                     {representation.startsWith('http') ? (
                       <a
-                        href={representation}
-                        target="_blank"
+                        href={`/observables/urls/${url.id}`}
                         rel="noopener noreferrer"
-                        className="text-blue-600 underline"
                         onClick={(e) => e.stopPropagation()}
                       >
                         {representation}

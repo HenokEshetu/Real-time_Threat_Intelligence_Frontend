@@ -53,3 +53,11 @@ export interface CourseOfAction {
   extensions?: any;
   relationship?: RelationshipCommonProperties[];
 }
+
+export interface CourseOfActionSearchResult {
+  page: number;
+  pageSize: number;
+  total: number;
+  totalPages: number;
+  results: CourseOfAction[];
+}

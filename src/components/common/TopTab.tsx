@@ -29,9 +29,11 @@ export const TopTab = ({
   return (
     <Tabs defaultValue={defaultTab || tabs.titles[0]} className="w-full">
       <TopContainer
-        className={`h-13 flex-start border-b border-gray-200 top-42 ${containerStyle}`}
+        className={`h-15 flex-start !w-full border-gray-200 top-42 ${containerStyle}`}
       >
-        <TabsList className={`flex gap-4 bg-transparent ${listStyle}`}>
+        <TabsList
+          className={`flex gap-2 h-14 md:gap-4 bg-background overflow-x-auto scrollbar-thin scrollbar-thumb-rounded scrollbar-thumb-gray-300 ${listStyle}`}
+        >
           {tabs.titles?.map((tab, index) => (
             <>
               {isPage ? (

@@ -9,7 +9,7 @@ export const GET_TOOL = gql`
       created
       created_by_ref
       description
-      
+
       extensions
       external_references {
         source_name
@@ -33,7 +33,7 @@ export const GET_TOOL = gql`
       }
       revoked
       spec_version
-      
+
       tool_version
       type
     }
@@ -54,7 +54,7 @@ export const SEARCH_TOOLS = gql`
         created
         created_by_ref
         description
-        
+
         extensions
         external_references {
           source_name
@@ -82,5 +82,87 @@ export const SEARCH_TOOLS = gql`
         type
       }
     }
+  }
+`;
+
+export const TOOL_CREATED_SUBSCRIPTION = gql`
+  subscription ToolCreated {
+    toolCreated {
+      id
+      aliases
+      confidence
+      created
+      created_by_ref
+      description
+      extensions
+      external_references {
+        source_name
+        url
+        description
+      }
+      kill_chain_phases {
+        kill_chain_name
+        phase_name
+      }
+      labels
+      lang
+      modified
+      name
+      object_marking_refs
+      relationship {
+        id
+        source_ref
+        target_ref
+        type
+      }
+      revoked
+      spec_version
+      tool_version
+      type
+    }
+  }
+`;
+
+export const TOOL_UPDATED_SUBSCRIPTION = gql`
+  subscription ToolUpdated {
+    toolUpdated {
+      id
+      aliases
+      confidence
+      created
+      created_by_ref
+      description
+      extensions
+      external_references {
+        source_name
+        url
+        description
+      }
+      kill_chain_phases {
+        kill_chain_name
+        phase_name
+      }
+      labels
+      lang
+      modified
+      name
+      object_marking_refs
+      relationship {
+        id
+        source_ref
+        target_ref
+        type
+      }
+      revoked
+      spec_version
+      tool_version
+      type
+    }
+  }
+`;
+
+export const TOOL_DELETED_SUBSCRIPTION = gql`
+  subscription ToolDeleted {
+    toolDeleted
   }
 `;

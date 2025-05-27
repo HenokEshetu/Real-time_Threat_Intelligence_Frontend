@@ -19,6 +19,7 @@ import {
   ChevronsRight,
   FileChartLineIcon,
   FileChartPieIcon,
+  FileTextIcon,
 } from 'lucide-react';
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -130,6 +131,9 @@ export const ReportsPage = () => {
           <TableHeader>
             <TableRow className="bg-gray-100">
               <TableHead className="font-bold p-4 text-gray-800">
+                Type
+              </TableHead>
+              <TableHead className="font-bold p-4 text-gray-800">
                 Name
               </TableHead>
               <TableHead className="font-bold p-4 text-gray-800">
@@ -165,17 +169,25 @@ export const ReportsPage = () => {
                   onClick={() => handleViewReport(report.id)}
                   className="hover:bg-gray-50 transition-colors border-b border-gray-300 cursor-pointer"
                 >
+                  <TableCell className="p-4">
+                    <Badge
+                      variant="outline"
+                      className="text-violet-500 border-violet-500 bg-violet-50 px-8"
+                    >
+                      <FileTextIcon className="h-5 w-5 text-violet-600" />
+                      Report
+                    </Badge>
+                  </TableCell>
                   <TableCell className="p-4 font-medium text-gray-900 hover:underline max-w-100 truncate">
                     {report.name}
                   </TableCell>
                   <TableCell className="p-4 text-gray-700">
-                    {
-                      Array.isArray(report.report_types)
-                        ? report.report_types.join(', ')
-                        : (typeof report.report_types === 'string' && report.report_types)
-                        ? report.report_types
-                        : ''
-                    }
+                    {Array.isArray(report.report_types)
+                      ? report.report_types.join(', ')
+                      : typeof report.report_types === 'string' &&
+                        report.report_types
+                      ? report.report_types
+                      : ''}
                   </TableCell>
                   <TableCell className="p-4 max-w-100">
                     <div className="flex flex-wrap gap-1">

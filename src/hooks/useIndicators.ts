@@ -1,9 +1,12 @@
 import {
   SEARCH_INDICATORS,
   GET_INDICATOR,
-  SEARCH_SUBSCRIPTION_INDICATORS,
+  INDICATOR_CREATED_SUBSCRIPTION,
+  INDICATOR_UPDATED_SUBSCRIPTION,
+  INDICATOR_DELETED_SUBSCRIPTION,
 } from '@/graphql/indicator/queries';
-import { useQuery, useSubscription } from '@apollo/client';
+import { useQuery } from '@apollo/client';
+import { useEffect } from 'react';
 
 export const useIndicators = ({
   filters = {},
@@ -14,31 +17,87 @@ export const useIndicators = ({
   page?: number;
   pageSize?: number;
 }) => {
-  const { data, loading, error, fetchMore } = useQuery(SEARCH_INDICATORS, {
-    variables: {
-      filters: filters,
-      page: page,
-      pageSize: pageSize,
+  const { data, loading, error, fetchMore, subscribeToMore } = useQuery(
+    SEARCH_INDICATORS,
+    {
+      variables: {
+        filters: filters,
+        page: page,
+        pageSize: pageSize,
+      },
+      notifyOnNetworkStatusChange: true,
     },
-    notifyOnNetworkStatusChange: true,
-  });
+  );
 
-  // const { data, loading, error } = useSubscription(
-  //   SEARCH_SUBSCRIPTION_INDICATORS,
-  //   {
-  //     variables: {
-  //       filters: filters,
-  //       page: page,
-  //       pageSize: pageSize,
-  //     },
-  //     fetchPolicy: 'cache-first',
-  //   },
-  // );
+  useEffect(() => {
+    const unsubCreate = subscribeToMore({
+      document: INDICATOR_CREATED_SUBSCRIPTION,
+      updateQuery: (prev, { subscriptionData }) => {
+        const newItem = subscriptionData.data?.indicatorCreated;
+        if (!newItem) return prev;
+        if (
+          prev.searchIndicators.results.some((i: any) => i.id === newItem.id)
+        ) {
+          return prev;
+        }
+        return {
+          ...prev,
+          searchIndicators: {
+            ...prev.searchIndicators,
+            results: [newItem, ...prev.searchIndicators.results].slice(
+              0,
+              pageSize,
+            ),
+            total: prev.searchIndicators.total + 1,
+          },
+        };
+      },
+    });
+
+    const unsubUpdate = subscribeToMore({
+      document: INDICATOR_UPDATED_SUBSCRIPTION,
+      updateQuery: (prev, { subscriptionData }) => {
+        const updated = subscriptionData.data?.indicatorUpdated;
+        if (!updated) return prev;
+        return {
+          ...prev,
+          searchIndicators: {
+            ...prev.searchIndicators,
+            results: prev.searchIndicators.results.map((i: any) =>
+              i.id === updated.id ? { ...i, ...updated } : i,
+            ),
+          },
+        };
+      },
+    });
+
+    const unsubDelete = subscribeToMore({
+      document: INDICATOR_DELETED_SUBSCRIPTION,
+      updateQuery: (prev, { subscriptionData }) => {
+        const deletedId = subscriptionData.data?.indicatorDeleted;
+        if (!deletedId) return prev;
+        return {
+          ...prev,
+          searchIndicators: {
+            ...prev.searchIndicators,
+            results: prev.searchIndicators.results.filter(
+              (i: any) => i.id !== deletedId,
+            ),
+            total: prev.searchIndicators.total - 1,
+          },
+        };
+      },
+    });
+
+    return () => {
+      unsubCreate();
+      unsubUpdate();
+      unsubDelete();
+    };
+  }, [subscribeToMore, pageSize]);
 
   const indicators = data?.searchIndicators?.results || [];
   const total = data?.searchIndicators?.total || 0;
-
-  console.log('total ', total);
 
   const loadMore = () => {
     fetchMore({

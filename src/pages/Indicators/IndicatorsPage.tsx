@@ -14,41 +14,41 @@ import {
 } from '@/components/ui/table';
 import { Indicator } from '@/types/indicator';
 import { Button } from '@/components/ui/button';
-import { ChevronsLeft, ChevronsRight, DatabaseIcon } from 'lucide-react';
+import { ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight, CircleArrowOutDownLeftIcon, DatabaseIcon } from 'lucide-react';
 
 const tailwindColors = [
-  { bg: 'bg-red-200', border: 'border-red-500', text: 'text-red-600' },
-  { bg: 'bg-orange-200', border: 'border-orange-500', text: 'text-orange-600' },
-  { bg: 'bg-yellow-200', border: 'border-yellow-500', text: 'text-yellow-600' },
-  { bg: 'bg-green-200', border: 'border-green-500', text: 'text-green-600' },
-  { bg: 'bg-teal-200', border: 'border-teal-500', text: 'text-teal-600' },
-  { bg: 'bg-blue-200', border: 'border-blue-500', text: 'text-blue-600' },
-  { bg: 'bg-indigo-200', border: 'border-indigo-500', text: 'text-indigo-600' },
-  { bg: 'bg-purple-200', border: 'border-purple-500', text: 'text-purple-600' },
-  { bg: 'bg-pink-200', border: 'border-pink-500', text: 'text-pink-600' },
-  { bg: 'bg-rose-200', border: 'border-rose-500', text: 'text-rose-600' },
-  { bg: 'bg-amber-200', border: 'border-amber-500', text: 'text-amber-600' },
-  { bg: 'bg-lime-200', border: 'border-lime-500', text: 'text-lime-600' },
+  { bg: 'bg-red-50', border: 'border-red-500', text: 'text-red-600' },
+  { bg: 'bg-orange-50', border: 'border-orange-500', text: 'text-orange-600' },
+  { bg: 'bg-yellow-50', border: 'border-yellow-500', text: 'text-yellow-600' },
+  { bg: 'bg-green-50', border: 'border-green-500', text: 'text-green-600' },
+  { bg: 'bg-teal-50', border: 'border-teal-500', text: 'text-teal-600' },
+  { bg: 'bg-blue-50', border: 'border-blue-500', text: 'text-blue-600' },
+  { bg: 'bg-indigo-50', border: 'border-indigo-500', text: 'text-indigo-600' },
+  { bg: 'bg-purple-50', border: 'border-purple-500', text: 'text-purple-600' },
+  { bg: 'bg-pink-50', border: 'border-pink-500', text: 'text-pink-600' },
+  { bg: 'bg-rose-50', border: 'border-rose-500', text: 'text-rose-600' },
+  { bg: 'bg-amber-50', border: 'border-amber-500', text: 'text-amber-600' },
+  { bg: 'bg-lime-50', border: 'border-lime-500', text: 'text-lime-600' },
   {
-    bg: 'bg-emerald-200',
+    bg: 'bg-emerald-50',
     border: 'border-emerald-500',
     text: 'text-emerald-600',
   },
-  { bg: 'bg-cyan-200', border: 'border-cyan-500', text: 'text-cyan-600' },
-  { bg: 'bg-sky-200', border: 'border-sky-500', text: 'text-sky-600' },
-  { bg: 'bg-violet-200', border: 'border-violet-500', text: 'text-violet-600' },
+  { bg: 'bg-cyan-50', border: 'border-cyan-500', text: 'text-cyan-600' },
+  { bg: 'bg-sky-50', border: 'border-sky-500', text: 'text-sky-600' },
+  { bg: 'bg-violet-50', border: 'border-violet-500', text: 'text-violet-600' },
   {
-    bg: 'bg-fuchsia-200',
+    bg: 'bg-fuchsia-50',
     border: 'border-fuchsia-500',
     text: 'text-fuchsia-600',
   },
   {
-    bg: 'bg-neutral-200',
+    bg: 'bg-neutral-50',
     border: 'border-neutral-500',
     text: 'text-neutral-600',
   },
-  { bg: 'bg-slate-200', border: 'border-slate-500', text: 'text-slate-600' },
-  { bg: 'bg-gray-200', border: 'border-gray-500', text: 'text-gray-600' },
+  { bg: 'bg-slate-50', border: 'border-slate-500', text: 'text-slate-600' },
+  { bg: 'bg-gray-50', border: 'border-gray-500', text: 'text-gray-600' },
 ];
 
 let availableColors = [...tailwindColors];
@@ -92,13 +92,13 @@ export const IndicatorsPage = () => {
       case 'WHITE':
         return 'bg-white text-black border-black';
       case 'GREEN':
-        return 'bg-green-200 text-green-800 border-green-800';
+        return 'bg-green-50 text-green-800 border-green-800';
       case 'AMBER':
-        return 'bg-yellow-200 text-yellow-800 border-yellow-800';
+        return 'bg-yellow-50 text-yellow-800 border-yellow-800';
       case 'RED':
-        return 'bg-red-200 text-red-800 border-red-800';
+        return 'bg-red-50 text-red-800 border-red-800';
       default:
-        return 'bg-gray-200 text-gray-800 border-gray-800';
+        return 'bg-gray-50 text-gray-800 border-gray-800';
     }
   };
 
@@ -138,10 +138,13 @@ export const IndicatorsPage = () => {
           <TableHeader>
             <TableRow className="bg-muted">
               <TableHead className="font-bold p-4 text-foreground">
-                Pattern Type
+                Type
               </TableHead>
               <TableHead className="font-bold p-4 text-foreground">
                 Name
+              </TableHead>
+              <TableHead className="font-bold p-4 text-foreground">
+                Pattern Type
               </TableHead>
               <TableHead className="font-bold p-4 text-foreground">
                 Markings
@@ -186,17 +189,26 @@ export const IndicatorsPage = () => {
                   onClick={() => handleViewIndicator(indicator.id)}
                   className="hover:bg-muted bg-background transition-colors border-b border-border cursor-pointer"
                 >
-                  <TableCell className="p-4 text-foreground">
+                  <TableCell className="p-4">
                     <Badge
                       variant="outline"
-                      className="text-cyan-600 border-cyan-500 bg-blue-200 px-8"
+                      className="text-fuchsia-500 border-fuchsia-500 bg-fuchsia-50 px-8"
                     >
-                      <DatabaseIcon />
-                      {indicator.pattern_type}
+                      <CircleArrowOutDownLeftIcon className="h-5 w-5 text-fuchsia-600" />
+                      Indicator
                     </Badge>
                   </TableCell>
                   <TableCell className="p-4 font-medium text-foreground hover:underline max-w-100 truncate">
                     {indicator.name || 'Unknown'}
+                  </TableCell>
+                  <TableCell className="p-4 text-foreground">
+                    <Badge
+                      variant="outline"
+                      className="text-cyan-600 border-cyan-500 bg-blue-50 px-8"
+                    >
+                      <DatabaseIcon />
+                      {indicator.pattern_type}
+                    </Badge>
                   </TableCell>
                   <TableCell className={`p-4 text-foreground`}>
                     <Badge
@@ -290,7 +302,7 @@ export const IndicatorsPage = () => {
             onClick={() => handlePageChange(currentPage - 1)}
             disabled={currentPage === 1 || loading}
           >
-            <ChevronsLeft className="h-4 w-4" />
+            <ChevronLeft className="h-4 w-4" />
           </Button>
           <span className="px-2 text-sm font-medium">
             Page {currentPage} of {totalPages}
@@ -301,7 +313,7 @@ export const IndicatorsPage = () => {
             onClick={() => handlePageChange(currentPage + 1)}
             disabled={currentPage === totalPages || loading}
           >
-            <ChevronsRight className="h-4 w-4" />
+            <ChevronRight className="h-4 w-4" />
           </Button>
           <Button
             variant="outline"

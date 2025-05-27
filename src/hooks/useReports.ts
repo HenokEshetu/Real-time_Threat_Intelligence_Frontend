@@ -7,6 +7,15 @@ import {
   DELETE_REPORT,
 } from '@/graphql/report/queries';
 import { ReportSearchResult } from '@/types/report';
+import { toast } from 'sonner';
+
+// Add these imports for subscriptions
+import {
+  REPORT_CREATED_SUBSCRIPTION,
+  REPORT_UPDATED_SUBSCRIPTION,
+  REPORT_DELETED_SUBSCRIPTION,
+} from '@/graphql/report/subscriptions';
+import { useEffect } from 'react';
 
 export const useReports = ({
   filters = {},
@@ -17,10 +26,86 @@ export const useReports = ({
   page?: number;
   pageSize?: number;
 }) => {
-  const { data, loading, error, fetchMore } = useQuery(SEARCH_REPORTS, {
-    variables: { filters, page, pageSize },
-    notifyOnNetworkStatusChange: true,
-  });
+  const { data, loading, error, fetchMore, subscribeToMore } = useQuery(
+    SEARCH_REPORTS,
+    {
+      variables: { filters, page, pageSize },
+      notifyOnNetworkStatusChange: true,
+      fetchPolicy: 'cache-and-network',
+    },
+  );
+
+  // Add subscription logic as of malware
+  useEffect(() => {
+    const unsubCreate = subscribeToMore({
+      document: REPORT_CREATED_SUBSCRIPTION,
+      updateQuery: (prev, { subscriptionData }) => {
+        const newItem = subscriptionData.data?.reportCreated;
+        if (!newItem) return prev;
+        if (prev.searchReports.results.some((r: any) => r.id === newItem.id)) {
+          return prev;
+        }
+        return {
+          ...prev,
+          searchReports: {
+            ...prev.searchReports,
+            results: [newItem, ...prev.searchReports.results].slice(
+              0,
+              pageSize,
+            ),
+            total: prev.searchReports.total + 1,
+          },
+        };
+      },
+    });
+
+    const unsubUpdate = subscribeToMore({
+      document: REPORT_UPDATED_SUBSCRIPTION,
+      updateQuery: (prev, { subscriptionData }) => {
+        const updated = subscriptionData.data?.reportUpdated;
+        if (!updated) return prev;
+        return {
+          ...prev,
+          searchReports: {
+            ...prev.searchReports,
+            results: prev.searchReports.results.map((r: any) =>
+              r.id === updated.id ? { ...r, ...updated } : r,
+            ),
+          },
+        };
+      },
+    });
+
+    const unsubDelete = subscribeToMore({
+      document: REPORT_DELETED_SUBSCRIPTION,
+      updateQuery: (prev, { subscriptionData }) => {
+        const deletedId = subscriptionData.data?.reportDeleted;
+        if (!deletedId) return prev;
+        return {
+          ...prev,
+          searchReports: {
+            ...prev.searchReports,
+            results: prev.searchReports.results.filter(
+              (r: any) => r.id !== deletedId,
+            ),
+            total: prev.searchReports.total - 1,
+          },
+        };
+      },
+    });
+
+    return () => {
+      unsubCreate();
+      unsubUpdate();
+      unsubDelete();
+    };
+  }, [subscribeToMore, pageSize]);
+
+  if (error) {
+    toast.error('Error loading reports data', {
+      description: error?.message,
+    });
+  }
 
   const reports = data?.searchReports?.results || [];
   const total = data?.searchReports?.total || 0;

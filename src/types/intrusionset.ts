@@ -64,4 +64,5 @@ export interface IntrusionSet {
   enrichment?: Enrichment;
   extensions?: JSONObject;
   relationship?: RelationshipCommonProperties[];
+  x_mitre_domains: string[];
 }

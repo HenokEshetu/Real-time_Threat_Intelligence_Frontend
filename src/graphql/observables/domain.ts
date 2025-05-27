@@ -111,3 +111,67 @@ export const DELETE_DOMAIN_NAME = gql`
     deleteDomainName(id: $id)
   }
 `;
+
+export const DOMAIN_NAME_CREATED_SUBSCRIPTION = gql`
+  subscription DomainNameCreated {
+    domainNameCreated {
+      confidence
+      created
+      created_by_ref
+      defanged
+      extensions
+      external_references {
+        description
+        external_id
+        id
+        source_name
+        url
+      }
+      id
+      labels
+      lang
+      modified
+      object_marking_refs
+      resolves_to_refs
+      revoked
+      spec_version
+      type
+      value
+    }
+  }
+`;
+
+export const DOMAIN_NAME_UPDATED_SUBSCRIPTION = gql`
+  subscription DomainNameUpdated {
+    domainNameUpdated {
+      confidence
+      created
+      created_by_ref
+      defanged
+      extensions
+      external_references {
+        description
+        external_id
+        id
+        source_name
+        url
+      }
+      id
+      labels
+      lang
+      modified
+      object_marking_refs
+      resolves_to_refs
+      revoked
+      spec_version
+      type
+      value
+    }
+  }
+`;
+
+export const DOMAIN_NAME_DELETED_SUBSCRIPTION = gql`
+  subscription DomainNameDeleted {
+    domainNameDeleted
+  }
+`;

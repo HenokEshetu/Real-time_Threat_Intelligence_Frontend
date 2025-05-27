@@ -33,7 +33,7 @@ export const IndicatorDetailPage = () => {
     <div className="w-full flex flex-col">
       <TopContainer className="h-13 top-29">
         <h1 className="text-2xl max-w-[40%] font-semibold truncate">
-          {indicator.name.replace('Indicator: ', '')}
+          {indicator.name}
         </h1>
       </TopContainer>
 

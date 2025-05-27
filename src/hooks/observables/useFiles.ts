@@ -2,8 +2,12 @@ import { useQuery } from '@apollo/client';
 import {
   FIND_FILE_OBSERVABLE,
   SEARCH_FILE_OBSERVABLES,
+  FILE_CREATED_SUBSCRIPTION,
+  FILE_UPDATED_SUBSCRIPTION,
+  FILE_DELETED_SUBSCRIPTION,
 } from '../../graphql/observables/file';
 import { File } from '../../types/file';
+import { useEffect } from 'react';
 
 export const useFiles = ({
   filter,
@@ -14,7 +18,7 @@ export const useFiles = ({
   from?: number;
   size?: number;
 }) => {
-  const { data, loading, error, fetchMore } = useQuery(
+  const { data, loading, error, fetchMore, subscribeToMore } = useQuery(
     SEARCH_FILE_OBSERVABLES,
     {
       variables: {
@@ -25,6 +29,68 @@ export const useFiles = ({
       notifyOnNetworkStatusChange: true,
     },
   );
+
+  useEffect(() => {
+    const unsubCreate = subscribeToMore({
+      document: FILE_CREATED_SUBSCRIPTION,
+      updateQuery: (prev, { subscriptionData }) => {
+        const newItem = subscriptionData.data?.fileCreated;
+        if (!newItem) return prev;
+        if (prev.searchFiles.results.some((f: File) => f.id === newItem.id)) {
+          return prev;
+        }
+        return {
+          ...prev,
+          searchFiles: {
+            ...prev.searchFiles,
+            results: [newItem, ...prev.searchFiles.results].slice(0, size),
+            total: prev.searchFiles.total + 1,
+          },
+        };
+      },
+    });
+
+    const unsubUpdate = subscribeToMore({
+      document: FILE_UPDATED_SUBSCRIPTION,
+      updateQuery: (prev, { subscriptionData }) => {
+        const updated = subscriptionData.data?.fileUpdated;
+        if (!updated) return prev;
+        return {
+          ...prev,
+          searchFiles: {
+            ...prev.searchFiles,
+            results: prev.searchFiles.results.map((f: File) =>
+              f.id === updated.id ? { ...f, ...updated } : f,
+            ),
+          },
+        };
+      },
+    });
+
+    const unsubDelete = subscribeToMore({
+      document: FILE_DELETED_SUBSCRIPTION,
+      updateQuery: (prev, { subscriptionData }) => {
+        const deletedId = subscriptionData.data?.fileDeleted;
+        if (!deletedId) return prev;
+        return {
+          ...prev,
+          searchFiles: {
+            ...prev.searchFiles,
+            results: prev.searchFiles.results.filter(
+              (f: File) => f.id !== deletedId,
+            ),
+            total: prev.searchFiles.total - 1,
+          },
+        };
+      },
+    });
+
+    return () => {
+      unsubCreate();
+      unsubUpdate();
+      unsubDelete();
+    };
+  }, [subscribeToMore, size]);
 
   const files = data?.searchFiles?.results || [];
   const total = data?.searchFiles?.total || 0;

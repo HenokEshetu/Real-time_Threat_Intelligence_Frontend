@@ -17,6 +17,7 @@ export interface Campaign {
   last_seen: string;
   objective: string | null;
   relationship: CampaignRelationship | null;
+  x_mitre_domains: string[];
 }
 
 export interface SearchCampaignsResult {
