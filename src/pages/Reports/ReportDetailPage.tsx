@@ -6,6 +6,7 @@ import { ErrorMessage } from '@/components/common/ErrorMessage/ErrorMessage';
 import { TopContainer } from '@/components/common/TopContainer';
 import { TabsType, TopTab } from '@/components/common/TopTab';
 import ReportDetail from '@/components/common/Reports/ReportDetail';
+import ReportRelationship from '@/components/common/Reports/ReportRelationship';
 import { Trash2 } from 'lucide-react';
 
 export const ReportDetailPage = () => {
@@ -25,7 +26,7 @@ export const ReportDetailPage = () => {
     ],
     components: [
       <ReportDetail />,
-      <div>Relationships content here</div>,
+      <ReportRelationship reportId={id} />,
       <div>Analysis content here</div>,
       <div></div>,
       <div></div>,

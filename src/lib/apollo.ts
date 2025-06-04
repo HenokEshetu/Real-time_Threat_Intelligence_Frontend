@@ -57,13 +57,13 @@ const errorLink = onError(({ graphQLErrors, networkError, operation }) => {
 });
 
 const httpLink = createHttpLink({
-  uri: 'http://localhost:4000/graphql',
+  uri: 'http://10.161.162.43:4000/graphql',
   credentials: 'include',
 });
 
 const wsLink = new GraphQLWsLink(
   createClient({
-    url: 'ws://localhost:4000/graphql',
+    url: 'ws://10.161.162.43:4000/graphql',
     connectionParams: () => ({
       ...(accessToken ? { Authorization: `Bearer ${accessToken}` } : {}),
     }),

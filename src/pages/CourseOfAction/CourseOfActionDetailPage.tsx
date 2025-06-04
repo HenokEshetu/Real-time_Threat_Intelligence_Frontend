@@ -4,8 +4,9 @@ import { useCourseOfActionDetail } from '@/hooks/useCourseOfAction';
 import { Loading } from '@/components/common/Loading/Loading';
 import { ErrorMessage } from '@/components/common/ErrorMessage/ErrorMessage';
 import { TopContainer } from '@/components/common/TopContainer';
-import { TabsType, TopTab } from '@/components/common/TopTab';
 import CourseOfActionDetail from '@/components/common/CourseOfActions/CourseOfActionDetail';
+import CourseOfActionRelationships from '@/components/common/CourseOfActions/CourseOfActionRelationship';
+import { TabsType, TopTab } from '@/components/common/TopTab';
 
 export const CourseOfActionDetailPage = () => {
   const { id } = useParams<{ id: string }>();
@@ -15,12 +16,14 @@ export const CourseOfActionDetailPage = () => {
     titles: [
       'Detail',
       'Relationships',
-      'Analysis'
+      'Analysis',
+      'Content',
     ],
     components: [
       <CourseOfActionDetail />,
-      <div>Relationships content here</div>,
+      <CourseOfActionRelationships courseOfActionId={id} />,
       <div>Analysis content here</div>,
+      <div>Content content here</div>,
     ],
   } as TabsType;
 

@@ -94,7 +94,7 @@ const parseIntelReport = (raw: string): ParsedReport => {
   return result;
 };
 
-export const IndicatorRelationships = ({
+export const IndicatorDetail = ({
   indicator,
 }: {
   indicator: Indicator;

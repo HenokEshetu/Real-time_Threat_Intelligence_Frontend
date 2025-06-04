@@ -22,7 +22,7 @@ export const useRelationships = ({
     error: relError,
     fetchMore,
   } = useQuery(SEARCH_RELATIONSHIP, {
-    variables: { filers: filter, page: page, pageSize: pageSize },
+    variables: { filters: filter, page: page, pageSize: pageSize },
     notifyOnNetworkStatusChange: true,
   });
 
