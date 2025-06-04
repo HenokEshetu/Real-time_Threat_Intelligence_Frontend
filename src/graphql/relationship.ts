@@ -85,11 +85,11 @@ export const GET_RELATIONSHIP_OBJECT = gql`
         spec_version
         created
         modified
-        #   name
+        name
         description
         aliases
         kill_chain_phases {
-          id
+          # id
           kill_chain_name
           phase_name
         }
@@ -219,7 +219,7 @@ export const GET_RELATIONSHIP_OBJECT = gql`
         spec_version
         created
         modified
-        #   name
+        name
         description
         action
         action_type
@@ -474,7 +474,7 @@ export const GET_RELATIONSHIP_OBJECT = gql`
         spec_version
         created
         modified
-        name
+        #        	name
         description
         context
         object_refs
@@ -574,7 +574,7 @@ export const GET_RELATIONSHIP_OBJECT = gql`
         spec_version
         created
         modified
-        name
+        #         name
         description
         roles
         identity_class
@@ -627,7 +627,7 @@ export const GET_RELATIONSHIP_OBJECT = gql`
         spec_version
         created
         modified
-        name
+        #         name
         description
         aliases
         #   first_seen
@@ -684,7 +684,7 @@ export const GET_RELATIONSHIP_OBJECT = gql`
         spec_version
         created
         modified
-        name
+        # name
         description
         indicator_types
         pattern
@@ -693,7 +693,7 @@ export const GET_RELATIONSHIP_OBJECT = gql`
         valid_from
         valid_until
         kill_chain_phases {
-          id
+          # id
           kill_chain_name
           phase_name
         }
@@ -751,7 +751,7 @@ export const GET_RELATIONSHIP_OBJECT = gql`
         #   first_seen
         #   last_seen
         kill_chain_phases {
-          id
+          # id
           kill_chain_name
           phase_name
         }
@@ -812,7 +812,7 @@ export const GET_RELATIONSHIP_OBJECT = gql`
         primary_motivation
         secondary_motivations
         kill_chain_phases {
-          id
+          # id
           kill_chain_name
           phase_name
         }
@@ -947,11 +947,11 @@ export const GET_RELATIONSHIP_OBJECT = gql`
         modified
         name
         description
-        malware_types
+        # malware_types
         is_family
         aliases
         kill_chain_phases {
-          id
+          # id
           kill_chain_name
           phase_name
         }
@@ -1495,10 +1495,10 @@ export const GET_RELATIONSHIP_OBJECT = gql`
         name
         description
         aliases
-        tool_types
+        # tool_types
         tool_version
         kill_chain_phases {
-          id
+          # id
           kill_chain_name
           phase_name
         }

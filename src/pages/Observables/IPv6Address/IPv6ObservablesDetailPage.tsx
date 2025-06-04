@@ -21,7 +21,7 @@ export const IPv6ObservablesDetailPage = () => {
       'data',
       'history',
     ],
-    comoponents: [
+    components: [
       <IPv6Overview ipv6={ipv6Address} />,
       <div>Knowledge content here</div>,
       <div>Content content here</div>,

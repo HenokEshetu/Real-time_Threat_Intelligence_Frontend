@@ -39,8 +39,8 @@ export const ReportDetailPage = () => {
 
   return (
     <div className="w-full flex flex-col">
-      <TopContainer className="h-13 top-29">
-        <div className="flex flex-row border border-red-500 w-full items-center justify-between">
+      <TopContainer className="h-13 top-29 w-full">
+        <div className="flex flex-row w-full items-center justify-between">
           <h1 className="text-2xl max-w-[60%] font-semibold truncate">
             {report.name}
           </h1>

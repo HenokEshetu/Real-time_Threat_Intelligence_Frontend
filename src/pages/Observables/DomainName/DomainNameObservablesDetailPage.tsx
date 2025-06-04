@@ -20,7 +20,7 @@ export const DomainNameObservablesDetailPage = () => {
       'data',
       'history',
     ],
-    comoponents: [
+    components: [
       <DomainOverview domain={domainName} />,
       <div>Knowledge content here</div>,
       <div>Analysis content here</div>,

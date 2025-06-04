@@ -11,13 +11,8 @@ export const UserAccountObservablesDetailPage = () => {
   const { id } = useParams<{ id: string }>();
   const { account, loading, error } = useUserAccount(id);
   const tabs = {
-    titles: [
-      'overview',
-      'knowledge',
-      'activity',
-      'history',
-    ],
-    comoponents: [
+    titles: ['overview', 'knowledge', 'activity', 'history'],
+    components: [
       <UserAccountOverview userAccount={account} />,
       <div>Knowledge content here</div>,
       <div>Activity content here</div>,

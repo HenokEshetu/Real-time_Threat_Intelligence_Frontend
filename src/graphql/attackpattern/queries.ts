@@ -80,7 +80,6 @@ export const SEARCH_ATTACK_PATTERNS = gql`
         created
         modified
         created_by_ref
-
         extensions
         external_references {
           id

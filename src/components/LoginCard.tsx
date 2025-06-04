@@ -18,7 +18,7 @@ export function LoginCard({
   return (
     <div
       className={cn(
-        'flex flex-col bg-white gap-6 rounded-r-2xl w-[50%] h-full border-y border-r border-gray-200 items-center justify-start bg-[url(src/static/images/cover-2.png)] bg-center bg-contain bg-no-repeat',
+        'flex flex-col bg-white gap-6 rounded-r-2xl w-[50%] h-full border-y border-r border-gray-200 items-center justify-start bg-[url(src/static/images/cover-7.jpeg)] bg-center bg-cover bg-no-repeat',
         className,
       )}
       {...props}

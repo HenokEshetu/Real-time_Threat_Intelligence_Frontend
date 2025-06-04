@@ -21,7 +21,7 @@ export const NetworkTrafficObservablesDetailPage = () => {
       'data',
       'history',
     ],
-    comoponents: [
+    components: [
       <NetworkTrafficOverview networkTraffic={networkTraffic} />,
       <div>Knowledge content here</div>,
       <div>Content content here</div>,
@@ -34,7 +34,8 @@ export const NetworkTrafficObservablesDetailPage = () => {
 
   if (loading) return <Loading />;
   if (error) return <ErrorMessage message={error.message} />;
-  if (!networkTraffic) return <ErrorMessage message="Network Traffic not found" />;
+  if (!networkTraffic)
+    return <ErrorMessage message="Network Traffic not found" />;
 
   return (
     <div className="w-full flex flex-col">

@@ -9,7 +9,7 @@ export const GET_TOOL = gql`
       created
       created_by_ref
       description
-
+      x_mitre_platforms
       extensions
       external_references {
         source_name
@@ -54,7 +54,7 @@ export const SEARCH_TOOLS = gql`
         created
         created_by_ref
         description
-
+        x_mitre_platforms
         extensions
         external_references {
           source_name
@@ -94,6 +94,7 @@ export const TOOL_CREATED_SUBSCRIPTION = gql`
       created
       created_by_ref
       description
+      x_mitre_platforms
       extensions
       external_references {
         source_name
@@ -133,6 +134,7 @@ export const TOOL_UPDATED_SUBSCRIPTION = gql`
       created_by_ref
       description
       extensions
+      x_mitre_platforms
       external_references {
         source_name
         url

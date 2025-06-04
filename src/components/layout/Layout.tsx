@@ -119,11 +119,11 @@ const menuItems: MenuItem[] = [
     icon: <TargetIcon className="h-5 w-5" />,
     path: '/attack-patterns',
   },
-  {
-    text: 'Threat Actors',
-    icon: <LockIcon className="h-5 w-5" />,
-    path: '/threat-actors',
-  },
+  // {
+  //   text: 'Threat Actors',
+  //   icon: <LockIcon className="h-5 w-5" />,
+  //   path: '/threat-actors',
+  // },
   { text: 'Malware', icon: <BugIcon className="h-5 w-5" />, path: '/malware' },
   {
     text: 'Reports',
@@ -238,7 +238,7 @@ export const Layout = ({ children }: { children: React.ReactNode }) => {
             <div className="flex items-center w-[33.3%]">
               {/* <div className="flex"> */}
               <img
-                src="/src/static/images/favicon.png"
+                src="/src/static/images/favicon-2.png"
                 alt=""
                 className="w-13 h-13 rounded-full"
               />
@@ -290,7 +290,7 @@ export const Layout = ({ children }: { children: React.ReactNode }) => {
                     <span className="sr-only">Toggle theme</span>
                   </Button>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent align="end">
+                <DropdownMenuContent align="end" className="z-2000">
                   <DropdownMenuItem onClick={() => setTheme('light')}>
                     Light
                   </DropdownMenuItem>

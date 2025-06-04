@@ -20,7 +20,7 @@ export const IPv4ObservablesDetailPage = () => {
       'data',
       'history',
     ],
-    comoponents: [
+    components: [
       <IPv4Overview ipv4={ipv4} />,
       <div>Knowledge content here</div>,
       <div>Enrichment content here</div>,

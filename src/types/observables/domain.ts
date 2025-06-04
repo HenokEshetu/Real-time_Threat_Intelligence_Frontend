@@ -36,6 +36,8 @@ export interface DomainName {
   object_marking_refs?: string[];
   resolves_to_refs?: string[];
   revoked?: boolean;
+  description: string;
+  pattern: String;
   spec_version: string;
   type: string;
   value: string;

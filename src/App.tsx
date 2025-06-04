@@ -7,8 +7,11 @@ import { AppRoutes } from './routes'; // Import your routes
 import { BrowserRouter } from 'react-router-dom';
 import { AuthProvider } from './auth/AuthContext';
 import { ThemeProvider } from './components/ui/theme-provider';
+import { useAutoRefreshOnTokenExpire } from './lib/useAutoRefreshOnTokenExpire';
 
 function App() {
+  useAutoRefreshOnTokenExpire();
+
   return (
     <BrowserRouter>
       <AuthProvider>

@@ -16,7 +16,8 @@ export const SEARCH_DOMAIN_OBSERVABLES = gql`
         created
         created_by_ref
         defanged
-
+        description
+        pattern
         extensions
         external_references {
           description
@@ -47,7 +48,8 @@ export const GET_DOMAIN_NAME = gql`
       created
       created_by_ref
       defanged
-
+      pattern
+      description
       extensions
       external_references {
         description
@@ -120,6 +122,8 @@ export const DOMAIN_NAME_CREATED_SUBSCRIPTION = gql`
       created_by_ref
       defanged
       extensions
+      pattern
+      description
       external_references {
         description
         external_id
@@ -149,6 +153,8 @@ export const DOMAIN_NAME_UPDATED_SUBSCRIPTION = gql`
       created_by_ref
       defanged
       extensions
+      pattern
+      description
       external_references {
         description
         external_id

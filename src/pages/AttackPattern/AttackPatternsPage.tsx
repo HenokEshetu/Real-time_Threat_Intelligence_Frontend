@@ -83,7 +83,8 @@ export const AttackPatternsPage = () => {
   const totalPages = attackPatterns?.totalPages || 1;
   const results = attackPatterns?.results || [];
 
-  const handleViewAttackPattern = (id: string) => navigate(`/attack-patterns/${id}`);
+  const handleViewAttackPattern = (id: string) =>
+    navigate(`/attack-patterns/${id}`);
 
   const handlePageChange = (newPage: number) => {
     setCurrentPage(Math.max(1, Math.min(newPage, totalPages)));
@@ -161,8 +162,9 @@ export const AttackPatternsPage = () => {
                   className="hover:bg-gray-50 transition-colors border-b border-gray-300 cursor-pointer"
                   role="button"
                   tabIndex={0}
-                  onKeyDown={e => {
-                    if (e.key === 'Enter' || e.key === ' ') handleViewAttackPattern(pattern.id);
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' || e.key === ' ')
+                      handleViewAttackPattern(pattern.id);
                   }}
                 >
                   <TableCell className="p-4 text-gray-700">
@@ -181,9 +183,7 @@ export const AttackPatternsPage = () => {
                     {pattern.description || '—'}
                   </TableCell>
                   <TableCell className="p-4 text-gray-600 max-w-100 truncate">
-                    {aliases.length > 0
-                      ? aliases.join(', ')
-                      : '—'}
+                    {aliases.length > 0 ? aliases.join(', ') : '—'}
                   </TableCell>
                   <TableCell className="p-4 max-w-100">
                     <div className="flex flex-wrap gap-1">

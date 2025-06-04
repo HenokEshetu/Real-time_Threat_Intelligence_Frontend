@@ -16,7 +16,7 @@ export const IndicatorDetailPage = () => {
       'Relationships',
       'Analysis',
     ],
-    comoponents: [
+    components: [
       <IndicatorRelationships indicator={indicator} />,
       <div>Knowledge content here</div>,
       <div>Content content here</div>,

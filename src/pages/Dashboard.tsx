@@ -1,11 +1,13 @@
 import { Card, CardHeader, CardContent, CardTitle } from '@/components/ui/card';
 import {
   AreaChartGradient,
-  BarChartCustomLabel,
+  barChart_chartData,
+  LineChartCustomLabel,
   BarChartHorizontal,
   barchartInteractive,
   BarChartInteractive,
-  PieChartInteractive,
+  PieChartDonut,
+  radial_chartData,
   // PieChart,
   RadialChart,
 } from '@/components/ui/charts';
@@ -31,6 +33,12 @@ import {
   Shield,
   AlertTriangle,
   FileText,
+  FileTextIcon,
+  Link2Icon,
+  ServerIcon,
+  CpuIcon,
+  HammerIcon,
+  TriangleAlert,
 } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
 import { MapContainer, TileLayer, useMap, GeoJSON } from 'react-leaflet';
@@ -49,6 +57,8 @@ import { useObservables } from '@/hooks/observables/useObservables';
 import { useAttackPatterns } from '@/hooks/observables/useAttackPattern';
 import { useCoursesOfAction } from '@/hooks/useCourseOfAction';
 import { useTools } from '@/hooks/useTools';
+import { useNavigate } from 'react-router-dom';
+import { useVulnerabilities } from '@/hooks/useVulnerability';
 
 // delete L.Icon.Default.prototype._getIconUrl;
 L.Icon.Default.mergeOptions({
@@ -89,7 +99,13 @@ export const Dashboard = () => {
     page: 1,
     pageSize: 1,
   });
-  const { total: observableTotal } = useObservables({
+  const {
+    fileTotal: filesDataTotal,
+    urlTotal: urlsDataTotal,
+    domainTotal: domainsDataTotal,
+    ipv4Total: ipv4sDataTotal,
+    total: observableTotal,
+  } = useObservables({
     page: 1,
     pageSize: 1,
   });
@@ -223,136 +239,238 @@ export const Dashboard = () => {
     pageSize: 1,
   });
 
-  // Chart Data
-  const targetedRegions = [
-    { region: 'North America', Incidents: 245 },
-    { region: 'Europe', Incidents: 189 },
-    { region: 'Asia', Incidents: 156 },
-  ];
-
-  const targetedSectors = [
-    { sector: 'Finance', count: 45 },
-    { sector: 'Healthcare', count: 32 },
-    { sector: 'Energy', count: 28 },
-    { sector: 'Government', count: 41 },
-  ];
-
-  const malwareDistribution = [
-    { name: 'Ransomware', value: 35 },
-    { name: 'Spyware', value: 25 },
-    { name: 'Trojan', value: 20 },
-  ];
-
-  // Reports Data
-  const securityReports = [
-    {
-      id: 1,
-      title: 'Q3 Threat Landscape Analysis',
-      date: '2024-09-15',
-      type: 'PDF',
-      status: 'Published',
+  const { total: windowsMalwareTotal } = useMalware({
+    filters: {
+      x_mitre_platforms: ['Windows'],
     },
-    {
-      id: 2,
-      title: 'APT Group Activity Report',
-      date: '2024-09-10',
-      type: 'DOCX',
-      status: 'Draft',
+    page: 1,
+    pageSize: 1,
+  });
+  const { total: macOSMalwareTotal } = useMalware({
+    filters: {
+      x_mitre_platforms: ['macOS'],
     },
-    {
-      id: 3,
-      title: 'Monthly Security Audit',
-      date: '2024-09-01',
-      type: 'PDF',
-      status: 'Archived',
+    page: 1,
+    pageSize: 1,
+  });
+  const { total: linuxMalwareTotal } = useMalware({
+    filters: {
+      x_mitre_platforms: ['Linux'],
     },
-  ];
+    page: 1,
+    pageSize: 1,
+  });
+  const { total: networkDevicesMalwareTotal } = useMalware({
+    filters: {
+      x_mitre_platforms: ['Network Devices'],
+    },
+    page: 1,
+    pageSize: 1,
+  });
+  const { total: esxiMalwareTotal } = useMalware({
+    filters: {
+      x_mitre_platforms: ['ESXi'],
+    },
+    page: 1,
+    pageSize: 1,
+  });
+  const { total: saasMalwareTotal } = useMalware({
+    filters: {
+      x_mitre_platforms: ['SaaS'],
+    },
+    page: 1,
+    pageSize: 1,
+  });
+  const { total: iaasMalwareTotal } = useMalware({
+    filters: {
+      x_mitre_platforms: ['IaaS'],
+    },
+    page: 1,
+    pageSize: 1,
+  });
+  const { total: containersMalwareTotal } = useMalware({
+    filters: {
+      x_mitre_platforms: ['Containers'],
+    },
+    page: 1,
+    pageSize: 1,
+  });
+  const { total: preMalwareTotal } = useMalware({
+    filters: {
+      x_mitre_platforms: ['PRE'],
+    },
+    page: 1,
+    pageSize: 1,
+  });
+  const { total: officeSuiteMalwareTotal } = useMalware({
+    filters: {
+      x_mitre_platforms: ['Office Suite'],
+    },
+    page: 1,
+    pageSize: 1,
+  });
+  const { total: office365MalwareTotal } = useMalware({
+    filters: {
+      x_mitre_platforms: ['Office 365'],
+    },
+    page: 1,
+    pageSize: 1,
+  });
+  const { total: identityProviderMalwareTotal } = useMalware({
+    filters: {
+      x_mitre_platforms: ['Identity Provider'],
+    },
+    page: 1,
+    pageSize: 1,
+  });
 
-  // Other Data
-  const threatTrends = [
-    { month: 'Jan', count: 45 },
-    { month: 'Feb', count: 60 },
-    { month: 'Mar', count: 75 },
-  ];
+  const { total: windowsAttackPatternTotal } = useAttackPatterns({
+    filters: {
+      x_mitre_platforms: ['Windows'],
+    },
+    page: 1,
+    pageSize: 1,
+  });
+  const { total: macOSAttackPatternTotal } = useAttackPatterns({
+    filters: {
+      x_mitre_platforms: ['macOS'],
+    },
+    page: 1,
+    pageSize: 1,
+  });
+  const { total: linuxAttackPatternTotal } = useAttackPatterns({
+    filters: {
+      x_mitre_platforms: ['Linux'],
+    },
+    page: 1,
+    pageSize: 1,
+  });
+  const { total: networkDevicesAttackPatternTotal } = useAttackPatterns({
+    filters: {
+      x_mitre_platforms: ['Network Devices'],
+    },
+    page: 1,
+    pageSize: 1,
+  });
+  const { total: esxiAttackPatternTotal } = useAttackPatterns({
+    filters: {
+      x_mitre_platforms: ['ESXi'],
+    },
+    page: 1,
+    pageSize: 1,
+  });
+  const { total: saasAttackPatternTotal } = useAttackPatterns({
+    filters: {
+      x_mitre_platforms: ['SaaS'],
+    },
+    page: 1,
+    pageSize: 1,
+  });
+  const { total: iaasAttackPatternTotal } = useAttackPatterns({
+    filters: {
+      x_mitre_platforms: ['IaaS'],
+    },
+    page: 1,
+    pageSize: 1,
+  });
+  const { total: containersAttackPatternTotal } = useAttackPatterns({
+    filters: {
+      x_mitre_platforms: ['Containers'],
+    },
+    page: 1,
+    pageSize: 1,
+  });
+  const { total: preAttackPatternTotal } = useAttackPatterns({
+    filters: {
+      x_mitre_platforms: ['PRE'],
+    },
+    page: 1,
+    pageSize: 1,
+  });
+  const { total: officeSuiteAttackPatternTotal } = useAttackPatterns({
+    filters: {
+      x_mitre_platforms: ['Office Suite'],
+    },
+    page: 1,
+    pageSize: 1,
+  });
+  const { total: office365AttackPatternTotal } = useAttackPatterns({
+    filters: {
+      x_mitre_platforms: ['Office 365'],
+    },
+    page: 1,
+    pageSize: 1,
+  });
+  const { total: identityProviderAttackPatternTotal } = useAttackPatterns({
+    filters: {
+      x_mitre_platforms: ['Identity Provider'],
+    },
+    page: 1,
+    pageSize: 1,
+  });
 
-  const vulnerabilities = [
-    { name: 'CVE-2024-1234', severity: 'Critical', count: 45 },
-    { name: 'CVE-2024-5678', severity: 'High', count: 32 },
-    { name: 'CVE-2024-9012', severity: 'Medium', count: 28 },
-  ];
+  const { total: windowsToolTotal } = useTools({
+    filters: {
+      x_mitre_platforms: ['Windows'],
+    },
+    page: 1,
+    pageSize: 1,
+  });
+  const { total: macOSToolTotal } = useTools({
+    filters: {
+      x_mitre_platforms: ['macOS'],
+    },
+    page: 1,
+    pageSize: 1,
+  });
+  const { total: linuxToolTotal } = useTools({
+    filters: {
+      x_mitre_platforms: ['Linux'],
+    },
+    page: 1,
+    pageSize: 1,
+  });
+  const { total: officeSuiteToolTotal } = useTools({
+    filters: {
+      x_mitre_platforms: ['Office Suite'],
+    },
+    page: 1,
+    pageSize: 1,
+  });
+  const { total: SaaSToolTotal } = useTools({
+    filters: {
+      x_mitre_platforms: ['SaaS'],
+    },
+    page: 1,
+    pageSize: 1,
+  });
 
-  const ttps = [
-    { technique: 'Credential Dumping', frequency: 120 },
-    { technique: 'Phishing', frequency: 95 },
-    { technique: 'Lateral Movement', frequency: 75 },
-  ];
+  const { reports: reportData } = useReports({
+    filters: {},
+    page: 1,
+    pageSize: 6,
+  });
 
-  const activityFeed = [
-    { time: '2m ago', event: 'New IOC detected in network logs' },
-    { time: '15m ago', event: 'Malware signature updated' },
-    { time: '1h ago', event: 'Suspicious domain blocked' },
-  ];
+  const { tools: toolsData } = useTools({
+    filters: {},
+    page: 1,
+    pageSize: 5,
+  });
+
+  const { vulnerabilities: vulnerabilitiesData } = useVulnerabilities({
+    filters: {},
+    page: 1,
+    pageSize: 5,
+  });
 
   const position: [number, number] = [0, 0];
   const zoom = 1;
 
-  const totalThreatActorQuery = gql`
-    query GetThreatActorCount {
-      searchThreatActors(page: 1, pageSize: 1) {
-        total
-      }
-    }
-  `;
-
-  const threatActorIn24hQuery = gql`
-    query ThreatActorsLast24Hours($timestamp: String!) {
-      searchThreatActors(
-        filters: {
-          created: $timestamp # Replace with a dynamic 24h-old timestamp
-        }
-        page: 1
-        pageSize: 1
-      ) {
-        total # Number of threat actors created in the last 24 hours
-      }
-    }
-  `;
-
-  const totalIntrusionSetQuery = gql`
-    query GetIntrusionSetCount {
-      searchIntrusionSets(page: 1, pageSize: 1) {
-        total
-      }
-    }
-  `;
-
-  const [twentyFourHoursAgo, setTwentyFourHoursAgo] = useState('');
-
-  useEffect(() => {
-    // Calculate 24 hours ago timestamp
-    const date = new Date();
-    date.setHours(date.getHours() - 24);
-    setTwentyFourHoursAgo(date.toISOString());
-  }, []);
-
-  const {
-    data: totalData,
-    loading: totalLoading,
-    error: totalError,
-  } = useQuery(totalThreatActorQuery);
-
-  // Fetch 24h threat actors
-  const {
-    data: last24hData,
-    loading: last24hLoading,
-    error: last24hError,
-  } = useQuery(threatActorIn24hQuery, {
-    variables: { timestamp: twentyFourHoursAgo },
-  });
-
-  if (totalLoading || last24hLoading) return <Loading />;
-  if (totalError) return <div>Error: {totalError.message}</div>;
-  if (last24hError) return <div>Error: {last24hError.message}</div>;
+  const navigate = useNavigate();
+  const handleViewReport = (id: string) => navigate(`/reports/${id}`);
+  const handleViewTool = (id: string) => navigate(`/tools/${id}`);
+  const handleViewVulnerability = (id: string) =>
+    navigate(`/vulnerabilities/${id}`);
 
   return (
     <div className="w-full p-6 space-y-6 mx-auto">
@@ -438,7 +556,7 @@ export const Dashboard = () => {
           {/* Threat Trend Analysis */}
           <div className="grid grid-cols-4 gap-4 h-auto">
             {/* <RadialChart /> */}
-            <PieChartInteractive />
+            <PieChartDonut />
             <div className="lg:col-span-2 h-112 overflow-hidden border rounded-xl shadow-sm">
               <MapContainer
                 center={position}
@@ -558,18 +676,190 @@ export const Dashboard = () => {
               }
               className="lg:col-span-2"
             />
-            <RadialChart />
-            <BarChartCustomLabel />
+            <RadialChart
+              title="Tools Target Platforms"
+              titleDescription="Distribution of tools across different platforms"
+              chartData={[
+                {
+                  platform: 'windows',
+                  tools: windowsToolTotal,
+                  fill: 'var(--color-windows)',
+                },
+                {
+                  platform: 'macos',
+                  tools: macOSToolTotal,
+                  fill: 'var(--color-macos)',
+                },
+                {
+                  platform: 'linux',
+                  tools: linuxToolTotal,
+                  fill: 'var(--color-linux)',
+                },
+                {
+                  platform: 'saas',
+                  tools: SaaSToolTotal,
+                  fill: 'var(--color-saas)',
+                },
+                {
+                  platform: 'office_suite',
+                  tools: officeSuiteToolTotal,
+                  fill: 'var(--color-office_suite)',
+                },
+              ]}
+            />
+            <LineChartCustomLabel
+              title="Threat Distribution"
+              titleDescription="The threat distribution focused on malicious objects"
+              chartData={[
+                {
+                  object: 'urls',
+                  entities: urlsDataTotal,
+                  fill: 'var(--color-urls)',
+                },
+                {
+                  object: 'domain_names',
+                  entities: domainsDataTotal,
+                  fill: 'var(--color-domain_names)',
+                },
+                {
+                  object: 'ipv4_addresses',
+                  entities: ipv4sDataTotal,
+                  fill: 'var(--color-ipv4_addresses)',
+                },
+                {
+                  object: 'files',
+                  entities: filesDataTotal,
+                  fill: 'var(--color-files)',
+                },
+                {
+                  object: 'indicators',
+                  entities: indicatorTotal,
+                  fill: 'var(--color-indicators)',
+                },
+              ]}
+            />
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-4 gap-4 h-auto">
             {/* Targeted Regions */}
-            <BarChartHorizontal />
-            <BarChartHorizontal />
+            <BarChartHorizontal
+              title="Malware Target Platforms"
+              titleDescription="Distribution of malware across different platforms"
+              label="Malware"
+              chartData={
+                [
+                  {
+                    platform: 'Windows',
+                    entity: windowsMalwareTotal,
+                  },
+                  {
+                    platform: 'macOS',
+                    entity: macOSMalwareTotal,
+                  },
+                  {
+                    platform: 'Linux',
+                    entity: linuxMalwareTotal,
+                  },
+                  {
+                    platform: 'Network Devices',
+                    entity: networkDevicesMalwareTotal,
+                  },
+                  {
+                    platform: 'ESXi',
+                    entity: esxiMalwareTotal,
+                  },
+                  {
+                    platform: 'SaaS',
+                    entity: saasMalwareTotal,
+                  },
+                  {
+                    platform: 'IaaS',
+                    entity: iaasMalwareTotal,
+                  },
+                  {
+                    platform: 'Containers',
+                    entity: containersMalwareTotal,
+                  },
+                  {
+                    platform: 'PRE',
+                    entity: preMalwareTotal,
+                  },
+                  {
+                    platform: 'Office Suite',
+                    entity: officeSuiteMalwareTotal,
+                  },
+                  {
+                    platform: 'Office 365',
+                    entity: office365MalwareTotal,
+                  },
+                  {
+                    platform: 'Identity Provider',
+                    entity: identityProviderMalwareTotal,
+                  },
+                ] as (typeof barChart_chartData)[]
+              }
+            />
+            <BarChartHorizontal
+              title="Attack Pattern Target Platforms"
+              titleDescription="Distribution of attack patterns across different platforms"
+              label="Attack Patterns"
+              chartData={
+                [
+                  {
+                    platform: 'Windows',
+                    entity: windowsAttackPatternTotal,
+                  },
+                  {
+                    platform: 'macOS',
+                    entity: macOSAttackPatternTotal,
+                  },
+                  {
+                    platform: 'Linux',
+                    entity: linuxAttackPatternTotal,
+                  },
+                  {
+                    platform: 'Network Devices',
+                    entity: networkDevicesAttackPatternTotal,
+                  },
+                  {
+                    platform: 'ESXi',
+                    entity: esxiAttackPatternTotal,
+                  },
+                  {
+                    platform: 'SaaS',
+                    entity: saasAttackPatternTotal,
+                  },
+                  {
+                    platform: 'IaaS',
+                    entity: iaasAttackPatternTotal,
+                  },
+                  {
+                    platform: 'Containers',
+                    entity: containersAttackPatternTotal,
+                  },
+                  {
+                    platform: 'PRE',
+                    entity: preAttackPatternTotal,
+                  },
+                  {
+                    platform: 'Office Suite',
+                    entity: officeSuiteAttackPatternTotal,
+                  },
+                  {
+                    platform: 'Office 365',
+                    entity: office365AttackPatternTotal,
+                  },
+                  {
+                    platform: 'Identity Provider',
+                    entity: identityProviderAttackPatternTotal,
+                  },
+                ] as (typeof barChart_chartData)[]
+              }
+            />
             <Card className="lg:col-span-2">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
-                  <FileText className="h-6 w-6" />
+                  <FileText className="h-6 w-6 text-violet-500" />
                   Security Reports
                 </CardTitle>
               </CardHeader>
@@ -577,30 +867,37 @@ export const Dashboard = () => {
                 <Table>
                   <TableHeader>
                     <TableRow>
-                      <TableHead>Report</TableHead>
-                      <TableHead>Date</TableHead>
-                      <TableHead className="text-right">Status</TableHead>
+                      <TableHead>Type</TableHead>
+                      <TableHead>Name</TableHead>
+                      <TableHead>Report Type</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {securityReports.map((report) => (
-                      <TableRow key={report.id}>
-                        <TableCell className="font-medium">
-                          {report.title}
-                        </TableCell>
-                        <TableCell>{report.date}</TableCell>
-                        <TableCell className="text-right">
+                    {reportData.map((report) => (
+                      <TableRow
+                        key={report.id}
+                        onClick={() => handleViewReport(report.id)}
+                        className="hover:bg-gray-50 transition-colors border-b border-gray-300 cursor-pointer"
+                      >
+                        <TableCell className="p-4">
                           <Badge
-                            variant={
-                              report.status === 'Published'
-                                ? 'default'
-                                : report.status === 'Draft'
-                                ? 'secondary'
-                                : 'outline'
-                            }
+                            variant="outline"
+                            className="text-violet-500 border-violet-500 bg-violet-50 px-8"
                           >
-                            {report.status}
+                            <FileTextIcon className="h-5 w-5 text-violet-600" />
+                            Report
                           </Badge>
+                        </TableCell>
+                        <TableCell className="p-4 font-medium text-gray-900 hover:underline max-w-100 truncate">
+                          {report.name}
+                        </TableCell>
+                        <TableCell className="p-4 text-gray-700">
+                          {Array.isArray(report.report_types)
+                            ? report.report_types.join(', ')
+                            : typeof report.report_types === 'string' &&
+                              report.report_types
+                            ? report.report_types
+                            : ''}
                         </TableCell>
                       </TableRow>
                     ))}
@@ -618,23 +915,65 @@ export const Dashboard = () => {
         <Card className="col-span-2">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <Factory className="h-6 w-6" />
-              Targeted Sectors
+              <HammerIcon className="h-6 w-6 text-fuchsia-500" />
+              Recently Used Tools
             </CardTitle>
           </CardHeader>
           <CardContent>
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>Sector</TableHead>
-                  <TableHead className="text-right">Incidents</TableHead>
+                  <TableHead>Type</TableHead>
+                  <TableHead>Name</TableHead>
+                  <TableHead>Platforms</TableHead>
+                  <TableHead>Created</TableHead>
+                  <TableHead>Modified</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {targetedSectors.map((sector) => (
-                  <TableRow key={sector.sector}>
-                    <TableCell>{sector.sector}</TableCell>
-                    <TableCell className="text-right">{sector.count}</TableCell>
+                {toolsData.map((tool) => (
+                  <TableRow
+                    key={tool.id}
+                    onClick={() => handleViewTool(tool.id)}
+                    className="hover:bg-gray-50 transition-colors border-b border-gray-300 cursor-pointer"
+                  >
+                    <TableCell>
+                      <Badge
+                        variant="outline"
+                        className="text-fuchsia-500 border-fuchsia-500 bg-fuchsia-50 px-8"
+                      >
+                        <HammerIcon className="h-5 w-5 text-fuchsia-600" />
+                        Tool
+                      </Badge>
+                    </TableCell>
+                    <TableCell className="p-4 font-medium text-gray-900 hover:underline max-w-100 truncate">
+                      {tool.name}
+                    </TableCell>
+                    <TableCell className="p-4">
+                      {tool.x_mitre_platforms != null ? (
+                        tool.x_mitre_platforms.map((platform) => (
+                          <Badge
+                            variant="outline"
+                            className="border-2 text-amber-500 border-amber-500 bg-amber-50 px-4"
+                          >
+                            {platform}
+                          </Badge>
+                        ))
+                      ) : (
+                        <Badge
+                          variant="outline"
+                          className="border-2 text-neutral-500 border-neutral-500 bg-neutral-50 px-4"
+                        >
+                          Unknown
+                        </Badge>
+                      )}
+                    </TableCell>
+                    <TableCell className="p-4">
+                      {new Date(tool.created).toUTCString()}
+                    </TableCell>
+                    <TableCell className="p-4">
+                      {new Date(tool.modified).toUTCString()}
+                    </TableCell>
                   </TableRow>
                 ))}
               </TableBody>
@@ -646,22 +985,61 @@ export const Dashboard = () => {
         <Card className="lg:col-span-1">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <Activity className="h-6 w-6" />
-              Real-time Activity
+              <TriangleAlert className="h-6 w-6 text-red-500" />
+              Recent Vulnerabilities
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
-            {activityFeed.map((activity, index) => (
-              <div key={index} className="flex items-start gap-3">
-                <div className="h-2 w-2 mt-2 rounded-full bg-primary" />
-                <div>
-                  <p className="font-medium">{activity.event}</p>
-                  <p className="text-sm text-muted-foreground">
-                    {activity.time}
-                  </p>
-                </div>
-              </div>
-            ))}
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Type</TableHead>
+                  <TableHead>Name</TableHead>
+                  <TableHead>Platforms</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {vulnerabilitiesData.map((vulnerability) => (
+                  <TableRow
+                    key={vulnerability.id}
+                    onClick={() => handleViewVulnerability(vulnerability.id)}
+                    className="hover:bg-gray-50 transition-colors border-b border-gray-300 cursor-pointer"
+                  >
+                    <TableCell className="p-4">
+                      <Badge
+                        variant="outline"
+                        className="text-red-500 border-red-500 bg-red-50 px-4"
+                      >
+                        <ShieldAlert className="h-5 w-5 text-red-600" />
+                        Vulnerability
+                      </Badge>
+                    </TableCell>
+                    <TableCell className="p-4 font-medium text-gray-900 hover:underline max-w-100 truncate">
+                      {vulnerability.name}
+                    </TableCell>
+                    <TableCell className="p-4">
+                      {vulnerability.x_mitre_platforms != null ? (
+                        vulnerability.x_mitre_platforms.map((platform) => (
+                          <Badge
+                            variant="outline"
+                            className="border-2 text-amber-500 border-amber-500 bg-amber-50 px-4"
+                          >
+                            {platform}
+                          </Badge>
+                        ))
+                      ) : (
+                        <Badge
+                          variant="outline"
+                          className="border-2 text-neutral-500 border-neutral-500 bg-neutral-50 px-4"
+                        >
+                          Unknown
+                        </Badge>
+                      )}
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
           </CardContent>
         </Card>
       </div>
@@ -670,53 +1048,53 @@ export const Dashboard = () => {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         <Card className="hover:shadow-lg transition-shadow">
           <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <Shield className="h-6 w-6" />
+            <FileText className="h-6 w-6" />
             <Badge variant="outline" className="text-green-600">
-              +12%
+              +
             </Badge>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">98%</div>
-            <p className="text-xs text-muted-foreground">Prevention Rate</p>
+            <div className="text-2xl font-bold">{filesDataTotal}</div>
+            <p className="text-xs text-muted-foreground">Files</p>
           </CardContent>
         </Card>
 
         <Card className="hover:shadow-lg transition-shadow">
           <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <AlertCircle className="h-6 w-6" />
-            <Badge variant="outline" className="text-red-600">
-              -8%
+            <Link2Icon className="h-6 w-6" />
+            <Badge variant="outline" className="text-green-600">
+              +
             </Badge>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">2.4s</div>
-            <p className="text-xs text-muted-foreground">Avg. Response Time</p>
+            <div className="text-2xl font-bold">{urlsDataTotal}</div>
+            <p className="text-xs text-muted-foreground">URLs</p>
           </CardContent>
         </Card>
 
         <Card className="hover:shadow-lg transition-shadow">
           <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <Globe className="h-6 w-6" />
-            <Badge variant="outline" className="text-blue-600">
-              +23
+            <ServerIcon className="h-6 w-6" />
+            <Badge variant="outline" className="text-green-600">
+              +
             </Badge>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">156</div>
-            <p className="text-xs text-muted-foreground">Active Connections</p>
+            <div className="text-2xl font-bold">{domainsDataTotal}</div>
+            <p className="text-xs text-muted-foreground">Domain Names</p>
           </CardContent>
         </Card>
 
         <Card className="hover:shadow-lg transition-shadow">
           <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <Hammer className="h-6 w-6" />
-            <Badge variant="outline" className="text-purple-600">
-              +5
+            <CpuIcon className="h-6 w-6" />
+            <Badge variant="outline" className="text-green-600">
+              +
             </Badge>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">89</div>
-            <p className="text-xs text-muted-foreground">Mitigation Actions</p>
+            <div className="text-2xl font-bold">{ipv4sDataTotal}</div>
+            <p className="text-xs text-muted-foreground">IPv4 Addresses</p>
           </CardContent>
         </Card>
       </div>

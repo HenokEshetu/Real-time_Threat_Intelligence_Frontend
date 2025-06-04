@@ -333,11 +333,11 @@ export const useObservables = ({
   const domains = domainData?.searchDomainNames?.results || [];
   const urls = urlData?.searchUrls?.results || [];
 
-  const total =
-    fileData?.searchFiles?.total +
-    ipv4Data?.searchIPv4Addresses?.total +
-    domainData?.searchDomainNames?.total +
-    urlData?.searchUrls?.total;
+  const fileTotal = fileData?.searchFiles?.total;
+  const urlTotal = urlData?.searchUrls?.total;
+  const domainTotal = domainData?.searchDomainNames?.total;
+  const ipv4Total = ipv4Data?.searchIPv4Addresses?.total;
+  const total = fileTotal + ipv4Total + domainTotal + urlTotal;
 
   const allObservables = [
     ...files.map((o: any) => ({ ...o, observableType: 'file' })),
@@ -352,6 +352,10 @@ export const useObservables = ({
     domains,
     urls,
     allObservables,
+    fileTotal,
+    urlTotal,
+    domainTotal,
+    ipv4Total,
     total,
     loading: fileLoading || ipv4Loading || domainLoading || urlLoading,
     error: fileError || ipv4Error || domainError || urlError,

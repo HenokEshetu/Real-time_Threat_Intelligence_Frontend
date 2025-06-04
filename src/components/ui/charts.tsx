@@ -37,7 +37,7 @@ import {
   CardFooter,
 } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import React from 'react';
+import React, { useState } from 'react';
 
 import {
   ChartConfig,
@@ -94,11 +94,11 @@ const chartData = [
 
 const chartConfig = {
   desktop: {
-    label: 'Desktop',
+    label: 'Intrusion Set',
     color: 'hsl(var(--chart-1))',
   },
   mobile: {
-    label: 'Mobile',
+    label: 'Campaign',
     color: 'hsl(var(--chart-2))',
   },
 } satisfies ChartConfig;
@@ -107,9 +107,9 @@ export const AreaChartGradient = () => {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Area Chart - Gradient</CardTitle>
+        <CardTitle>Campaign and Intrusion Set Distribution</CardTitle>
         <CardDescription>
-          Showing total visitors for the last 6 months
+          Showing campaigns and Intrusion Set for the last 6 months
         </CardDescription>
       </CardHeader>
       <CardContent>
@@ -176,18 +176,7 @@ export const AreaChartGradient = () => {
           </AreaChart>
         </ChartContainer>
       </CardContent>
-      <CardFooter>
-        <div className="flex w-full items-start gap-2 text-sm">
-          <div className="grid gap-2">
-            <div className="flex items-center gap-2 font-medium leading-none">
-              Trending up by 5.2% this month <TrendingUp className="h-4 w-4" />
-            </div>
-            <div className="flex items-center gap-2 leading-none text-muted-foreground">
-              January - June 2024
-            </div>
-          </div>
-        </div>
-      </CardFooter>
+      <CardFooter></CardFooter>
     </Card>
   );
 };
@@ -200,7 +189,7 @@ export const barchartInteractive = {
 };
 
 const barChartInteractive_chartConfig = {
-  views: {
+  entities: {
     label: 'Entities Founded',
   },
   enterprise: {
@@ -228,7 +217,7 @@ export const BarChartInteractive = ({
   chartData: (typeof barchartInteractive)[];
 }) => {
   const [activeChart, setActiveChart] =
-    React.useState<keyof typeof barChartInteractive_chartConfig>('enterprise');
+    useState<keyof typeof barChartInteractive_chartConfig>('enterprise');
   const total = React.useMemo(
     () => ({
       enterprise: chartData.reduce((acc, curr) => acc + curr.enterprise, 0),
@@ -293,7 +282,7 @@ export const BarChartInteractive = ({
               content={
                 <ChartTooltipContent
                   className="w-[150px]"
-                  nameKey="views"
+                  nameKey="entities"
                   labelFormatter={(value) => {
                     return value;
                   }}
@@ -308,51 +297,64 @@ export const BarChartInteractive = ({
   );
 };
 
-const barChartCustomLabel_chartData = [
-  { browser: 'chrome', visitors: 275, fill: 'var(--color-chrome)' },
-  { browser: 'safari', visitors: 200, fill: 'var(--color-safari)' },
-  { browser: 'firefox', visitors: 187, fill: 'var(--color-firefox)' },
-  { browser: 'edge', visitors: 173, fill: 'var(--color-edge)' },
-  { browser: 'other', visitors: 90, fill: 'var(--color-other)' },
+export const lineChartCustomLabel_chartData = [
+  { object: 'URLs', entities: 275, fill: 'var(--color-urls)' },
+  { object: 'Domain Names', entities: 200, fill: 'var(--color-domain_names)' },
+  {
+    object: 'IPv4 Addresses',
+    entities: 187,
+    fill: 'var(--color-ipv4addresses)',
+  },
+  { object: 'Files', entities: 173, fill: 'var(--color-files)' },
+  { object: 'Indicators', entities: 90, fill: 'var(--color-indicators)' },
 ];
-const barChartCustomLabel_chartConfig = {
-  visitors: {
-    label: 'Visitors',
-    color: 'hsl(var(--chart-2))',
-  },
-  chrome: {
-    label: 'Chrome',
-    color: 'hsl(var(--chart-1))',
-  },
-  safari: {
-    label: 'Safari',
-    color: 'hsl(var(--chart-2))',
-  },
-  firefox: {
-    label: 'Firefox',
-    color: 'hsl(var(--chart-3))',
-  },
-  edge: {
-    label: 'Edge',
-    color: 'hsl(var(--chart-4))',
-  },
-  other: {
-    label: 'Other',
-    color: 'hsl(var(--chart-5))',
-  },
-} satisfies ChartConfig;
-export function BarChartCustomLabel() {
+
+export function LineChartCustomLabel({
+  title,
+  titleDescription,
+  chartData,
+}: {
+  title: string;
+  titleDescription: string;
+  chartData: typeof lineChartCustomLabel_chartData;
+}) {
+  const lineChartCustomLabel_chartConfig = {
+    entities: {
+      label: 'Entities',
+      color: 'hsl(var(--chart-2))',
+    },
+    urls: {
+      label: 'URLs',
+      color: 'hsl(var(--chart-1))',
+    },
+    domain_names: {
+      label: 'Domain Names',
+      color: 'hsl(var(--chart-2))',
+    },
+    ipv4_addresses: {
+      label: 'IPv4 Addresses',
+      color: 'hsl(var(--chart-3))',
+    },
+    files: {
+      label: 'Files',
+      color: 'hsl(var(--chart-4))',
+    },
+    indicators: {
+      label: 'Indicators',
+      color: 'hsl(var(--chart-5))',
+    },
+  } satisfies ChartConfig;
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Line Chart - Custom Label</CardTitle>
-        <CardDescription>January - June 2024</CardDescription>
+        <CardTitle>{title}</CardTitle>
+        <CardDescription>{titleDescription}</CardDescription>
       </CardHeader>
       <CardContent>
-        <ChartContainer config={barChartCustomLabel_chartConfig}>
+        <ChartContainer config={lineChartCustomLabel_chartConfig}>
           <LineChart
             accessibilityLayer
-            data={barChartCustomLabel_chartData}
+            data={chartData}
             margin={{
               top: 24,
               left: 24,
@@ -365,18 +367,18 @@ export function BarChartCustomLabel() {
               content={
                 <ChartTooltipContent
                   indicator="line"
-                  nameKey="visitors"
+                  nameKey="object"
                   hideLabel
                 />
               }
             />
             <Line
-              dataKey="visitors"
+              dataKey="entities"
               type="natural"
-              stroke="var(--color-visitors)"
+              stroke="var(--color-entities)"
               strokeWidth={2}
               dot={{
-                fill: 'var(--color-visitors)',
+                fill: 'var(--color-entities)',
               }}
               activeDot={{
                 r: 6,
@@ -387,86 +389,80 @@ export function BarChartCustomLabel() {
                 offset={12}
                 className="fill-foreground"
                 fontSize={12}
-                dataKey="browser"
+                dataKey="object"
                 formatter={(
-                  value: keyof typeof barChartCustomLabel_chartConfig,
-                ) => barChartCustomLabel_chartConfig[value]?.label}
+                  value: keyof typeof lineChartCustomLabel_chartConfig,
+                ) => lineChartCustomLabel_chartConfig[value]?.label}
               />
             </Line>
           </LineChart>
         </ChartContainer>
       </CardContent>
-      <CardFooter className="flex-col items-start gap-2 text-sm">
-        <div className="flex gap-2 font-medium leading-none">
-          Trending up by 5.2% this month <TrendingUp className="h-4 w-4" />
-        </div>
-        <div className="leading-none text-muted-foreground">
-          Showing total visitors for the last 6 months
-        </div>
-      </CardFooter>
+      <CardFooter className="flex-col items-start gap-2 text-sm"></CardFooter>
     </Card>
   );
 }
 
-const barChart_chartData = [
-  { month: 'January', desktop: 186 },
-  { month: 'February', desktop: 305 },
-  { month: 'March', desktop: 237 },
-  { month: 'April', desktop: 73 },
-  { month: 'May', desktop: 209 },
-  { month: 'June', desktop: 214 },
-  { month: 'July', desktop: 150 },
-  { month: 'August', desktop: 190 },
-  { month: 'September', desktop: 250 },
-];
-const barChart_chartConfig = {
-  desktop: {
-    label: 'Desktop',
-    color: 'hsl(var(--chart-1))',
-  },
-} satisfies ChartConfig;
-export function BarChartHorizontal() {
+export const barChart_chartData = { platform: 'Windows', entity: 186 };
+
+export function BarChartHorizontal({
+  title,
+  titleDescription,
+  label,
+  chartData,
+}: {
+  title: string;
+  titleDescription: string;
+  label?: string;
+  chartData?: (typeof barChart_chartData)[];
+}) {
+  const barChart_chartConfig = {
+    entity: {
+      label: label,
+      color:
+        label.toLocaleLowerCase() == 'malware'
+          ? `hsl(var(--chart-5))`
+          : `hsl(var(--chart-1))`,
+    },
+  } satisfies ChartConfig;
+  const BAR_SIZE = 7;
+  const GAP = 6;
+  const chartHeight = (BAR_SIZE + GAP) * chartData.length + 40;
+
   return (
-    <Card>
+    <Card className="h-[500px]">
       <CardHeader>
-        <CardTitle>Bar Chart - Horizontal</CardTitle>
-        <CardDescription>January - June 2024</CardDescription>
+        <CardTitle>{title}</CardTitle>
+        <CardDescription>{titleDescription}</CardDescription>
       </CardHeader>
-      <CardContent>
-        <ChartContainer config={barChart_chartConfig}>
+      <CardContent className="p-0 h-full">
+        <ChartContainer className="h-full w-full" config={barChart_chartConfig}>
           <BarChart
-            accessibilityLayer
-            data={barChart_chartData}
             layout="vertical"
-            barSize={7}
-            barCategoryGap={2}
-            margin={{ top: 0, right: 50, left: 20, bottom: 0 }}
+            data={chartData}
+            barSize={BAR_SIZE}
+            barCategoryGap={GAP}
+            height={chartHeight}
+            margin={{ left: 0, right: 20 }}
           >
-            <XAxis type="number" dataKey="desktop" hide />
+            <XAxis type="number" dataKey="entity" hide />
             <YAxis
-              dataKey="month"
+              dataKey="platform"
               type="category"
+              width={160}
               tickLine={false}
               tickMargin={10}
               axisLine={false}
-              tickFormatter={(value) => value.slice(0, 3)}
+              tick={{ fontSize: 12 }}
             />
             <ChartTooltip
               cursor={false}
               content={<ChartTooltipContent hideLabel />}
             />
-            <Bar dataKey="desktop" fill="var(--color-desktop)" radius={5} />
+            <Bar dataKey="entity" fill="var(--color-entity)" radius={5} />
           </BarChart>
         </ChartContainer>
       </CardContent>
-      <CardFooter className="flex-col items-start gap-2 text-sm">
-        <div className="flex gap-2 font-medium leading-none">
-          Trending up by 5.2% this month <TrendingUp className="h-4 w-4" />
-        </div>
-        <div className="leading-none text-muted-foreground">
-          Showing total visitors for the last 6 months
-        </div>
-      </CardFooter>
     </Card>
   );
 }
@@ -580,31 +576,98 @@ type PieChartProps = {
   tickFormatter?: (value: any) => string;
 };
 
-const radial_chartData = [
+export const radial_chartData = {
+  platform: 'Windows',
+  tools: 275,
+  fill: 'var(--color-windows)',
+};
+
+export function RadialChart({
+  title,
+  titleDescription,
+  chartData,
+}: {
+  title: string;
+  titleDescription: string;
+  chartData: { platform: string; tools: number; fill?: string }[];
+}) {
+  const radial_chartConfig = {
+    tools: {
+      label: 'Tools',
+    },
+    windows: {
+      label: 'Windows',
+      color: 'hsl(var(--chart-1))',
+    },
+    macos: {
+      label: 'macOS',
+      color: 'hsl(var(--chart-2))',
+    },
+    linux: {
+      label: 'Linux',
+      color: 'hsl(var(--chart-3))',
+    },
+    office_suite: {
+      label: 'Office Suite',
+      color: 'hsl(var(--chart-4))',
+    },
+    saas: {
+      label: 'SaaS',
+      color: 'hsl(var(--chart-5))',
+    },
+  } satisfies ChartConfig;
+
+  return (
+    <Card className="flex flex-col">
+      <CardHeader className="items-center pb-0">
+        <CardTitle>{title}</CardTitle>
+        <CardDescription>{titleDescription}</CardDescription>
+      </CardHeader>
+      <CardContent className="flex-1 pb-0">
+        <ChartContainer
+          config={radial_chartConfig}
+          className="mx-auto aspect-square max-h-[200px]"
+        >
+          <RadialBarChart data={chartData} innerRadius={30} outerRadius={100}>
+            <ChartTooltip
+              cursor={false}
+              content={<ChartTooltipContent hideLabel nameKey="platform" />}
+            />
+            <PolarGrid gridType="circle" />
+            <RadialBar dataKey="tools" />
+          </RadialBarChart>
+        </ChartContainer>
+      </CardContent>
+      <CardFooter className="flex-col gap-2 text-sm"></CardFooter>
+    </Card>
+  );
+}
+
+const pieChart_chartData = [
   { browser: 'chrome', visitors: 275, fill: 'var(--color-chrome)' },
   { browser: 'safari', visitors: 200, fill: 'var(--color-safari)' },
-  { browser: 'firefox', visitors: 187, fill: 'var(--color-firefox)' },
+  { browser: 'firefox', visitors: 287, fill: 'var(--color-firefox)' },
   { browser: 'edge', visitors: 173, fill: 'var(--color-edge)' },
-  { browser: 'other', visitors: 90, fill: 'var(--color-other)' },
+  { browser: 'other', visitors: 190, fill: 'var(--color-other)' },
 ];
-const radial_chartConfig = {
+const pieChat_chartConfig = {
   visitors: {
-    label: 'Visitors',
+    label: 'Reports',
   },
   chrome: {
-    label: 'Chrome',
+    label: 'Indicator',
     color: 'hsl(var(--chart-1))',
   },
   safari: {
-    label: 'Safari',
+    label: 'Malware',
     color: 'hsl(var(--chart-2))',
   },
   firefox: {
-    label: 'Firefox',
+    label: 'URLs',
     color: 'hsl(var(--chart-3))',
   },
   edge: {
-    label: 'Edge',
+    label: 'Campaign',
     color: 'hsl(var(--chart-4))',
   },
   other: {
@@ -612,148 +675,22 @@ const radial_chartConfig = {
     color: 'hsl(var(--chart-5))',
   },
 } satisfies ChartConfig;
-export function RadialChart() {
+export function PieChartDonut() {
+  const totalVisitors = React.useMemo(() => {
+    return pieChart_chartData.reduce((acc, curr) => acc + curr.visitors, 0);
+  }, []);
   return (
     <Card className="flex flex-col">
       <CardHeader className="items-center pb-0">
-        <CardTitle>Radial Chart - Grid</CardTitle>
-        <CardDescription>January - June 2024</CardDescription>
+        <CardTitle>Report to Threat Distribution</CardTitle>
+        <CardDescription>
+          The total Report Distribution accross different threats
+        </CardDescription>
       </CardHeader>
       <CardContent className="flex-1 pb-0">
         <ChartContainer
-          config={radial_chartConfig}
+          config={pieChat_chartConfig}
           className="mx-auto aspect-square max-h-[250px]"
-        >
-          <RadialBarChart
-            data={radial_chartData}
-            innerRadius={30}
-            outerRadius={100}
-          >
-            <ChartTooltip
-              cursor={false}
-              content={<ChartTooltipContent hideLabel nameKey="browser" />}
-            />
-            <PolarGrid gridType="circle" />
-            <RadialBar dataKey="visitors" />
-          </RadialBarChart>
-        </ChartContainer>
-      </CardContent>
-      <CardFooter className="flex-col gap-2 text-sm">
-        <div className="flex items-center gap-2 font-medium leading-none">
-          Trending up by 5.2% this month <TrendingUp className="h-4 w-4" />
-        </div>
-        <div className="leading-none text-muted-foreground">
-          Showing total visitors for the last 6 months
-        </div>
-      </CardFooter>
-    </Card>
-  );
-}
-
-const pieChartInteractive_desktopData = [
-  { month: 'january', desktop: 186, fill: 'var(--color-january)' },
-  { month: 'february', desktop: 305, fill: 'var(--color-february)' },
-  { month: 'march', desktop: 237, fill: 'var(--color-march)' },
-  { month: 'april', desktop: 173, fill: 'var(--color-april)' },
-  { month: 'may', desktop: 209, fill: 'var(--color-may)' },
-];
-const pieChartInteractive_chartConfig = {
-  visitors: {
-    label: 'Visitors',
-  },
-  desktop: {
-    label: 'Desktop',
-  },
-  mobile: {
-    label: 'Mobile',
-  },
-  january: {
-    label: 'January',
-    color: 'hsl(var(--chart-1))',
-  },
-  february: {
-    label: 'February',
-    color: 'hsl(var(--chart-2))',
-  },
-  march: {
-    label: 'March',
-    color: 'hsl(var(--chart-3))',
-  },
-  april: {
-    label: 'April',
-    color: 'hsl(var(--chart-4))',
-  },
-  may: {
-    label: 'May',
-    color: 'hsl(var(--chart-5))',
-  },
-} satisfies ChartConfig;
-export function PieChartInteractive() {
-  const id = 'pie-interactive';
-  const [activeMonth, setActiveMonth] = React.useState(
-    pieChartInteractive_desktopData[0].month,
-  );
-  const activeIndex = React.useMemo(
-    () =>
-      pieChartInteractive_desktopData.findIndex(
-        (item) => item.month === activeMonth,
-      ),
-    [activeMonth],
-  );
-  const months = React.useMemo(
-    () => pieChartInteractive_desktopData.map((item) => item.month),
-    [],
-  );
-  return (
-    <Card data-chart={id} className="flex flex-col">
-      <ChartStyle id={id} config={pieChartInteractive_chartConfig} />
-      <CardHeader className="flex-row items-start space-y-0 pb-0">
-        <div className="grid gap-1">
-          <CardTitle>Pie Chart - Interactive</CardTitle>
-          <CardDescription>January - June 2024</CardDescription>
-        </div>
-        <Select value={activeMonth} onValueChange={setActiveMonth}>
-          <SelectTrigger
-            className="ml-auto h-7 w-[130px] rounded-lg pl-2.5"
-            aria-label="Select a value"
-          >
-            <SelectValue placeholder="Select month" />
-          </SelectTrigger>
-          <SelectContent align="end" className="rounded-xl">
-            {months.map((key) => {
-              const config =
-                pieChartInteractive_chartConfig[
-                  key as keyof typeof pieChartInteractive_chartConfig
-                ];
-              if (!config) {
-                return null;
-              }
-              return (
-                <SelectItem
-                  key={key}
-                  value={key}
-                  className="rounded-lg [&_span]:flex"
-                >
-                  <div className="flex items-center gap-2 text-xs">
-                    <span
-                      className="flex h-3 w-3 shrink-0 rounded-sm"
-                      style={{
-                        backgroundColor: `var(--color-${key})`,
-                      }}
-                    />
-                    {config?.label}
-                  </div>
-                </SelectItem>
-              );
-            })}
-          </SelectContent>
-        </Select>
-      </CardHeader>
-      <CardContent className="flex flex-1 justify-center pb-0">
-        <ChartContainer
-          id={id}
-          config={chartConfig}
-          className="mx-auto aspect-square w-full max-w-[300px]"
         >
           <PieChart>
             <ChartTooltip
@@ -761,25 +698,11 @@ export function PieChartInteractive() {
               content={<ChartTooltipContent hideLabel />}
             />
             <Pie
-              data={pieChartInteractive_desktopData}
-              dataKey="desktop"
-              nameKey="month"
+              data={pieChart_chartData}
+              dataKey="visitors"
+              nameKey="browser"
               innerRadius={60}
               strokeWidth={5}
-              activeIndex={activeIndex}
-              activeShape={({
-                outerRadius = 0,
-                ...props
-              }: PieSectorDataItem) => (
-                <g>
-                  <Sector {...props} outerRadius={outerRadius + 10} />
-                  <Sector
-                    {...props}
-                    outerRadius={outerRadius + 25}
-                    innerRadius={outerRadius + 12}
-                  />
-                </g>
-              )}
             >
               <Label
                 content={({ viewBox }) => {
@@ -796,16 +719,14 @@ export function PieChartInteractive() {
                           y={viewBox.cy}
                           className="fill-foreground text-3xl font-bold"
                         >
-                          {pieChartInteractive_desktopData[
-                            activeIndex
-                          ].desktop.toLocaleString()}
+                          {totalVisitors.toLocaleString()}
                         </tspan>
                         <tspan
                           x={viewBox.cx}
                           y={(viewBox.cy || 0) + 24}
                           className="fill-muted-foreground"
                         >
-                          Visitors
+                          Reports
                         </tspan>
                       </text>
                     );
@@ -816,6 +737,7 @@ export function PieChartInteractive() {
           </PieChart>
         </ChartContainer>
       </CardContent>
+      <CardFooter className="flex-col gap-2 text-sm"></CardFooter>
     </Card>
   );
 }

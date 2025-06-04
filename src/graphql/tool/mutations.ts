@@ -10,6 +10,7 @@ export const CREATE_TOOL = gql`
       created_by_ref
       description
       enrichment
+      x_mitre_platforms
       extensions
       external_references {
         source_name
@@ -49,6 +50,7 @@ export const UPDATE_TOOL = gql`
       created
       created_by_ref
       description
+      x_mitre_platforms
       enrichment
       extensions
       external_references {

@@ -9,7 +9,6 @@ interface ParsedReport {
   [key: string]: string;
 }
 
-// Tailwind palette for badges
 const tailwindColors = [
   { bg: 'bg-red-50', border: 'border-red-500', text: 'text-red-600' },
   { bg: 'bg-orange-50', border: 'border-orange-500', text: 'text-orange-600' },
@@ -57,7 +56,6 @@ const parseIntelReport = (raw: string): ParsedReport => {
   const result: ParsedReport = {};
   let hasStixFormat = false;
 
-  // STIX-style **Key:** Value blocks
   const stixRegex = /\*\*([^:]+):\*\*\s*([\s\S]*?)(?=\s*\*\*[^:]+:\*\*|$)/g;
   let match: RegExpExecArray | null;
   while ((match = stixRegex.exec(raw))) {
@@ -65,7 +63,6 @@ const parseIntelReport = (raw: string): ParsedReport => {
     result[match[1].trim()] = match[2].trim().replace(/\n/g, ' ');
   }
 
-  // Fallback only when semicolon-delimited segments present
   if (!hasStixFormat && raw.includes(';')) {
     raw.split(/;\s*/g).forEach((seg) => {
       const [key, ...rest] = seg.split(/:\s*/);
@@ -73,7 +70,7 @@ const parseIntelReport = (raw: string): ParsedReport => {
       if (!key || !value || key.trim().toLowerCase() === 'source') return;
       result[key.trim()] = value;
     });
-    // Format lists and percentages
+
     if (result['Processes']) {
       result['Processes'] = result['Processes']
         .split('.')
@@ -88,7 +85,6 @@ const parseIntelReport = (raw: string): ParsedReport => {
     }
   }
 
-  // Always extract the standalone Source line or phrase
   const sourceRegex = /\bSource\s*[:\-]\s*([^;\n]+)/i;
   const srcMatch = raw.match(sourceRegex);
   if (srcMatch) {
@@ -98,7 +94,11 @@ const parseIntelReport = (raw: string): ParsedReport => {
   return result;
 };
 
-export const IndicatorRelationships = ({ indicator }: { indicator: Indicator }) => {
+export const IndicatorRelationships = ({
+  indicator,
+}: {
+  indicator: Indicator;
+}) => {
   const parsed = useMemo(() => {
     if (typeof indicator.description === 'string') {
       // return parseIntelReport(indicator.description);
@@ -160,14 +160,12 @@ export const IndicatorRelationships = ({ indicator }: { indicator: Indicator }) 
 
   return (
     <div className="p-4 grid grid-cols-1 md:grid-cols-2 gap-6">
-      {/* Details Section */}
       <div className="">
         <h1 className="uppercase text-xs font-bold text-slate-600 p-2">
           Details
         </h1>
         <Card className="bg-transparent border border-gray-300 rounded-sm shadow-none !py-4">
           <CardContent className="px-3">
-            {/* Pattern */}
             <div className="pb-3 w-full">
               <h2 className="font-semibold text-base mb-2">
                 Indicator Pattern
@@ -177,7 +175,6 @@ export const IndicatorRelationships = ({ indicator }: { indicator: Indicator }) 
               </div>
             </div>
 
-            {/* Validity & Confidence */}
             <div className="flex justify-between py-3">
               <div className="w-[48%]">
                 <h2 className="font-bold text-base mb-2">Valid From</h2>
@@ -193,16 +190,15 @@ export const IndicatorRelationships = ({ indicator }: { indicator: Indicator }) 
               </div>
             </div>
 
-            {/* Confidence, Detection, Type */}
             <div className="flex justify-between py-3">
               <div className="w-[31%]">
                 <h2 className="font-bold text-base mb-2">Confidence</h2>
                 <span
                   className={`${getConfidenceColor(
-                    indicator.confidence,
+                    indicator.confidence ?? 0,
                   )} py-1 px-6 rounded text-sm text-center uppercase`}
                 >
-                  {indicator.confidence}%
+                  {indicator.confidence ?? 0}%
                 </span>
               </div>
               <div className="w-[31%]">
@@ -221,7 +217,6 @@ export const IndicatorRelationships = ({ indicator }: { indicator: Indicator }) 
               </div>
             </div>
 
-            {/* Hybrid Analysis specific fields */}
             {parsed['Verdict'] && (
               <div className="flex justify-between py-3">
                 <div className="w-[31%]">
@@ -275,7 +270,6 @@ export const IndicatorRelationships = ({ indicator }: { indicator: Indicator }) 
               </div>
             )}
 
-            {/* Parsed fields */}
             <div className="py-3">
               {Object.entries(parsed).map(([key, value]) => {
                 if (
@@ -316,24 +310,25 @@ export const IndicatorRelationships = ({ indicator }: { indicator: Indicator }) 
                   </h2>
                   <table className="w-full text-sm text-foreground">
                     <tbody>
-                      {indicator.external_references.map((ref, index) => (
-                        <tr
-                          key={index}
-                          className="hover:bg-slate-100 transition-colors border-b border-gray-300 cursor-pointer"
-                        >
-                          <td className="p-4 text-gray-700">
-                            <Badge
-                              variant="outline"
-                              className="text-blue-500 border-blue-500 bg-blue-50 py-1"
-                            >
-                              {ref.source_name}
-                            </Badge>
-                          </td>
-                          <td className="p-4 font-medium text-gray-900 hover:underline">
-                            <a href={ref.url}>{ref.url}</a>
-                          </td>
-                        </tr>
-                      ))}
+                      {indicator.external_references?.length > 0 &&
+                        indicator.external_references.map((ref, index) => (
+                          <tr
+                            key={index}
+                            className="hover:bg-slate-100 transition-colors border-b border-gray-300 cursor-pointer"
+                          >
+                            <td className="p-4 text-gray-700">
+                              <Badge
+                                variant="outline"
+                                className="text-blue-500 border-blue-500 bg-blue-50 py-1"
+                              >
+                                {ref.source_name}
+                              </Badge>
+                            </td>
+                            <td className="p-4 font-medium text-gray-900 hover:underline">
+                              <a href={ref.url} className='break-all'>{ref.url}</a>
+                            </td>
+                          </tr>
+                        ))}
                     </tbody>
                   </table>
                 </div>
@@ -381,10 +376,10 @@ export const IndicatorRelationships = ({ indicator }: { indicator: Indicator }) 
                 </span> */}
                 <span
                   className={`py-1 px-5 rounded text-sm text-center uppercase border ${getTlpColors(
-                    indicator.object_marking_refs[0],
+                    indicator.object_marking_refs[0] ?? 'UNKNOWN',
                   )}`}
                 >
-                  TLP:{indicator.object_marking_refs[0]}
+                  TLP:{indicator.object_marking_refs[0] ?? 'UNKNOWN'}
                 </span>
               </div>
             </div>

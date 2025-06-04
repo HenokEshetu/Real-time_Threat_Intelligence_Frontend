@@ -132,16 +132,11 @@ import IntrusionSetCreatePage from './pages/IntrusionSet/IntrusionSetCreatePage'
 import IntrusionSetEditPage from './pages/IntrusionSet/IntrusionSetEditPage';
 import IntrusionSetDetailPage from './pages/IntrusionSet/IntrusionSetDetailPage';
 
-import IntrusionSetPage from './pages/IntrusionSet/IntrusionSetPage';
-import IntrusionSetCreatePage from './pages/IntrusionSet/IntrusionSetCreatePage';
-import IntrusionSetEditPage from './pages/IntrusionSet/IntrusionSetEditPage';
-import IntrusionSetDetailPage from './pages/IntrusionSet/IntrusionSetDetailPage';
-
 export const AppRoutes = () => {
   return (
     <Routes>
       <Route path="/" element={<ProtectedRoute children={<Dashboard />} />} />
-      <Route
+      {/* <Route
         path="/threat-actors"
         element={<ProtectedRoute children={<ThreatActorsPage />} />}
       />
@@ -161,7 +156,7 @@ export const AppRoutes = () => {
       <Route
         path="/threat-actors/:id/edit"
         element={<ProtectedRoute children={<DeleteThreatActor />} />}
-      />
+      /> */}
       <Route
         path="/indicators"
         element={<ProtectedRoute children={<IndicatorsPage />} />}

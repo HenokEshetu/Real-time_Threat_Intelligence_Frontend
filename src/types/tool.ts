@@ -53,6 +53,7 @@ export interface Tool {
   tool_types: ToolType[];
   tool_version?: string;
   type: string;
+  x_mitre_platforms: string[];
 }
 
 export interface ToolSearchResult {

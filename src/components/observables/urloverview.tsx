@@ -72,7 +72,9 @@ const getTlpColors = (tlp: string) => {
 export const URLOverview = ({ url }: { url: URL }) => {
   const labels: string[] = url.labels || [];
   const uniqueLabels = Array.from(new Set(labels));
-  const labelColorMap = useRef<Map<string, (typeof tailwindColors)[0]>>(new Map());
+  const labelColorMap = useRef<Map<string, (typeof tailwindColors)[0]>>(
+    new Map(),
+  );
 
   // Extract TLP marking from labels or object_marking_refs
   let marking = '';
@@ -81,7 +83,11 @@ export const URLOverview = ({ url }: { url: URL }) => {
       marking = lbl.replace('tlp:', '').toUpperCase();
     }
   });
-  if (!marking && url.object_marking_refs && url.object_marking_refs.length > 0) {
+  if (
+    !marking &&
+    url.object_marking_refs &&
+    url.object_marking_refs.length > 0
+  ) {
     marking = url.object_marking_refs[0];
   }
 
@@ -117,7 +123,9 @@ export const URLOverview = ({ url }: { url: URL }) => {
               <div className="w-[31%]">
                 <h2 className="font-bold text-base mb-2">Confidence</h2>
                 <span
-                  className={`${getConfidenceColor(url.confidence || 0)} py-1 px-6 rounded text-sm text-center uppercase`}
+                  className={`${getConfidenceColor(
+                    url.confidence || 0,
+                  )} py-1 px-6 rounded text-sm text-center uppercase`}
                 >
                   {url.confidence || 0}%
                 </span>
@@ -158,7 +166,14 @@ export const URLOverview = ({ url }: { url: URL }) => {
                             </Badge>
                           </td>
                           <td className="p-4 font-medium text-gray-900 hover:underline">
-                            <a href={ref.url} target="_blank" rel="noopener noreferrer">{ref.url}</a>
+                            <a
+                              href={ref.url}
+                              className='break-all'
+                              target="_blank"
+                              rel="noopener noreferrer"
+                            >
+                              {ref.url}
+                            </a>
                           </td>
                         </tr>
                       ))}
@@ -180,7 +195,9 @@ export const URLOverview = ({ url }: { url: URL }) => {
               <div className="w-[48%]">
                 <h2 className="font-bold text-sm mb-2">Marking</h2>
                 <span
-                  className={`py-1 px-5 rounded text-sm text-center uppercase border ${getTlpColors(marking)}`}
+                  className={`py-1 px-5 rounded text-sm text-center uppercase border ${getTlpColors(
+                    marking,
+                  )}`}
                 >
                   TLP:{marking || 'clear'}
                 </span>
@@ -190,7 +207,10 @@ export const URLOverview = ({ url }: { url: URL }) => {
                 <div className="flex flex-wrap gap-2">
                   {uniqueLabels.map((label) => {
                     if (!labelColorMap.current.has(label)) {
-                      labelColorMap.current.set(label, getRandomTailwindColor());
+                      labelColorMap.current.set(
+                        label,
+                        getRandomTailwindColor(),
+                      );
                     }
                     const color = labelColorMap.current.get(label)!;
                     return (

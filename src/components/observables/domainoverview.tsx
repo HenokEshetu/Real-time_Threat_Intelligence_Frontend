@@ -72,7 +72,17 @@ const getTlpColors = (tlp: string) => {
 export const DomainOverview = ({ domain }: { domain: DomainName }) => {
   const labels: string[] = domain.labels || [];
   const uniqueLabels = Array.from(new Set(labels));
-  const labelColorMap = useRef<Map<string, (typeof tailwindColors)[0]>>(new Map());
+  const labelColorMap = useRef<Map<string, (typeof tailwindColors)[0]>>(
+    new Map(),
+  );
+
+  const extension = domain?.extensions
+    ? domain?.extensions['extension-definition--virustotal-enrichment']
+    : {};
+  const last_analysis_stat = extension
+    ? extension?.data?.attributes?.last_analysis_stats
+    : {};
+  const ext_type = extension ? extension?.extension_type : '';
 
   return (
     <div className="p-4 grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -82,13 +92,21 @@ export const DomainOverview = ({ domain }: { domain: DomainName }) => {
         </h1>
         <Card className="bg-transparent border border-gray-300 rounded-sm shadow-none !py-4">
           <CardContent className="px-3">
-            <div className="pb-3 w-full">
-              <h2 className="font-semibold text-base mb-2">Domain Value</h2>
-              <div className="bg-slate-100 border border-slate-600 text-slate-600 font-semibold p-3 rounded overflow-x-auto font-mono text-sm">
-                {domain.value}
+            <div className="pb-3 w-full flex justify-between">
+              <div className="w-[50%]">
+                <h2 className="font-semibold text-base mb-2">Domain Value</h2>
+                <div className="bg-slate-100 w-[90%] border border-slate-600 text-slate-600 font-semibold p-3 rounded overflow-x-auto font-mono text-sm">
+                  {domain.value}
+                </div>
+              </div>
+              <div className="w-[50%]">
+                <h2 className="font-semibold text-base mb-2">Pattern</h2>
+                <div className="bg-slate-100 w-[90%] border border-slate-600 text-slate-600 font-semibold p-3 rounded overflow-x-auto font-mono text-sm">
+                  {domain.pattern}
+                </div>
               </div>
             </div>
-            <div className="flex justify-between py-3">
+            <div className="flex justify-between py-3 mb-3">
               <div className="w-[48%]">
                 <h2 className="font-bold text-base mb-2">Created</h2>
                 <p className="bg-slate-100 border border-slate-600 text-slate-600 font-semibold p-2 rounded w-[52%] font-mono text-sm text-center uppercase">
@@ -102,11 +120,14 @@ export const DomainOverview = ({ domain }: { domain: DomainName }) => {
                 </p>
               </div>
             </div>
-            <div className="flex justify-between py-3">
+            <hr />
+            <div className="flex justify-between py-3 mt-3">
               <div className="w-[31%]">
                 <h2 className="font-bold text-base mb-2">Confidence</h2>
                 <span
-                  className={`${getConfidenceColor(domain.confidence || 0)} py-1 px-6 rounded text-sm text-center uppercase`}
+                  className={`${getConfidenceColor(
+                    domain.confidence || 0,
+                  )} py-1 px-6 rounded text-sm text-center uppercase`}
                 >
                   {domain.confidence || 0}%
                 </span>
@@ -119,10 +140,58 @@ export const DomainOverview = ({ domain }: { domain: DomainName }) => {
               </div>
               <div className="w-[31%]">
                 <h2 className="font-bold text-base mb-2">Defanged</h2>
-                <span className={`py-1 px-5 rounded text-sm text-center ${domain.defanged ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'}`}>
+                <span
+                  className={`py-1 px-5 rounded text-sm text-center ${
+                    domain.defanged
+                      ? 'bg-green-100 text-green-800'
+                      : 'bg-gray-100 text-gray-800'
+                  }`}
+                >
                   {domain.defanged ? 'Yes' : 'No'}
                 </span>
               </div>
+            </div>
+            <div className="flex justify-between py-5">
+              <div className="">
+                <h2 className="font-bold text-base mb-2">Extension Type</h2>
+                <Badge
+                  variant="outline"
+                  className="border border-gray-500 text-gray-600 bg-gray-100 rounded-sm py-2 px-5"
+                >
+                  {ext_type ?? 'UNKOWN'}
+                </Badge>
+              </div>
+              <div className="">
+                <h2 className="font-bold text-base mb-2">Malicious</h2>
+                <Badge className="text-red-600 bg-red-100 py-1 px-6 rounded text-sm text-center uppercase">
+                  {last_analysis_stat ? last_analysis_stat['malicious'] : 0}%
+                </Badge>
+              </div>
+              <div className="">
+                <h2 className="font-bold text-base mb-2">Suspicious</h2>
+                <Badge className="text-amber-600 bg-amber-100 py-1 px-6 rounded text-sm text-center uppercase">
+                  {last_analysis_stat ? last_analysis_stat['suspicious'] : 0}%
+                </Badge>
+              </div>
+              <div className="">
+                <h2 className="font-bold text-base mb-2">Undetected</h2>
+                <Badge className="text-sky-600 bg-sky-100 py-1 px-6 rounded text-sm text-center uppercase">
+                  {last_analysis_stat ? last_analysis_stat['undetected'] : 0}%
+                </Badge>
+              </div>
+              <div className="">
+                <h2 className="font-bold text-base mb-2">Harmless</h2>
+                <Badge className="text-green-600 bg-green-100 py-1 px-6 rounded text-sm text-center uppercase">
+                  {last_analysis_stat ? last_analysis_stat['harmless'] : 0}%
+                </Badge>
+              </div>
+            </div>
+            <hr />
+            <div className="w-full py-3 mb-3">
+              <h2 className="font-bold text-base mb-2">Description</h2>
+              <p className="bg-slate-100 border border-slate-600 p-3 rounded text-md text-slate-600">
+                {domain.description ? domain.description : '-'}
+              </p>
             </div>
             <hr />
             <div className="flex justify-between py-5">
@@ -147,7 +216,11 @@ export const DomainOverview = ({ domain }: { domain: DomainName }) => {
                             </Badge>
                           </td>
                           <td className="p-4 font-medium text-gray-900 hover:underline">
-                            {ref.url ? <a href={ref.url}>{ref.url}</a> : null}
+                            {ref.url ? (
+                              <a href={ref.url} className="break-all">
+                                {ref.url}
+                              </a>
+                            ) : null}
                           </td>
                         </tr>
                       ))}
@@ -181,7 +254,10 @@ export const DomainOverview = ({ domain }: { domain: DomainName }) => {
                 <div className="flex flex-wrap gap-2">
                   {uniqueLabels.map((label) => {
                     if (!labelColorMap.current.has(label)) {
-                      labelColorMap.current.set(label, getRandomTailwindColor());
+                      labelColorMap.current.set(
+                        label,
+                        getRandomTailwindColor(),
+                      );
                     }
                     const color = labelColorMap.current.get(label)!;
                     return (

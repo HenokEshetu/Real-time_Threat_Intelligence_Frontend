@@ -203,15 +203,14 @@ export const FileObservablesPage = () => {
                   </TableCell>
                   <TableCell className="p-4 font-medium text-gray-900 hover:underline max-w-100 truncate">
                     {
-                      file.name
-                        ? file.hashes.SHA_512
-                        : file.hashes.SHA_256
-                        ? file.hashes.SHA_256
-                        : file.hashes.SHA_1
-                        ? file.hashes.SHA_1
-                        : file.hashes.MD5
-                        ? file.hashes.MD5
-                        : '---'
+                      file.name ||
+                        file.name_enc ||
+                        file.hashes.SHA_512 ||
+                        file.hashes.SHA_256 ||
+                        file.hashes.SHA_1 ||
+                        file.hashes.MD5 ||
+                        file.created_by_ref ||
+                        '---'
                       // : (file.created_by_ref || '')
                       //     .replaceAll('identity--', '')
                       //     .replaceAll('-', '')

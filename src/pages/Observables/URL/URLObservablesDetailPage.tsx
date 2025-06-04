@@ -20,7 +20,7 @@ export const URLObservablesDetailPage = () => {
       'data',
       'history',
     ],
-    comoponents: [
+    components: [
       url ? <URLOverview url={url} key="overview" /> : null,
       <div key="knowledge">Knowledge content here</div>,
       <div key="enrichment">Enrichment content here</div>,

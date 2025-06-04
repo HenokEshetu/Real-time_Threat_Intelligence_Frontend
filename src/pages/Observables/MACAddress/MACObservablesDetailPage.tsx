@@ -21,7 +21,7 @@ export const MACObservablesDetailPage = () => {
       'data',
       'history',
     ],
-    comoponents: [
+    components: [
       <MACAddressOverview mac={macAddress} />,
       <div>Knowledge content here</div>,
       <div>Enrichment content here</div>,

@@ -134,7 +134,7 @@ export const EmailMessageOverview = ({ emailMessage }: { emailMessage: EmailMess
                             </Badge>
                           </td>
                           <td className="p-4 font-medium text-gray-900 hover:underline">
-                            <a href={ref.url}>{ref.url}</a>
+                            <a href={ref.url} className='break-all'>{ref.url}</a>
                           </td>
                         </tr>
                       ))}

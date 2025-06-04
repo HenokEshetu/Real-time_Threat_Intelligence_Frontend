@@ -66,18 +66,45 @@ export const FileOverview = ({ file }: { file: File }) => {
 
   const getTlpColors = (tlp: string) => {
     switch (tlp?.toUpperCase()) {
-      case 'WHITE':
+      case 'TLP:WHITE':
         return 'bg-white text-black border-black';
-      case 'GREEN':
+      case 'TLP:GREEN':
         return 'bg-green-100 text-green-800 border-green-800';
-      case 'AMBER':
+      case 'TLP:AMBER':
         return 'bg-yellow-100 text-yellow-800 border-yellow-800';
-      case 'RED':
+      case 'TLP:RED':
         return 'bg-red-100 text-red-800 border-red-800';
       default:
         return 'bg-gray-100 text-gray-800 border-gray-800';
     }
   };
+
+  const TLP_BY_ID: Record<string, string> = {
+    'marking-definition--4975332a-f577-5a7c-8256-3ae6c49f6d94': 'TLP:WHITE',
+    'marking-definition--34098fce-860f-48ae-8e50-ebd3cc5e41da': 'TLP:GREEN',
+    'marking-definition--f88d31f6-486f-44da-b317-01333bde0b82': 'TLP:AMBER',
+    'marking-definition--5e57c739-391a-4eb3-b6be-7d15ca92d5ed': 'TLP:RED',
+    'marking-definition--94868c89-83c2-464b-929b-a1a8aa3c8487': 'TLP:CLEAR',
+    'marking-definition--883ccf11-4906-5a56-84ab-209fe08c7a63': 'TLP:CUSTOM',
+  };
+
+  function tlpFromString(full: string): string {
+    const parts = full.split('TLP:');
+    if (parts.length !== 2) {
+      return 'TLP:UNKNOWN';
+    }
+
+    const id = parts[1];
+    return TLP_BY_ID[id] ?? 'TLP:UNKNOWN';
+  }
+
+  const extension = file?.extensions
+    ? file?.extensions['extension-definition--virustotal-enrichment']
+    : {};
+  const last_analysis_stat = extension
+    ? extension?.data?.attributes?.last_analysis_stats
+    : {};
+  const ext_type = extension ? extension?.extension_type : '';
 
   return (
     <div className="p-4 grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -90,14 +117,16 @@ export const FileOverview = ({ file }: { file: File }) => {
             <div className="pb-3 w-full">
               <h2 className="font-semibold text-base mb-2">Name</h2>
               <div className="bg-slate-100 border border-slate-600 text-slate-600 font-semibold p-3 rounded overflow-x-auto font-mono text-sm">
-                {file.name ||
-                  file.hashes.SHA_512 ||
-                  file.hashes.SHA_256 ||
-                  file.hashes.SHA_1 ||
-                  file.hashes.MD5 ||
-                  file.created_by_ref
-                    .replaceAll('identity--', '')
-                    .replaceAll('-', '')}
+                {
+                  file.name ||
+                    file.hashes.SHA_512 ||
+                    file.hashes.SHA_256 ||
+                    file.hashes.SHA_1 ||
+                    file.hashes.MD5 ||
+                    file.created_by_ref
+                  // .replaceAll('identity--', '')
+                  // .replaceAll('-', '')}
+                }
               </div>
             </div>
 
@@ -175,6 +204,44 @@ export const FileOverview = ({ file }: { file: File }) => {
             </div> */}
 
             <hr />
+
+            <div className="flex justify-between py-5">
+              <div className="">
+                <h2 className="font-bold text-base mb-2">Extension Type</h2>
+                <Badge
+                  variant="outline"
+                  className="border border-gray-500 text-gray-600 bg-gray-100 rounded-sm py-2 px-5"
+                >
+                  {ext_type ?? 'UNKOWN'}
+                </Badge>
+              </div>
+              <div className="">
+                <h2 className="font-bold text-base mb-2">Malicious</h2>
+                <Badge className="text-red-600 bg-red-100 py-1 px-6 rounded text-sm text-center uppercase">
+                  {last_analysis_stat ? last_analysis_stat['malicious'] : 0}%
+                </Badge>
+              </div>
+              <div className="">
+                <h2 className="font-bold text-base mb-2">Suspicious</h2>
+                <Badge className="text-amber-600 bg-amber-100 py-1 px-6 rounded text-sm text-center uppercase">
+                  {last_analysis_stat ? last_analysis_stat['suspicious'] : 0}%
+                </Badge>
+              </div>
+              <div className="">
+                <h2 className="font-bold text-base mb-2">Undetected</h2>
+                <Badge className="text-sky-600 bg-sky-100 py-1 px-6 rounded text-sm text-center uppercase">
+                  {last_analysis_stat ? last_analysis_stat['undetected'] : 0}%
+                </Badge>
+              </div>
+              <div className="">
+                <h2 className="font-bold text-base mb-2">Harmless</h2>
+                <Badge className="text-green-600 bg-green-100 py-1 px-6 rounded text-sm text-center uppercase">
+                  {last_analysis_stat ? last_analysis_stat['harmless'] : 0}%
+                </Badge>
+              </div>
+            </div>
+
+            <hr />
             <div className="flex justify-between py-5">
               {file.external_references && (
                 <div className="w-full">
@@ -182,13 +249,13 @@ export const FileOverview = ({ file }: { file: File }) => {
                     External References
                   </h2>
                   <table className="w-full text-sm text-foreground">
-                    <tbody>
+                    <tbody className="w-full">
                       {file.external_references.map((ref, index) => (
                         <tr
                           key={index}
                           className="hover:bg-slate-100 transition-colors border-b border-gray-300 cursor-pointer"
                         >
-                          <td className="p-4 text-gray-700">
+                          <td className="p-4 text-gray-700 whitespace-nowrap">
                             <Badge
                               variant="outline"
                               className="text-blue-500 border-blue-500 bg-blue-50 py-1"
@@ -197,7 +264,9 @@ export const FileOverview = ({ file }: { file: File }) => {
                             </Badge>
                           </td>
                           <td className="p-4 font-medium text-gray-900 hover:underline">
-                            <a href={ref.url}>{ref.url}</a>
+                            <a className="break-all" href={ref.url}>
+                              {ref.url}
+                            </a>
                           </td>
                         </tr>
                       ))}
@@ -238,14 +307,16 @@ export const FileOverview = ({ file }: { file: File }) => {
               <div className="w-[48%]">
                 <h2 className="font-bold text-sm mb-2">Pattern Type</h2>
                 <span className="bg-blue-100 text-blue-800 border border-blue-800 py-1 px-5 rounded text-sm text-center uppercase">
-                  {file.name ||
-                    file.hashes.SHA_512 ||
-                    file.hashes.SHA_256 ||
-                    file.hashes.SHA_1 ||
-                    file.hashes.MD5 ||
-                    file.created_by_ref
-                      .replaceAll('identity--', '')
-                      .replaceAll('-', '')}
+                  {
+                    file.name ||
+                      file.hashes.SHA_512 ||
+                      file.hashes.SHA_256 ||
+                      file.hashes.SHA_1 ||
+                      file.hashes.MD5 ||
+                      file.created_by_ref
+                    // .replaceAll('identity--', '')
+                    // .replaceAll('-', '')}
+                  }
                 </span>
               </div>
               <div className="w-[48%]">
@@ -255,10 +326,10 @@ export const FileOverview = ({ file }: { file: File }) => {
                 </span> */}
                 <span
                   className={`py-1 px-5 rounded text-sm text-center uppercase border ${getTlpColors(
-                    file.object_marking_refs[0] || 'clear',
+                    tlpFromString(file.object_marking_refs[0] || 'clear'),
                   )}`}
                 >
-                  TLP:{file.object_marking_refs[0] || 'clear'}
+                  {tlpFromString(file.object_marking_refs[0] || 'clear')}
                 </span>
               </div>
             </div>

@@ -20,7 +20,7 @@ export const FileObservablesDetailPage = () => {
       'data',
       'history',
     ],
-    comoponents: [
+    components: [
       <FileOverview file={file} />,
       <div>Knowledge content here</div>,
       <div>Content content here</div>,

@@ -80,12 +80,11 @@ export const IPv4Overview = ({ ipv4 }: { ipv4: IPv4Address }) => {
     new Map(),
   );
 
-  // Marking (TLP) from labels or object_marking_refs
   let marking = '';
   uniqueLabels.forEach((lbl) => {
     if (lbl.includes('tlp:')) marking = lbl.replace('tlp:', '').toUpperCase();
   });
-  // Use object_marking_refs as fallback if no TLP label found
+  
   if (
     !marking &&
     ipv4.object_marking_refs &&
@@ -176,7 +175,7 @@ export const IPv4Overview = ({ ipv4 }: { ipv4: IPv4Address }) => {
                           </td>
                           <td className="p-4 font-medium text-gray-900 hover:underline">
                             {ref.url ? (
-                              <a href={ref.url}>{ref.url}</a>
+                              <a href={ref.url} className='break-all'>{ref.url}</a>
                             ) : (
                               <span>-</span>
                             )}
@@ -188,27 +187,6 @@ export const IPv4Overview = ({ ipv4 }: { ipv4: IPv4Address }) => {
                 </div>
               )}
             </div>
-            {/* Enrichment Section */}
-            {ipv4.enrichment && (
-              <div className="mt-4">
-                <h2 className="font-semibold mb-1">Enrichment</h2>
-                <div className="grid gap-2">
-                  {Object.entries(ipv4.enrichment).map(([key, value]) =>
-                    value ? (
-                      <div
-                        key={key}
-                        className="bg-white/5 border border-white/10 rounded p-3 text-sm"
-                      >
-                        <strong>{key}</strong>
-                        <pre className="whitespace-pre-wrap break-all text-xs mt-1">
-                          {JSON.stringify(value, null, 2)}
-                        </pre>
-                      </div>
-                    ) : null,
-                  )}
-                </div>
-              </div>
-            )}
           </CardContent>
         </Card>
       </div>

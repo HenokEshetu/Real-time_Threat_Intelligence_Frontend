@@ -7,7 +7,7 @@ import { TacticsMatrixView } from './TacticsMatrixView';
 export const ReportKnowledge = ({ report }: { report: any }) => {
   const tabs: TabsType = {
     titles: ['graph', 'timeline', 'matrix'],
-    comoponents: [
+    components: [
       <ReportKnowledgeGraph report={report} />,
       <KnowledgeTimeline report={report} />,
       <TacticsMatrixView report={report} />,

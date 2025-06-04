@@ -21,7 +21,7 @@ export const X509CertificateObservablesDetailPage = () => {
       'data',
       'history',
     ],
-    comoponents: [
+    components: [
       <X509CertificateOverview certificate={certificate} />,
       <div>Knowledge content here</div>,
       <div>Content content here</div>,

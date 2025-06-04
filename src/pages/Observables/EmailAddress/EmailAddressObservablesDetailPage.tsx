@@ -20,7 +20,7 @@ export const EmailAddressObservablesDetailPage = () => {
       'data',
       'history',
     ],
-    comoponents: [
+    components: [
       email ? <EmailAddressOverview email={email} /> : null,
       <div>Knowledge content here</div>,
       <div>Analysis content here</div>,
