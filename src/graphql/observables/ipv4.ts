@@ -16,6 +16,8 @@ export const SEARCH_IPv4_OBSERVABLES = gql`
         created
         created_by_ref
         defanged
+        description
+        pattern
         extensions
         external_references {
           description
@@ -40,11 +42,13 @@ export const SEARCH_IPv4_OBSERVABLES = gql`
 
 export const GET_IPv4_OBSERVABLE = gql`
   query getIPv4Address($id: String!) {
-    getIPv4Address(id: $id) {
+    ipv4Address(id: $id) {
       confidence
       created
       created_by_ref
       defanged
+      description
+      pattern
       extensions
       external_references {
         description
@@ -74,6 +78,8 @@ export const IPV4_CREATED_SUBSCRIPTION = gql`
       created
       created_by_ref
       defanged
+      description
+      pattern
       extensions
       external_references {
         description
@@ -102,6 +108,8 @@ export const IPV4_UPDATED_SUBSCRIPTION = gql`
       created
       created_by_ref
       defanged
+      description
+      pattern
       extensions
       external_references {
         description

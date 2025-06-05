@@ -189,7 +189,7 @@ export const DomainOverview = ({ domain }: { domain: DomainName }) => {
             <hr />
             <div className="w-full py-3 mb-3">
               <h2 className="font-bold text-base mb-2">Description</h2>
-              <p className="bg-slate-100 border border-slate-600 p-3 rounded text-md text-slate-600">
+              <p className="border p-5 rounded text-md text-foreground">
                 {domain.description ? domain.description : '-'}
               </p>
             </div>

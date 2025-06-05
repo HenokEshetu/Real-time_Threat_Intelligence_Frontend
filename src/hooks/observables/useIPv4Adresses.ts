@@ -137,11 +137,10 @@ export const useIPv4 = ({
 export const useIPv4Address = (id?: string) => {
   const { data, loading, error } = useQuery(GET_IPv4_OBSERVABLE, {
     variables: { id },
-    skip: !id,
   });
 
   return {
-    ipv4: data?.getIPv4Address,
+    ipv4: data?.ipv4Address,
     loading,
     error,
   };

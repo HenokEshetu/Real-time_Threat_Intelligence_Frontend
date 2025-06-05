@@ -132,6 +132,8 @@ import IntrusionSetCreatePage from './pages/IntrusionSet/IntrusionSetCreatePage'
 import IntrusionSetEditPage from './pages/IntrusionSet/IntrusionSetEditPage';
 import IntrusionSetDetailPage from './pages/IntrusionSet/IntrusionSetDetailPage';
 
+import { IdsIpsRulesPage } from './pages/IdsIpsRulesPage';
+
 export const AppRoutes = () => {
   return (
     <Routes>
@@ -792,6 +794,15 @@ export const AppRoutes = () => {
         element={
           <ProtectedRoute
             children={<LocationsList initialType="ADMINISTRATIVE_AREA" />}
+          />
+        }
+      />
+
+      <Route
+        path="/ids-ips-rules"
+        element={
+          <ProtectedRoute
+            children={<IdsIpsRulesPage />}
           />
         }
       />

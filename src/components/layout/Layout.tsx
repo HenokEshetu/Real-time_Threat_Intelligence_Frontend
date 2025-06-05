@@ -27,6 +27,7 @@ import {
   TriangleAlert,
   TrendingUp,
   SwordIcon,
+  BrickWallFireIcon,
 } from 'lucide-react';
 import { Link, useLocation } from 'react-router-dom';
 import { cn } from '@/lib/utils';
@@ -74,6 +75,7 @@ import {
   AlertDialogTrigger,
 } from '../ui/alert-dialog';
 import { Toaster } from 'sonner';
+import { Badge } from '../ui/badge';
 
 interface MenuItem {
   text: string;
@@ -250,6 +252,13 @@ export const Layout = ({ children }: { children: React.ReactNode }) => {
               <SearchBar className="ml-18" />
             </div>
             <div className="flex justify-end items-center gap-2 w-[33.3%]">
+              <Badge
+                variant="outline"
+                className="border-2 rounded border-purple-500 bg-purple-100 text-purple-700 px-10 py-2 text-md  font-bold mx-5"
+              >
+                <BrickWallFireIcon />
+                <a href="/ids-ips-rules">IDS/IPS Rules</a>
+              </Badge>
               <DropdownMenu>
                 <DropdownMenuTrigger>
                   <BellIcon />
@@ -387,7 +396,7 @@ export const Layout = ({ children }: { children: React.ReactNode }) => {
           </header>
 
           {!isDashboard && (
-            <TopContainer className="h-8">
+            <TopContainer className="h-8 bg-background">
               <TopBreadcrumb />
             </TopContainer>
           )}

@@ -32,13 +32,13 @@ export const IPv4ObservablesDetailPage = () => {
 
   if (loading) return <Loading />;
   if (error) return <ErrorMessage message={error.message} />;
-  if (!ipv4) return <ErrorMessage message="IPv4 Address not found" />;
+  // if (!ipv4) return <ErrorMessage message="IPv4 Address not found" />;
 
   return (
     <div className="w-full flex flex-col">
       <TopContainer className="h-13 top-29">
         <h1 className="text-2xl max-w-[40%] font-semibold truncate">
-          {ipv4.value || ipv4.id}
+          {ipv4.value ? ipv4.value : ipv4.id}
         </h1>
       </TopContainer>
       <TopTab tabs={tabs} triggerStyle="" />

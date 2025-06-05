@@ -84,7 +84,7 @@ export const IPv4Overview = ({ ipv4 }: { ipv4: IPv4Address }) => {
   uniqueLabels.forEach((lbl) => {
     if (lbl.includes('tlp:')) marking = lbl.replace('tlp:', '').toUpperCase();
   });
-  
+
   if (
     !marking &&
     ipv4.object_marking_refs &&
@@ -92,6 +92,22 @@ export const IPv4Overview = ({ ipv4 }: { ipv4: IPv4Address }) => {
   ) {
     marking = ipv4.object_marking_refs[0].toUpperCase();
   }
+
+  const extension_virustotal = ipv4?.extensions
+    ? ipv4?.extensions['extension-definition--virustotal-enrichment']
+    : {};
+  const extension_geo = ipv4?.extensions
+    ? ipv4?.extensions['extension-definition--geo-enrichment']
+    : {};
+  const extension_asn = ipv4?.extensions
+    ? ipv4?.extensions['extension-definition--asn-enrichment']
+    : {};
+  const last_analysis_stat = extension_virustotal
+    ? extension_virustotal?.data?.attributes?.last_analysis_stats
+    : {};
+  const ext_type = extension_virustotal
+    ? extension_virustotal?.extension_type
+    : '';
 
   return (
     <div className="p-4 grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -101,13 +117,21 @@ export const IPv4Overview = ({ ipv4 }: { ipv4: IPv4Address }) => {
         </h1>
         <Card className="bg-transparent border border-gray-300 rounded-sm shadow-none !py-4">
           <CardContent className="px-3">
-            <div className="pb-3 w-full">
-              <h2 className="font-semibold text-base mb-2">IPv4 Address</h2>
-              <div className="bg-slate-100 border border-slate-600 text-slate-600 font-semibold p-3 rounded overflow-x-auto font-mono text-sm">
-                {ipv4.value}
+            <div className="pb-3 flex justify-between">
+              <div className="w-[50%]">
+                <h2 className="font-semibold text-base mb-2">IPv4 Address</h2>
+                <div className="bg-slate-100 w-[90%] border border-slate-600 text-slate-600 font-semibold p-3 rounded overflow-x-auto font-mono text-sm">
+                  {ipv4.value ? ipv4.value : '-'}
+                </div>
+              </div>
+              <div className="w-[50%]">
+                <h2 className="font-semibold text-base mb-2">Pattern</h2>
+                <div className="bg-slate-100 w-[90%] border border-slate-600 text-slate-600 font-semibold p-3 rounded overflow-x-auto font-mono text-sm">
+                  {ipv4.pattern ? ipv4.pattern : '-'}
+                </div>
               </div>
             </div>
-            <div className="flex justify-between py-3">
+            <div className="flex justify-between py-3 mb-3">
               <div className="w-[48%]">
                 <h2 className="font-bold text-base mb-2">Created</h2>
                 <p className="bg-slate-100 border border-slate-600 text-slate-600 font-semibold p-2 rounded w-[52%] font-mono text-sm text-center uppercase">
@@ -121,7 +145,49 @@ export const IPv4Overview = ({ ipv4 }: { ipv4: IPv4Address }) => {
                 </p>
               </div>
             </div>
-            <div className="flex justify-between py-3">
+            <hr />
+            <div className="flex justify-between py-3 my-3">
+              <div className="w-[50%]">
+                <h2 className="font-semibold text-base mb-2">Country Name</h2>
+                <div className="bg-neutral-100 w-[90%] border border-neutral-600 text-neutral-600 font-semibold p-3 rounded overflow-x-auto font-mono text-sm">
+                  {extension_geo.country_name
+                    ? extension_geo.country_name
+                    : '-'}
+                </div>
+              </div>
+              <div className="w-[50%]">
+                <h2 className="font-semibold text-base mb-2">Organization</h2>
+                <div className="bg-neutral-100 w-[90%] border border-neutral-600 text-neutral-600 font-semibold p-3 rounded overflow-x-auto font-mono text-sm">
+                  {extension_asn
+                    ? extension_asn.org
+                      ? extension_asn.org
+                      : '-'
+                    : '-'}
+                </div>
+              </div>
+            </div>
+            <div className="flex justify-between py-3 my-3">
+              <div className="w-[50%]">
+                <h2 className="font-semibold text-base mb-2">City</h2>
+                <div className="bg-neutral-100 w-[90%] border border-neutral-600 text-neutral-600 font-semibold p-3 rounded overflow-x-auto font-mono text-sm">
+                  {extension_geo.city ? extension_geo.city : '-'}
+                </div>
+              </div>
+              <div className="w-[25%]">
+                <h2 className="font-semibold text-base mb-2">Lon</h2>
+                <div className="bg-neutral-100 w-[90%] border border-neutral-600 text-neutral-600 font-semibold p-3 rounded overflow-x-auto font-mono text-sm">
+                  {extension_geo.lon ? extension_geo.lon : '-'}
+                </div>
+              </div>
+              <div className="w-[25%]">
+                <h2 className="font-semibold text-base mb-2">Lat</h2>
+                <div className="bg-neutral-100 w-[90%] border border-neutral-600 text-neutral-600 font-semibold p-3 rounded overflow-x-auto font-mono text-sm">
+                  {extension_geo.lat ? extension_geo.lat : '-'}
+                </div>
+              </div>
+            </div>
+            <hr />
+            <div className="flex justify-between py-3 mt-3">
               <div className="w-[31%]">
                 <h2 className="font-bold text-base mb-2">Confidence</h2>
                 <span
@@ -151,6 +217,68 @@ export const IPv4Overview = ({ ipv4 }: { ipv4: IPv4Address }) => {
                 </span>
               </div>
             </div>
+            <div className="flex justify-between py-5">
+              <div className="">
+                <h2 className="font-bold text-base mb-2">Extension Type</h2>
+                <Badge
+                  variant="outline"
+                  className="border border-gray-500 text-gray-600 bg-gray-100 rounded-sm py-2 px-5"
+                >
+                  {extension_virustotal ? (ext_type ?? 'UNKOWN') : 'UNKNOWN'}
+                </Badge>
+              </div>
+              <div className="">
+                <h2 className="font-bold text-base mb-2">Malicious</h2>
+                <Badge className="text-red-600 bg-red-100 py-1 px-6 rounded text-sm text-center uppercase">
+                  {extension_virustotal
+                    ? last_analysis_stat
+                      ? last_analysis_stat['malicious']
+                      : 0
+                    : 0}
+                  %
+                </Badge>
+              </div>
+              <div className="">
+                <h2 className="font-bold text-base mb-2">Suspicious</h2>
+                <Badge className="text-amber-600 bg-amber-100 py-1 px-6 rounded text-sm text-center uppercase">
+                  {extension_virustotal
+                    ? last_analysis_stat
+                      ? last_analysis_stat['suspicious']
+                      : 0
+                    : 0}
+                  %
+                </Badge>
+              </div>
+              <div className="">
+                <h2 className="font-bold text-base mb-2">Undetected</h2>
+                <Badge className="text-sky-600 bg-sky-100 py-1 px-6 rounded text-sm text-center uppercase">
+                  {extension_virustotal
+                    ? last_analysis_stat
+                      ? last_analysis_stat['undetected']
+                      : 0
+                    : 0}
+                  %
+                </Badge>
+              </div>
+              <div className="">
+                <h2 className="font-bold text-base mb-2">Harmless</h2>
+                <Badge className="text-green-600 bg-green-100 py-1 px-6 rounded text-sm text-center uppercase">
+                  {extension_virustotal
+                    ? last_analysis_stat
+                      ? last_analysis_stat['harmless']
+                      : 0
+                    : 0}
+                  %
+                </Badge>
+              </div>
+            </div>
+            <hr />
+            <div className="w-full py-3 mb-3">
+              <h2 className="font-bold text-base mb-2">Description</h2>
+              <p className="border p-5 rounded text-md text-forground">
+                {ipv4.description ? ipv4.description : '-'}
+              </p>
+            </div>
             <hr />
             <div className="flex justify-between py-5">
               {ipv4.external_references && (
@@ -175,7 +303,9 @@ export const IPv4Overview = ({ ipv4 }: { ipv4: IPv4Address }) => {
                           </td>
                           <td className="p-4 font-medium text-gray-900 hover:underline">
                             {ref.url ? (
-                              <a href={ref.url} className='break-all'>{ref.url}</a>
+                              <a href={ref.url} className="break-all">
+                                {ref.url}
+                              </a>
                             ) : (
                               <span>-</span>
                             )}

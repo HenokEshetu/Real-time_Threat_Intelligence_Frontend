@@ -38,6 +38,8 @@ export interface IPv4Address {
   spec_version: string;
   type: string;
   value: string;
+  description: string;
+  pattern: string;
 }
 
 export interface IPv4AddressSearchResult {

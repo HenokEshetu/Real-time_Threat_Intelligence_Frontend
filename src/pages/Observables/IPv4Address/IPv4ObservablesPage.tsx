@@ -88,7 +88,7 @@ export const IPv4ObservablesPage = () => {
   const totalPages = Math.ceil((total || 0) / pageSize);
 
   const handleViewIPv4 = (id: string) =>
-    navigate(`/observables/ipv4addresses/${id}`);
+    navigate(`/observables/ipv4-addresses/${id}`);
 
   const handlePageChange = (newPage: number) => {
     setCurrentPage(Math.max(1, Math.min(newPage, totalPages)));
