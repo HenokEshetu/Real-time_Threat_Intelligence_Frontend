@@ -227,14 +227,13 @@ const ToolDetail: React.FC<ToolDetailProps> = ({ tool }) => {
       )}
 
       {/* Floating Edit Button */}
-      <button
+      {/* <button
         className="fixed bottom-8 right-8 z-50 bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white rounded-full shadow-lg p-4 flex items-center justify-center transition-colors group"
         title="Edit Tool"
         onClick={() => {
           if (id) navigate(`/tools/${id}/edit`);
         }}
       >
-        {/* Modern interactive pencil-square icon (Heroicons style) */}
         <svg
           xmlns="http://www.w3.org/2000/svg"
           className="w-7 h-7 transition-transform duration-150 group-hover:scale-110 group-active:scale-95"
@@ -249,7 +248,7 @@ const ToolDetail: React.FC<ToolDetailProps> = ({ tool }) => {
             d="M16.862 3.487a2.1 2.1 0 1 1 2.97 2.97L7.5 18.79l-4 1 1-4 12.362-12.303ZM19 7l-2-2M5 21h14"
           />
         </svg>
-      </button>
+      </button> */}
     </div>
   );
 };

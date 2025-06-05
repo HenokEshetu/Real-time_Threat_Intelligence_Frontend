@@ -45,7 +45,7 @@ export const ReportDetailPage = () => {
           <h1 className="text-2xl max-w-[60%] font-semibold truncate">
             {report.name}
           </h1>
-          <button
+          {/* <button
             className="p-2 rounded-full hover:bg-red-100 active:bg-red-200 transition-colors"
             title="Delete Report"
             onClick={() => {
@@ -53,7 +53,7 @@ export const ReportDetailPage = () => {
             }}
           >
             <Trash2 className="w-6 h-6 text-red-600 hover:text-red-800" />
-          </button>
+          </button> */}
         </div>
       </TopContainer>
       <TopTab tabs={tabs} triggerStyle="" />
