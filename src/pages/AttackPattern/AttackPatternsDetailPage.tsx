@@ -5,8 +5,8 @@ import { Loading } from '@/components/common/Loading/Loading';
 import { ErrorMessage } from '@/components/common/ErrorMessage/ErrorMessage';
 import { TopContainer } from '@/components/common/TopContainer';
 import { TabsType, TopTab } from '@/components/common/TopTab';
-// You may want to implement this component for details:
 import { AttackPatternDetail } from '@/components/common/AttackPatterns/AttackPatternDetail';
+import AttackPatternRelationship from '@/components/common/AttackPatterns/AttackPatternRelationship';
 
 export const AttackPatternsDetailPage = () => {
   const { id } = useParams<{ id: string }>();
@@ -16,7 +16,7 @@ export const AttackPatternsDetailPage = () => {
     titles: ['Detail', 'Relationships', 'Analysis'],
     components: [
       <AttackPatternDetail attackPattern={attackPattern} />,
-      <div>Knowledge content here</div>,
+      <AttackPatternRelationship attackPatternId={id} />,
       <div>Analysis content here</div>,
     ],
   } as TabsType;

@@ -5,16 +5,16 @@ import { getRelEssentials } from '@/pages/Relationships/RelationshipEssentials';
 import { Badge } from '@/components/ui/badge';
 import { StixRelationship } from '@/types/relationship';
 
-interface AttackPatternRelationshipProps {
-  attackPatternId?: string;
+interface CampaignRelationshipProps {
+  campaignId?: string;
 }
 
-const AttackPatternRelationship: React.FC<AttackPatternRelationshipProps> = ({ attackPatternId }) => {
+const CampaignRelationship: React.FC<CampaignRelationshipProps> = ({ campaignId }) => {
   const { id: paramId } = useParams<{ id: string }>();
-  const id = attackPatternId || paramId;
+  const id = campaignId || paramId;
   const navigate = useNavigate();
 
-  // Fetch relationships where attack-pattern is source
+  // Fetch relationships where campaign is source
   const {
     relationships: sourceRelationships,
     loading: loadingSource,
@@ -25,7 +25,7 @@ const AttackPatternRelationship: React.FC<AttackPatternRelationshipProps> = ({ a
     pageSize: 100,
   });
 
-  // Fetch relationships where attack-pattern is target
+  // Fetch relationships where campaign is target
   const {
     relationships: targetRelationships,
     loading: loadingTarget,
@@ -51,13 +51,13 @@ const AttackPatternRelationship: React.FC<AttackPatternRelationshipProps> = ({ a
   const error = errorSource || errorTarget;
 
   if (!id) {
-    return <div className="p-4 text-red-500">No attack pattern ID provided.</div>;
+    return <div className="p-4 text-red-500">No campaign ID provided.</div>;
   }
 
   if (loading) return <div className="p-4">Loading relationships...</div>;
   if (error) return <div className="p-4 text-red-500">Failed to load relationships.<br/>{error.message}</div>;
   if (!relationships || relationships.length === 0) {
-    return <div className="p-4 text-gray-500">No relationships found for this attack pattern.</div>;
+    return <div className="p-4 text-gray-500">No relationships found for this campaign.</div>;
   }
 
   // Helper functions
@@ -150,4 +150,4 @@ const AttackPatternRelationship: React.FC<AttackPatternRelationshipProps> = ({ a
   );
 };
 
-export default AttackPatternRelationship;
+export default CampaignRelationship;
