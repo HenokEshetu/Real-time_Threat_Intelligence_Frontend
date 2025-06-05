@@ -6,6 +6,7 @@ import { ErrorMessage } from '@/components/common/ErrorMessage/ErrorMessage';
 import { TopContainer } from '@/components/common/TopContainer';
 import { TabsType, TopTab } from '@/components/common/TopTab';
 import ReportDetail from '@/components/common/Reports/ReportDetail';
+import ReportRelationship from '@/components/common/Reports/ReportRelationship';
 import { Trash2 } from 'lucide-react';
 
 export const ReportDetailPage = () => {
@@ -25,7 +26,7 @@ export const ReportDetailPage = () => {
     ],
     components: [
       <ReportDetail />,
-      <div>Relationships content here</div>,
+      <ReportRelationship reportId={id} />,
       <div>Analysis content here</div>,
       <div></div>,
       <div></div>,
@@ -44,7 +45,7 @@ export const ReportDetailPage = () => {
           <h1 className="text-2xl max-w-[60%] font-semibold truncate">
             {report.name}
           </h1>
-          <button
+          {/* <button
             className="p-2 rounded-full hover:bg-red-100 active:bg-red-200 transition-colors"
             title="Delete Report"
             onClick={() => {
@@ -52,7 +53,7 @@ export const ReportDetailPage = () => {
             }}
           >
             <Trash2 className="w-6 h-6 text-red-600 hover:text-red-800" />
-          </button>
+          </button> */}
         </div>
       </TopContainer>
       <TopTab tabs={tabs} triggerStyle="" />

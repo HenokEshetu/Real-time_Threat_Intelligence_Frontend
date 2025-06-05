@@ -6,6 +6,7 @@ import { ErrorMessage } from '@/components/common/ErrorMessage/ErrorMessage';
 import { TopContainer } from '@/components/common/TopContainer';
 import { TabsType, TopTab } from '@/components/common/TopTab';
 import IntrusionSetDetail from '@/components/common/IntrusionSets/IntrusionSetDetail';
+import IntrusionSetRelationship from '@/components/common/IntrusionSets/IntrusionSetRelationship';
 
 export const IntrusionSetDetailPage = () => {
   const { id } = useParams<{ id: string }>();
@@ -19,7 +20,7 @@ export const IntrusionSetDetailPage = () => {
     ],
     components: [
       <IntrusionSetDetail />,
-      <div>Relationships content here</div>,
+      <IntrusionSetRelationship intrusionSetId={id} />,
       <div>Analysis content here</div>,
       <div></div>,
       <div></div>,

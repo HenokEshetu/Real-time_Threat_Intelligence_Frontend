@@ -4,24 +4,26 @@ import { useIndicator } from '@/hooks/useIndicators';
 import { Loading } from '@/components/common/Loading/Loading';
 import { ErrorMessage } from '@/components/common/ErrorMessage/ErrorMessage';
 import { TopContainer } from '@/components/common/TopContainer';
-import { IndicatorRelationships } from '@/components/indicator/IndicatorDetail';
+import { IndicatorDetail } from '@/components/indicator/IndicatorDetail';
+import IndicatorRelationships from '@/components/indicator/IndicatorRelationship';
 import { TabsType, TopTab } from '@/components/common/TopTab';
 
 export const IndicatorDetailPage = () => {
   const { id } = useParams<{ id: string }>();
   const { indicator, loading, error } = useIndicator(id);
+
   const tabs = {
     titles: [
       'Detail',
       'Relationships',
       'Analysis',
+      'Content',
     ],
     components: [
-      <IndicatorRelationships indicator={indicator} />,
-      <div>Knowledge content here</div>,
-      <div>Content content here</div>,
+      <IndicatorDetail indicator={indicator} />,
+      <IndicatorRelationships indicatorId={id} />,
       <div>Analysis content here</div>,
-
+      <div>Content content here</div>,
     ],
   } as TabsType;
 
@@ -36,7 +38,6 @@ export const IndicatorDetailPage = () => {
           {indicator.name}
         </h1>
       </TopContainer>
-
       <TopTab tabs={tabs} triggerStyle="" />
     </div>
   );

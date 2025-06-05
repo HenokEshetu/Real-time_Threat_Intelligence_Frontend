@@ -6,10 +6,10 @@ import { ErrorMessage } from '@/components/common/ErrorMessage/ErrorMessage';
 import { TopContainer } from '@/components/common/TopContainer';
 import { TabsType, TopTab } from '@/components/common/TopTab';
 import CampaignDetail from '@/components/common/Campaigns/CampaignDetail';
+import CampaignRelationship from '@/components/common/Campaigns/CampaignRelationship';
 
 export const CampaignDetailPage = () => {
   const { id } = useParams<{ id: string }>();
-  // Ensure id is always a string (fallback to empty string if undefined)
   const { campaign, loading, error } = useCampaign(id || '');
 
   const tabs = {
@@ -20,11 +20,8 @@ export const CampaignDetailPage = () => {
     ],
     components: [
       <CampaignDetail />,
-      <div>Relationships content here</div>,
+      <CampaignRelationship campaignId={id} />,
       <div>Analysis content here</div>,
-      <div></div>,
-      <div></div>,
-      <div></div>,
     ],
   } as TabsType;
 

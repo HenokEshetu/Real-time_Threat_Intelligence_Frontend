@@ -88,6 +88,7 @@ import { X509CertificateObservablesDetailPage } from './pages/Observables/X509Ce
 import { X509CertificateObservablesEditPage } from './pages/Observables/X509Certificate/X509CertificateObservablesEditPage';
 import { X509CertificateObservablesCreatePage } from './pages/Observables/X509Certificate/X509CertificateObservablesCreatePage';
 import { RelationshipsPage } from './pages/Relationships/RelationshipsPage';
+import { RelationshipsDetailPage } from './pages/Relationships/RelationshipsDetailPage';
 import { AuthProvider } from './auth/AuthContext';
 import { ProtectedRoute } from './auth/ProtectedRoute';
 import { CampaignDetailPage } from './pages/Campaigns/CampaignsDetailPage';
@@ -749,6 +750,10 @@ export const AppRoutes = () => {
       <Route
         path="/relationships"
         element={<ProtectedRoute children={<RelationshipsPage />} />}
+      />
+      <Route
+        path="/relationships/:id"
+        element={<ProtectedRoute children={<RelationshipsDetailPage />} />}
       />
 
       <Route path="/auth" element={<Login />} />
